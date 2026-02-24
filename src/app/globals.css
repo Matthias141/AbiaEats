@@ -92,6 +92,18 @@
     background: rgba(242, 101, 34, 0.3);
     border-radius: 2px;
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 @layer utilities {
@@ -101,4 +113,50 @@
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Bottom sheet slide-up animation */
+@keyframes slideUpSheet {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up-sheet {
+  animation: slideUpSheet 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Onboarding slide transitions */
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out;
+}
+
+/* Pulse glow animation for CTA buttons */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(242, 101, 34, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(242, 101, 34, 0.5);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
 }

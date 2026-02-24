@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, UtensilsCrossed } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { loginSchema } from '@/lib/validations';
 
@@ -40,96 +38,117 @@ export default function LoginPage() {
       return;
     }
 
-    router.push('/restaurants');
+    router.push('/home');
     router.refresh();
   };
 
   return (
     <div className="min-h-screen bg-dark-bg flex flex-col overflow-x-hidden">
       {/* Header */}
-      <div className="p-4">
-        <Link
-          href="/"
-          className="tap-target inline-flex items-center gap-2 text-sm text-foreground/60 hover:text-foreground transition-colors"
+      <div className="p-4 flex items-center justify-between">
+        <button
+          onClick={() => router.back()}
+          className="tap-target w-10 h-10 rounded-xl bg-dark-card border border-dark-border flex items-center justify-center hover:border-dark-border-light transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back
+        </button>
+        <Link
+          href="/onboarding"
+          className="text-sm text-foreground/40 hover:text-foreground/60 transition-colors"
+        >
+          Skip
         </Link>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-4 pb-12">
+      <div className="flex-1 flex items-center justify-center px-6 pb-12">
         <div className="w-full max-w-sm">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl gradient-orange flex items-center justify-center">
-                <span className="text-white font-bold">A</span>
-              </div>
+          {/* Logo & Heading */}
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-orange mb-5">
+              <UtensilsCrossed className="w-7 h-7 text-white" />
             </div>
-            <h1 className="font-heading text-2xl font-bold">Welcome back</h1>
-            <p className="text-sm text-foreground/50 mt-1">
-              Sign in to your AbiaEats account
+            <h1 className="font-heading text-3xl font-bold mb-2">Welcome back</h1>
+            <p className="text-sm text-foreground/50">
+              Sign in to continue ordering
             </p>
           </div>
 
+          {/* Error */}
+          {error && (
+            <div className="mb-5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400 text-center">
+              {error}
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-4">
-            {error && (
-              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-500">
-                {error}
+            <div>
+              <label className="block text-xs font-medium text-foreground/50 mb-1.5 ml-1">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  className="w-full min-h-[52px] pl-11 pr-4 bg-dark-card border border-dark-border rounded-xl text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+                />
               </div>
-            )}
-
-            <Input
-              id="email"
-              type="email"
-              label="Email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              icon={<Mail className="w-4 h-4" />}
-              autoComplete="email"
-            />
-
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                label="Password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                icon={<Lock className="w-4 h-4" />}
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-[38px] text-foreground/40 hover:text-foreground/60"
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
             </div>
 
-            <Button type="submit" className="w-full" size="lg" isLoading={isLoading}>
-              Sign In
-            </Button>
+            <div>
+              <label className="block text-xs font-medium text-foreground/50 mb-1.5 ml-1">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                  className="w-full min-h-[52px] pl-11 pr-12 bg-dark-card border border-dark-border rounded-xl text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-foreground/30 hover:text-foreground/50"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full min-h-[52px] flex items-center justify-center gap-2 rounded-xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none mt-6"
+            >
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Signing in...
+                </>
+              ) : (
+                'Sign In'
+              )}
+            </button>
           </form>
 
-          {/* Divider */}
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-dark-border" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-dark-bg px-3 text-foreground/30">or</span>
-            </div>
-          </div>
-
           {/* Sign up link */}
-          <p className="text-center text-sm text-foreground/50">
+          <p className="text-center text-sm text-foreground/40 mt-8">
             Don&apos;t have an account?{' '}
-            <Link href="/auth/signup" className="text-brand-orange hover:text-brand-orange-light transition-colors font-medium">
+            <Link
+              href="/auth/signup"
+              className="text-brand-orange hover:text-brand-orange-light transition-colors font-medium"
+            >
               Sign up
             </Link>
           </p>

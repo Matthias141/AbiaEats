@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { CartProvider } from "@/contexts/cart-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -48,7 +49,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased bg-dark-bg text-foreground overflow-x-hidden">
-        {children}
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );
