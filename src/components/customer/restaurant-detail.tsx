@@ -143,7 +143,6 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
   const handleSwitchConfirm = useCallback(() => {
     setShowSwitchModal(false);
     if (pendingItem) {
-      // After clearing, add item or open modal
       addItem(
         {
           menu_item_id: pendingItem.id,
@@ -188,11 +187,11 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
   const cartTotal = subtotal + deliveryFee;
 
   return (
-    <div className="min-h-screen bg-dark-bg overflow-x-hidden pb-24">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden pb-24">
       {/* Hero Section */}
       <div className="relative">
         {/* Cover Image */}
-        <div className="aspect-[16/9] relative overflow-hidden bg-dark-card">
+        <div className="aspect-[16/9] relative overflow-hidden bg-gray-100">
           {restaurant.cover_image_url || restaurant.image_url ? (
             <img
               src={restaurant.cover_image_url || restaurant.image_url || ''}
@@ -200,111 +199,121 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-brand-orange/20 via-dark-card to-dark-bg" />
+            <div className="w-full h-full bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50 flex items-center justify-center">
+              <span className="text-7xl opacity-40">
+                {restaurant.cuisine_tags.includes('grills') ? '🍖' :
+                 restaurant.cuisine_tags.includes('shawarma') ? '🌯' :
+                 restaurant.cuisine_tags.includes('bakery') ? '🍞' :
+                 restaurant.cuisine_tags.includes('drinks') ? '🥤' :
+                 '🍽️'}
+              </span>
+            </div>
           )}
-          {/* Gradient overlay: transparent top to dark bottom */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-dark-bg" />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-white" />
         </div>
 
         {/* Navigation overlays */}
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20">
           <Link
             href="/restaurants"
-            className="w-10 h-10 rounded-xl backdrop-blur-[16px] bg-black/30 border border-white/10 flex items-center justify-center active:scale-[0.97] transition-transform"
+            className="w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm shadow-sm flex items-center justify-center active:scale-[0.97] transition-transform"
           >
-            <ArrowLeft className="w-5 h-5 text-white" />
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
           </Link>
           <button
             onClick={handleShare}
-            className="w-10 h-10 rounded-xl backdrop-blur-[16px] bg-black/30 border border-white/10 flex items-center justify-center active:scale-[0.97] transition-transform"
+            className="w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm shadow-sm flex items-center justify-center active:scale-[0.97] transition-transform"
           >
-            <Share2 className="w-5 h-5 text-white" />
+            <Share2 className="w-5 h-5 text-gray-700" />
           </button>
         </div>
 
-        {/* Restaurant info block overlapping hero */}
+        {/* Restaurant info block */}
         <div className="relative z-10 -mt-8 px-4">
-          <div className="max-w-2xl mx-auto">
-            {/* Logo */}
-            <div className="w-16 h-16 rounded-2xl bg-dark-card border-2 border-dark-border overflow-hidden shadow-lg flex-shrink-0">
-              {restaurant.image_url ? (
-                <img
-                  src={restaurant.image_url}
-                  alt={restaurant.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-orange/20 to-dark-card">
-                  <span className="text-2xl font-heading font-bold text-brand-orange">
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl p-5 card-shadow-md">
+            <div className="flex items-start gap-4">
+              {/* Logo */}
+              <div className="w-14 h-14 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                {restaurant.image_url ? (
+                  <img
+                    src={restaurant.image_url}
+                    alt={restaurant.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-xl font-bold text-brand-orange">
                     {restaurant.name.charAt(0)}
                   </span>
+                )}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <h1 className="text-xl font-bold text-gray-900">{restaurant.name}</h1>
+                  {/* Open/Closed badge */}
+                  {restaurant.is_open ? (
+                    <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600 text-xs font-medium">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      Open
+                    </span>
+                  ) : (
+                    <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-500 text-xs font-medium">
+                      Closed
+                    </span>
+                  )}
                 </div>
-              )}
-            </div>
+                {restaurant.description && (
+                  <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">
+                    {restaurant.description}
+                  </p>
+                )}
 
-            {/* Name and description */}
-            <h1 className="font-heading text-2xl font-bold mt-3">{restaurant.name}</h1>
-            {restaurant.description && (
-              <p className="text-sm text-foreground/50 mt-1 leading-relaxed">
-                {restaurant.description}
-              </p>
-            )}
-
-            {/* Stats row */}
-            <div className="flex items-center flex-wrap gap-4 mt-3">
-              {restaurant.rating_count > 0 && (
-                <span className="flex items-center gap-1.5 text-sm text-success font-medium">
-                  <Star className="w-4 h-4 fill-current" />
-                  {restaurant.average_rating.toFixed(1)}
-                  <span className="text-foreground/40 font-normal">
-                    ({restaurant.rating_count})
+                {/* Stats row */}
+                <div className="flex items-center flex-wrap gap-3 mt-2.5">
+                  {restaurant.rating_count > 0 && (
+                    <span className="flex items-center gap-1 text-sm">
+                      <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                      <span className="font-semibold text-gray-900">
+                        {restaurant.average_rating.toFixed(1)}
+                      </span>
+                      <span className="text-gray-400">
+                        ({restaurant.rating_count})
+                      </span>
+                    </span>
+                  )}
+                  <span className="flex items-center gap-1 text-sm text-gray-500">
+                    <Clock className="w-3.5 h-3.5" />
+                    {restaurant.min_delivery_time}-{restaurant.max_delivery_time} min
                   </span>
-                </span>
-              )}
-              <span className="flex items-center gap-1.5 text-sm text-foreground/60">
-                <Clock className="w-4 h-4" />
-                {restaurant.min_delivery_time}-{restaurant.max_delivery_time} min
-              </span>
-              <span className="flex items-center gap-1.5 text-sm text-foreground/60">
-                <MapPin className="w-4 h-4" />
-                {formatPrice(restaurant.delivery_fee)} delivery
-              </span>
-            </div>
-
-            {/* Cuisine tags */}
-            {restaurant.cuisine_tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-3">
-                {restaurant.cuisine_tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2.5 py-1 rounded-full bg-brand-orange/10 text-brand-orange text-xs font-medium"
-                  >
-                    {tag}
+                  <span className="flex items-center gap-1 text-sm text-gray-500">
+                    <MapPin className="w-3.5 h-3.5" />
+                    {formatPrice(restaurant.delivery_fee)} delivery
                   </span>
-                ))}
-              </div>
-            )}
+                </div>
 
-            {/* Open/Closed badge */}
-            {!restaurant.is_open && (
-              <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-error/10 text-error text-xs font-medium border border-error/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-error" />
-                Currently Closed
+                {/* Cuisine tags */}
+                {restaurant.cuisine_tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mt-2.5">
+                    {restaurant.cuisine_tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-0.5 rounded-full bg-orange-50 text-brand-orange text-xs font-medium"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-            {restaurant.is_open && (
-              <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-success/10 text-success text-xs font-medium border border-success/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse-soft" />
-                Open Now
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Category Tabs - Sticky */}
       {categoryNames.length > 0 && (
-        <div className="sticky top-0 z-30 bg-dark-bg/95 backdrop-blur-xl border-b border-dark-border/50 mt-6">
+        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-gray-100 mt-4">
           <div
             ref={tabsRef}
             className="max-w-2xl mx-auto flex overflow-x-auto no-scrollbar px-4 gap-1"
@@ -322,7 +331,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                   ${
                     activeCategory === category
                       ? 'text-brand-orange border-brand-orange'
-                      : 'text-foreground/40 border-transparent hover:text-foreground/60'
+                      : 'text-gray-400 border-transparent hover:text-gray-600'
                   }
                 `}
               >
@@ -344,7 +353,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
               }}
               className="mb-8"
             >
-              <h3 className="font-heading text-lg font-semibold text-foreground/80 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 {category}
               </h3>
 
@@ -356,10 +365,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                     <div
                       key={item.id}
                       onClick={() => handleItemClick(item)}
-                      className="rounded-2xl bg-dark-card border border-dark-border overflow-hidden cursor-pointer hover:border-dark-border-light transition-all active:scale-[0.97]"
+                      className="rounded-2xl bg-white overflow-hidden cursor-pointer card-shadow hover:card-shadow-md transition-all active:scale-[0.97]"
                     >
                       {/* Image area */}
-                      <div className="relative aspect-square overflow-hidden bg-dark-border/20">
+                      <div className="relative aspect-square overflow-hidden bg-gray-50">
                         {item.image_url ? (
                           <img
                             src={item.image_url}
@@ -368,8 +377,8 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                             loading="lazy"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-dark-card to-dark-border/30">
-                            <span className="text-4xl opacity-30">🍽️</span>
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
+                            <span className="text-4xl opacity-40">🍽️</span>
                           </div>
                         )}
 
@@ -402,7 +411,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
 
                       {/* Text content */}
                       <div className="p-3">
-                        <h4 className="text-sm font-medium leading-tight line-clamp-2 min-h-[2.5rem]">
+                        <h4 className="text-sm font-medium text-gray-900 leading-tight line-clamp-2 min-h-[2.5rem]">
                           {item.name}
                         </h4>
                         <p className="font-mono text-sm font-semibold text-brand-orange mt-1.5">
@@ -418,15 +427,15 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
         ) : (
           <div className="text-center py-20">
             <div className="text-6xl mb-4 opacity-60">📋</div>
-            <h3 className="font-heading text-xl font-semibold mb-2">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Menu coming soon
             </h3>
-            <p className="text-sm text-foreground/50 max-w-xs mx-auto">
+            <p className="text-sm text-gray-500 max-w-xs mx-auto">
               This restaurant hasn&apos;t added menu items yet. Check back later!
             </p>
             <Link
               href="/restaurants"
-              className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-xl border border-dark-border text-sm font-medium hover:border-dark-border-light active:scale-[0.97] transition-all"
+              className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-gray-300 active:scale-[0.97] transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
               Browse other restaurants
@@ -437,7 +446,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
 
       {/* Floating Cart Bar */}
       {itemCount > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-dark-bg/90 backdrop-blur-xl border-t border-dark-border safe-bottom">
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/90 backdrop-blur-xl border-t border-gray-100 safe-bottom">
           <div className="max-w-2xl mx-auto">
             <Link href="/cart">
               <div className="w-full min-h-[52px] flex items-center justify-between gap-3 px-5 py-3 rounded-2xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/25 active:scale-[0.97] transition-transform cursor-pointer">
