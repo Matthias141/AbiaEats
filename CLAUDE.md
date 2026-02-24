@@ -1,3 +1,4 @@
+@APEX_ENGINEER.md
 # CLAUDE.md — AbiaEats Development Guide
 
 ## What Is This File?
