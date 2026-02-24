@@ -73,7 +73,7 @@ export default function CheckoutPage() {
   // Don't render until we know auth state + cart
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-brand-orange animate-spin" />
       </div>
     );
@@ -237,40 +237,40 @@ export default function CheckoutPage() {
 
   if (showPaymentSheet) {
     return (
-      <div className="min-h-screen bg-dark-bg overflow-x-hidden">
+      <div className="min-h-screen bg-gray-50 overflow-x-hidden">
         <div className="max-w-lg mx-auto px-4 pb-24">
           {/* Success header */}
           <div className="text-center pt-12 pb-8">
             <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
-            <h1 className="font-heading text-2xl font-bold text-foreground mb-2">
+            <h1 className="font-bodytext-2xl font-bold text-gray-900 mb-2">
               Order Placed!
             </h1>
-            <p className="text-foreground/60 text-sm max-w-[280px] mx-auto">
+            <p className="text-gray-500 text-sm max-w-[280px] mx-auto">
               Transfer the exact amount below to complete your order.
             </p>
           </div>
 
           {/* Order number */}
-          <div className="bg-dark-card border border-dark-border rounded-2xl p-4 mb-4 text-center">
-            <p className="text-foreground/50 text-xs uppercase tracking-wider mb-1">
+          <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-4 text-center">
+            <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">
               Order Number
             </p>
-            <p className="font-mono text-lg font-bold text-foreground">
+            <p className="font-mono text-lg font-bold text-gray-900">
               {orderNumber}
             </p>
           </div>
 
           {/* Payment details card */}
-          <div className="bg-dark-card border border-brand-orange/30 rounded-2xl p-5 mb-4 space-y-4">
-            <h2 className="font-heading text-base font-semibold text-foreground">
+          <div className="bg-dark-card border border-orange-200 rounded-2xl p-5 mb-4 space-y-4">
+            <h2 className="font-bodytext-base font-semibold text-gray-900">
               OPay Transfer Details
             </h2>
 
             {/* Account Name */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-foreground/50 text-xs mb-0.5">Account Name</p>
-                <p className="text-foreground font-medium text-sm">{opayAccountName}</p>
+                <p className="text-gray-500 text-xs mb-0.5">Account Name</p>
+                <p className="text-gray-900 font-medium text-sm">{opayAccountName}</p>
               </div>
               <button
                 onClick={() => copyToClipboard(opayAccountName, 'name')}
@@ -285,8 +285,8 @@ export default function CheckoutPage() {
             {/* Account Number */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-foreground/50 text-xs mb-0.5">Account Number</p>
-                <p className="text-foreground font-mono font-bold text-base">{opayAccountNumber}</p>
+                <p className="text-gray-500 text-xs mb-0.5">Account Number</p>
+                <p className="text-gray-900 font-mono font-bold text-base">{opayAccountNumber}</p>
               </div>
               <button
                 onClick={() => copyToClipboard(opayAccountNumber, 'number')}
@@ -300,15 +300,15 @@ export default function CheckoutPage() {
 
             {/* Bank */}
             <div>
-              <p className="text-foreground/50 text-xs mb-0.5">Bank</p>
-              <p className="text-foreground font-medium text-sm">OPay</p>
+              <p className="text-gray-500 text-xs mb-0.5">Bank</p>
+              <p className="text-gray-900 font-medium text-sm">OPay</p>
             </div>
 
             {/* Amount */}
-            <div className="border-t border-dark-border pt-4">
+            <div className="border-t border-gray-200 pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-foreground/50 text-xs mb-0.5">Amount to Transfer</p>
+                  <p className="text-gray-500 text-xs mb-0.5">Amount to Transfer</p>
                   <p className="text-brand-orange font-mono font-bold text-xl">
                     {formatPrice(orderTotal)}
                   </p>
@@ -328,7 +328,7 @@ export default function CheckoutPage() {
           {/* Info notice */}
           <div className="flex items-start gap-3 bg-info/10 border border-info/20 rounded-xl p-3.5 mb-6">
             <Info className="w-4 h-4 text-info flex-shrink-0 mt-0.5" />
-            <p className="text-foreground/70 text-xs leading-relaxed">
+            <p className="text-gray-600 text-xs leading-relaxed">
               Admin will confirm your payment shortly. You will receive a WhatsApp notification once your order is confirmed and being prepared.
             </p>
           </div>
@@ -341,7 +341,7 @@ export default function CheckoutPage() {
             I&apos;ve Made the Transfer
           </button>
 
-          <p className="text-center text-foreground/40 text-xs mt-4">
+          <p className="text-center text-gray-400 text-xs mt-4">
             You can track your order status from the home page.
           </p>
         </div>
@@ -354,7 +354,7 @@ export default function CheckoutPage() {
   // ============================================================================
 
   return (
-    <div className="min-h-screen bg-dark-bg overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       <div className="max-w-lg mx-auto px-4 pb-24">
         {/* ================================================================
             Header
@@ -362,12 +362,12 @@ export default function CheckoutPage() {
         <header className="flex items-center gap-3 pt-6 pb-4">
           <Link
             href="/cart"
-            className="flex items-center justify-center w-10 h-10 rounded-xl bg-dark-card border border-dark-border active:scale-95 transition-transform min-h-[44px] min-w-[44px]"
+            className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-200 active:scale-95 transition-transform min-h-[44px] min-w-[44px]"
             aria-label="Back to cart"
           >
-            <ArrowLeft className="w-5 h-5 text-foreground" />
+            <ArrowLeft className="w-5 h-5 text-gray-900" />
           </Link>
-          <h1 className="font-heading text-xl font-bold text-foreground">
+          <h1 className="font-bodytext-xl font-bold text-gray-900">
             Checkout
           </h1>
         </header>
@@ -376,7 +376,7 @@ export default function CheckoutPage() {
             Delivery Address Section
             ================================================================ */}
         <section className="mb-6">
-          <h2 className="font-heading text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+          <h2 className="font-bodytext-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-brand-orange" />
             Delivery Address
           </h2>
@@ -384,11 +384,11 @@ export default function CheckoutPage() {
           <div className="space-y-3">
             {/* Name */}
             <div>
-              <label htmlFor="customerName" className="block text-xs text-foreground/50 mb-1.5">
+              <label htmlFor="customerName" className="block text-xs text-gray-500 mb-1.5">
                 Full Name
               </label>
               <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   id="customerName"
                   type="text"
@@ -398,10 +398,10 @@ export default function CheckoutPage() {
                     setCustomerName(e.target.value);
                     if (errors.customerName) setErrors((prev) => ({ ...prev, customerName: '' }));
                   }}
-                  className={`w-full bg-dark-card border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-foreground placeholder:text-foreground/30 outline-none transition-colors ${
+                  className={`w-full bg-dark-card border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
                     errors.customerName
                       ? 'border-error focus:border-error focus:ring-1 focus:ring-error/50'
-                      : 'border-dark-border focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
+                      : 'border-gray-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
                   }`}
                 />
               </div>
@@ -412,11 +412,11 @@ export default function CheckoutPage() {
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="block text-xs text-foreground/50 mb-1.5">
+              <label htmlFor="phone" className="block text-xs text-gray-500 mb-1.5">
                 Phone Number
               </label>
               <div className="relative">
-                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   id="phone"
                   type="tel"
@@ -426,10 +426,10 @@ export default function CheckoutPage() {
                     setPhone(e.target.value);
                     if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
                   }}
-                  className={`w-full bg-dark-card border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-foreground placeholder:text-foreground/30 outline-none transition-colors ${
+                  className={`w-full bg-dark-card border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
                     errors.phone
                       ? 'border-error focus:border-error focus:ring-1 focus:ring-error/50'
-                      : 'border-dark-border focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
+                      : 'border-gray-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
                   }`}
                 />
               </div>
@@ -440,11 +440,11 @@ export default function CheckoutPage() {
 
             {/* Address */}
             <div>
-              <label htmlFor="deliveryAddress" className="block text-xs text-foreground/50 mb-1.5">
+              <label htmlFor="deliveryAddress" className="block text-xs text-gray-500 mb-1.5">
                 Delivery Address
               </label>
               <div className="relative">
-                <MapPin className="absolute left-3.5 top-3 w-4 h-4 text-foreground/30" />
+                <MapPin className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
                 <input
                   id="deliveryAddress"
                   type="text"
@@ -454,10 +454,10 @@ export default function CheckoutPage() {
                     setDeliveryAddress(e.target.value);
                     if (errors.deliveryAddress) setErrors((prev) => ({ ...prev, deliveryAddress: '' }));
                   }}
-                  className={`w-full bg-dark-card border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-foreground placeholder:text-foreground/30 outline-none transition-colors ${
+                  className={`w-full bg-dark-card border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
                     errors.deliveryAddress
                       ? 'border-error focus:border-error focus:ring-1 focus:ring-error/50'
-                      : 'border-dark-border focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
+                      : 'border-gray-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
                   }`}
                 />
               </div>
@@ -468,9 +468,9 @@ export default function CheckoutPage() {
 
             {/* Landmark */}
             <div>
-              <label htmlFor="landmark" className="block text-xs text-foreground/50 mb-1.5">
+              <label htmlFor="landmark" className="block text-xs text-gray-500 mb-1.5">
                 Landmark / Directions{' '}
-                <span className="text-foreground/30">(optional)</span>
+                <span className="text-gray-400">(optional)</span>
               </label>
               <input
                 id="landmark"
@@ -478,7 +478,7 @@ export default function CheckoutPage() {
                 placeholder="e.g. Opposite Shoprite, beside the yellow gate"
                 value={landmark}
                 onChange={(e) => setLandmark(e.target.value)}
-                className="w-full bg-dark-card border border-dark-border rounded-xl min-h-[44px] px-4 text-sm text-foreground placeholder:text-foreground/30 outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+                className="w-full bg-white border border-gray-200 rounded-xl min-h-[44px] px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
               />
             </div>
           </div>
@@ -490,27 +490,27 @@ export default function CheckoutPage() {
         <section className="mb-6">
           <button
             onClick={() => setSummaryExpanded(!summaryExpanded)}
-            className="w-full flex items-center justify-between bg-dark-card border border-dark-border rounded-xl px-4 min-h-[44px] active:scale-[0.99] transition-transform"
+            className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 min-h-[44px] active:scale-[0.99] transition-transform"
           >
-            <h2 className="font-heading text-base font-semibold text-foreground flex items-center gap-2">
+            <h2 className="font-bodytext-base font-semibold text-gray-900 flex items-center gap-2">
               Order Summary
-              <span className="text-foreground/40 text-xs font-body font-normal">
+              <span className="text-gray-400 text-xs font-body font-normal">
                 ({items.length} {items.length === 1 ? 'item' : 'items'})
               </span>
             </h2>
             {summaryExpanded ? (
-              <ChevronUp className="w-4 h-4 text-foreground/50" />
+              <ChevronUp className="w-4 h-4 text-gray-500" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-foreground/50" />
+              <ChevronDown className="w-4 h-4 text-gray-500" />
             )}
           </button>
 
           {summaryExpanded && (
-            <div className="bg-dark-card border border-dark-border border-t-0 rounded-b-xl px-4 pb-4 -mt-2 pt-4 animate-slide-down">
+            <div className="bg-white border border-gray-200 border-t-0 rounded-b-xl px-4 pb-4 -mt-2 pt-4 animate-slide-down">
               {/* Restaurant name */}
-              <p className="text-foreground/50 text-xs mb-3">
+              <p className="text-gray-500 text-xs mb-3">
                 From{' '}
-                <span className="text-foreground font-medium">{restaurantName}</span>
+                <span className="text-gray-900 font-medium">{restaurantName}</span>
               </p>
 
               {/* Item list */}
@@ -520,38 +520,38 @@ export default function CheckoutPage() {
                     key={item.menu_item_id}
                     className="flex items-center justify-between text-sm"
                   >
-                    <span className="text-foreground/70 truncate mr-2">
+                    <span className="text-gray-600 truncate mr-2">
                       {item.name} x{item.quantity}
                     </span>
-                    <span className="text-foreground font-mono flex-shrink-0">
+                    <span className="text-gray-900 font-mono flex-shrink-0">
                       {formatPrice(item.price * item.quantity)}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t border-dark-border my-3" />
+              <div className="border-t border-gray-200 my-3" />
 
               {/* Subtotal */}
               <div className="flex items-center justify-between text-sm mb-1.5">
-                <span className="text-foreground/50">Subtotal</span>
-                <span className="text-foreground font-mono">{formatPrice(subtotal)}</span>
+                <span className="text-gray-500">Subtotal</span>
+                <span className="text-gray-900 font-mono">{formatPrice(subtotal)}</span>
               </div>
 
               {/* Delivery fee */}
               <div className="flex items-center justify-between text-sm mb-3">
-                <span className="text-foreground/50">Delivery fee</span>
-                <span className="text-foreground font-mono">
+                <span className="text-gray-500">Delivery fee</span>
+                <span className="text-gray-900 font-mono">
                   {deliveryFee > 0 ? formatPrice(deliveryFee) : 'Free'}
                 </span>
               </div>
 
-              <div className="border-t border-dark-border my-3" />
+              <div className="border-t border-gray-200 my-3" />
 
               {/* Total */}
               <div className="flex items-center justify-between">
-                <span className="text-foreground font-semibold">Total</span>
-                <span className="text-foreground font-mono font-bold text-lg">
+                <span className="text-gray-900 font-semibold">Total</span>
+                <span className="text-gray-900 font-mono font-bold text-lg">
                   {formatPrice(total)}
                 </span>
               </div>
@@ -563,20 +563,20 @@ export default function CheckoutPage() {
             Payment Method Section
             ================================================================ */}
         <section className="mb-8">
-          <h2 className="font-heading text-base font-semibold text-foreground mb-3 flex items-center gap-2">
+          <h2 className="font-bodytext-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-brand-orange" />
             Payment Method
           </h2>
 
-          <div className="bg-dark-card border border-dark-border rounded-xl p-4 flex items-center gap-3">
+          <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
               <span className="text-lg" role="img" aria-label="Bank">
                 🏦
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-foreground font-medium text-sm">OPay Transfer</p>
-              <p className="text-foreground/40 text-xs mt-0.5">
+              <p className="text-gray-900 font-medium text-sm">OPay Transfer</p>
+              <p className="text-gray-400 text-xs mt-0.5">
                 Transfer the exact amount to complete your order
               </p>
             </div>
@@ -612,7 +612,7 @@ export default function CheckoutPage() {
         </button>
 
         {!user && (
-          <p className="text-center text-foreground/40 text-xs mt-3">
+          <p className="text-center text-gray-400 text-xs mt-3">
             <Link href="/auth/login" className="text-brand-orange underline">
               Sign in
             </Link>{' '}

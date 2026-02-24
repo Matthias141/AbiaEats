@@ -65,28 +65,28 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
     <div className="fixed inset-0 z-[60]">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
 
       {/* Sheet */}
-      <div className="absolute bottom-0 left-0 right-0 max-h-[90vh] bg-dark-bg rounded-t-3xl overflow-hidden animate-slide-up-sheet">
+      <div className="absolute bottom-0 left-0 right-0 max-h-[90vh] bg-white rounded-t-3xl overflow-hidden animate-slide-up-sheet">
         {/* Handle bar */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full bg-dark-border-light" />
+          <div className="w-10 h-1 rounded-full bg-gray-200" />
         </div>
 
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-dark-card/80 backdrop-blur-sm border border-dark-border flex items-center justify-center"
+          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
         >
-          <X className="w-4 h-4" />
+          <X className="w-4 h-4 text-gray-600" />
         </button>
 
         <div className="overflow-y-auto max-h-[85vh] custom-scrollbar">
           {/* Image */}
-          <div className="aspect-[16/10] bg-dark-card relative overflow-hidden">
+          <div className="aspect-[16/10] bg-gray-50 relative overflow-hidden">
             {item.image_url ? (
               <img
                 src={item.image_url}
@@ -94,7 +94,7 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-dark-card to-dark-border/50">
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
                 <span className="text-7xl">🍽️</span>
               </div>
             )}
@@ -107,50 +107,50 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
 
           {/* Content */}
           <div className="px-5 pt-5 pb-32">
-            <h2 className="font-heading text-2xl font-bold">{item.name}</h2>
+            <h2 className="text-2xl font-bold text-gray-900">{item.name}</h2>
 
             <div className="flex items-center gap-3 mt-2">
               <span className="font-mono text-xl font-bold text-brand-orange">
                 {formatPrice(item.price)}
               </span>
-              <span className="flex items-center gap-1 text-xs text-foreground/40">
+              <span className="flex items-center gap-1 text-xs text-gray-400">
                 <Clock className="w-3.5 h-3.5" />
                 {restaurant.min_delivery_time}-{restaurant.max_delivery_time} min delivery
               </span>
             </div>
 
             {item.description && (
-              <p className="mt-4 text-sm text-foreground/60 leading-relaxed">
+              <p className="mt-4 text-sm text-gray-500 leading-relaxed">
                 {item.description}
               </p>
             )}
 
             {/* Delivery info */}
-            <div className="mt-6 p-4 rounded-2xl bg-dark-card border border-dark-border">
+            <div className="mt-6 p-4 rounded-2xl bg-gray-50">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-foreground/50">Delivery fee</span>
-                <span className="font-medium">{formatPrice(restaurant.delivery_fee)}</span>
+                <span className="text-gray-500">Delivery fee</span>
+                <span className="font-medium text-gray-900">{formatPrice(restaurant.delivery_fee)}</span>
               </div>
               <div className="flex items-center justify-between text-sm mt-2">
-                <span className="text-foreground/50">From</span>
-                <span className="font-medium">{restaurant.name}</span>
+                <span className="text-gray-500">From</span>
+                <span className="font-medium text-gray-900">{restaurant.name}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 bg-dark-bg/95 backdrop-blur-xl border-t border-dark-border safe-bottom">
+        <div className="absolute bottom-0 left-0 right-0 p-5 bg-white/95 backdrop-blur-xl border-t border-gray-100 safe-bottom">
           <div className="flex items-center gap-4">
             {/* Quantity controls */}
-            <div className="flex items-center gap-3 bg-dark-card rounded-xl border border-dark-border px-3 py-2">
+            <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-3 py-2">
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="w-8 h-8 rounded-lg border border-dark-border-light flex items-center justify-center hover:bg-dark-border transition-colors active:scale-95"
+                className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors active:scale-95"
               >
-                <Minus className="w-4 h-4" />
+                <Minus className="w-4 h-4 text-gray-600" />
               </button>
-              <span className="font-mono text-sm w-6 text-center font-semibold">
+              <span className="font-mono text-sm w-6 text-center font-semibold text-gray-900">
                 {quantity}
               </span>
               <button

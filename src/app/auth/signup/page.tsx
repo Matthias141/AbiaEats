@@ -61,22 +61,22 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center px-6">
+      <div className="min-h-screen bg-white flex items-center justify-center px-6">
         <div className="w-full max-w-sm text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-500/10 border border-green-500/20 mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-50 border border-green-100 mb-6">
             <CheckCircle className="w-10 h-10 text-green-500" />
           </div>
-          <h1 className="font-heading text-2xl font-bold mb-3">Check your email</h1>
-          <p className="text-sm text-foreground/50 mb-2 leading-relaxed">
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">Check your email</h1>
+          <p className="text-sm text-gray-500 mb-2 leading-relaxed">
             We sent a confirmation link to
           </p>
           <p className="text-sm text-brand-orange font-medium mb-8">{email}</p>
-          <p className="text-xs text-foreground/30 mb-8">
+          <p className="text-xs text-gray-400 mb-8">
             Click the link in your email to activate your account, then come back to sign in.
           </p>
           <Link
             href="/auth/login"
-            className="block w-full min-h-[52px] flex items-center justify-center rounded-xl bg-dark-card border border-dark-border text-foreground font-medium hover:bg-dark-border transition-colors active:scale-[0.97]"
+            className="block w-full min-h-[52px] flex items-center justify-center rounded-xl bg-gray-50 border border-gray-200 text-gray-700 font-medium hover:bg-gray-100 transition-colors active:scale-[0.97]"
           >
             Back to Sign In
           </Link>
@@ -86,18 +86,18 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-bg flex flex-col overflow-x-hidden">
+    <div className="min-h-screen bg-white flex flex-col overflow-x-hidden">
       {/* Header */}
       <div className="p-4 flex items-center justify-between">
         <button
           onClick={() => router.back()}
-          className="tap-target w-10 h-10 rounded-xl bg-dark-card border border-dark-border flex items-center justify-center hover:border-dark-border-light transition-colors"
+          className="tap-target w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-gray-700" />
         </button>
         <Link
           href="/home"
-          className="text-sm text-foreground/40 hover:text-foreground/60 transition-colors"
+          className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
         >
           Skip
         </Link>
@@ -107,18 +107,18 @@ export default function SignupPage() {
         <div className="w-full max-w-sm">
           {/* Logo & Heading */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-orange mb-5">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-orange mb-5 shadow-lg shadow-brand-orange/20">
               <UtensilsCrossed className="w-7 h-7 text-white" />
             </div>
-            <h1 className="font-heading text-3xl font-bold mb-2">Create account</h1>
-            <p className="text-sm text-foreground/50">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create account</h1>
+            <p className="text-sm text-gray-500">
               Join AbiaEats and start ordering
             </p>
           </div>
 
           {/* Error */}
           {error && (
-            <div className="mb-5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400 text-center">
+            <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 text-center">
               {error}
             </div>
           )}
@@ -126,74 +126,74 @@ export default function SignupPage() {
           {/* Form */}
           <form onSubmit={handleSignup} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-medium text-foreground/50 mb-1.5 ml-1">
+              <label className="block text-xs font-medium text-gray-500 mb-1.5 ml-1">
                 Full Name
               </label>
               <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   placeholder="John Doe"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   autoComplete="name"
-                  className="w-full min-h-[52px] pl-11 pr-4 bg-dark-card border border-dark-border rounded-xl text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+                  className="w-full min-h-[52px] pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 focus:bg-white transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-foreground/50 mb-1.5 ml-1">
+              <label className="block text-xs font-medium text-gray-500 mb-1.5 ml-1">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
-                  className="w-full min-h-[52px] pl-11 pr-4 bg-dark-card border border-dark-border rounded-xl text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+                  className="w-full min-h-[52px] pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 focus:bg-white transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-foreground/50 mb-1.5 ml-1">
+              <label className="block text-xs font-medium text-gray-500 mb-1.5 ml-1">
                 Phone Number
               </label>
               <div className="relative">
-                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="tel"
                   placeholder="08012345678"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   autoComplete="tel"
-                  className="w-full min-h-[52px] pl-11 pr-4 bg-dark-card border border-dark-border rounded-xl text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+                  className="w-full min-h-[52px] pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 focus:bg-white transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-foreground/50 mb-1.5 ml-1">
+              <label className="block text-xs font-medium text-gray-500 mb-1.5 ml-1">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Min. 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="new-password"
-                  className="w-full min-h-[52px] pl-11 pr-12 bg-dark-card border border-dark-border rounded-xl text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+                  className="w-full min-h-[52px] pl-11 pr-12 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 focus:bg-white transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-foreground/30 hover:text-foreground/50"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -203,7 +203,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full min-h-[52px] flex items-center justify-center gap-2 rounded-xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none mt-5"
+              className="w-full min-h-[52px] flex items-center justify-center gap-2 rounded-xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/30 transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none mt-5"
             >
               {isLoading ? (
                 <>
@@ -220,12 +220,12 @@ export default function SignupPage() {
           </form>
 
           {/* Terms */}
-          <p className="text-center text-[11px] text-foreground/25 mt-5 leading-relaxed">
+          <p className="text-center text-[11px] text-gray-400 mt-5 leading-relaxed">
             By creating an account, you agree to our Terms of Service and Privacy Policy
           </p>
 
           {/* Login link */}
-          <p className="text-center text-sm text-foreground/40 mt-6">
+          <p className="text-center text-sm text-gray-400 mt-6">
             Already have an account?{' '}
             <Link
               href="/auth/login"

@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 /* ============================================================================
-   AbiaEats Global Styles
+   AbiaEats Global Styles — Light Theme
    ============================================================================ */
 
 @layer base {
   :root {
-    --background: #FAF7F3;
+    --background: #FFFFFF;
     --foreground: #1C1917;
   }
 
@@ -35,34 +35,35 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: "Playfair Display", serif;
+    font-family: "Outfit", sans-serif;
+    font-weight: 600;
   }
 }
 
 @layer components {
   .glass-card {
     @apply backdrop-blur-[16px] border rounded-2xl;
-    background: rgba(28, 25, 23, 0.6);
-    border-color: rgba(68, 64, 60, 0.4);
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.06);
   }
 
   .status-awaiting {
-    @apply bg-amber-500/10 text-amber-500 border-amber-500/20;
+    @apply bg-amber-500/10 text-amber-600 border-amber-500/20;
   }
   .status-confirmed {
-    @apply bg-blue-500/10 text-blue-500 border-blue-500/20;
+    @apply bg-blue-500/10 text-blue-600 border-blue-500/20;
   }
   .status-preparing {
-    @apply bg-purple-500/10 text-purple-500 border-purple-500/20;
+    @apply bg-purple-500/10 text-purple-600 border-purple-500/20;
   }
   .status-out-for-delivery {
-    @apply bg-orange-500/10 text-orange-500 border-orange-500/20;
+    @apply bg-orange-500/10 text-orange-600 border-orange-500/20;
   }
   .status-delivered {
-    @apply bg-green-500/10 text-green-500 border-green-500/20;
+    @apply bg-green-500/10 text-green-600 border-green-500/20;
   }
   .status-cancelled {
-    @apply bg-red-500/10 text-red-500 border-red-500/20;
+    @apply bg-red-500/10 text-red-600 border-red-500/20;
   }
 
   .tap-target {
@@ -71,10 +72,6 @@
 
   .gradient-orange {
     background: linear-gradient(135deg, #F26522 0%, #FF8A50 100%);
-  }
-
-  .gradient-dark {
-    background: linear-gradient(180deg, #0C0A09 0%, #1C1917 100%);
   }
 
   .text-gradient-orange {
@@ -103,6 +100,14 @@
 
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Card with subtle shadow for light theme */
+  .card-shadow {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+  .card-shadow-md {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 }
 

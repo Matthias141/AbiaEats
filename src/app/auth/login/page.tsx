@@ -43,18 +43,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-bg flex flex-col overflow-x-hidden">
+    <div className="min-h-screen bg-white flex flex-col overflow-x-hidden">
       {/* Header */}
       <div className="p-4 flex items-center justify-between">
         <button
           onClick={() => router.back()}
-          className="tap-target w-10 h-10 rounded-xl bg-dark-card border border-dark-border flex items-center justify-center hover:border-dark-border-light transition-colors"
+          className="tap-target w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 text-gray-700" />
         </button>
         <Link
           href="/onboarding"
-          className="text-sm text-foreground/40 hover:text-foreground/60 transition-colors"
+          className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
         >
           Skip
         </Link>
@@ -64,18 +64,18 @@ export default function LoginPage() {
         <div className="w-full max-w-sm">
           {/* Logo & Heading */}
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-orange mb-5">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-orange mb-5 shadow-lg shadow-brand-orange/20">
               <UtensilsCrossed className="w-7 h-7 text-white" />
             </div>
-            <h1 className="font-heading text-3xl font-bold mb-2">Welcome back</h1>
-            <p className="text-sm text-foreground/50">
+            <h1 className="text-3xl font-bold mb-2 text-gray-900">Welcome back</h1>
+            <p className="text-sm text-gray-500">
               Sign in to continue ordering
             </p>
           </div>
 
           {/* Error */}
           {error && (
-            <div className="mb-5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400 text-center">
+            <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 text-center">
               {error}
             </div>
           )}
@@ -83,40 +83,40 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-foreground/50 mb-1.5 ml-1">
+              <label className="block text-xs font-medium text-gray-500 mb-1.5 ml-1">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
-                  className="w-full min-h-[52px] pl-11 pr-4 bg-dark-card border border-dark-border rounded-xl text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+                  className="w-full min-h-[52px] pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 focus:bg-white transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-foreground/50 mb-1.5 ml-1">
+              <label className="block text-xs font-medium text-gray-500 mb-1.5 ml-1">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/30" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
-                  className="w-full min-h-[52px] pl-11 pr-12 bg-dark-card border border-dark-border rounded-xl text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+                  className="w-full min-h-[52px] pl-11 pr-12 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 focus:bg-white transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-foreground/30 hover:text-foreground/50"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -126,7 +126,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full min-h-[52px] flex items-center justify-center gap-2 rounded-xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none mt-6"
+              className="w-full min-h-[52px] flex items-center justify-center gap-2 rounded-xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/30 transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none mt-6"
             >
               {isLoading ? (
                 <>
@@ -143,7 +143,7 @@ export default function LoginPage() {
           </form>
 
           {/* Sign up link */}
-          <p className="text-center text-sm text-foreground/40 mt-8">
+          <p className="text-center text-sm text-gray-400 mt-8">
             Don&apos;t have an account?{' '}
             <Link
               href="/auth/signup"
