@@ -5,8 +5,8 @@ export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key',
     {
       cookies: {
         getAll() {
@@ -32,7 +32,7 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public routes that don't require authentication
-  const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/callback'];
+  const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/callback', '/home', '/cart', '/checkout', '/onboarding'];
   const isPublicRoute = publicRoutes.includes(pathname);
   const isApiRoute = pathname.startsWith('/api/');
   const isStaticAsset = pathname.startsWith('/_next/') || pathname.includes('.');
