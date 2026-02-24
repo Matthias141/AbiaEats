@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, MapPin, Star, Clock, ChevronRight, Bell } from 'lucide-react';
+import { Search, MapPin, Star, Clock, ChevronRight, ChevronDown, Bell, Check, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { formatPrice } from '@/lib/utils';
 import { MOCK_RESTAURANTS } from '@/lib/mock-data';
@@ -139,12 +139,15 @@ function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
 // Main customer home page
 // ============================================================================
 
+const CITIES = ['Aba', 'Umuahia'] as const;
+
 export default function CustomerHomePage() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [city, setCity] = useState('Aba');
+  const [showCityPicker, setShowCityPicker] = useState(false);
 
   // Load city from localStorage on mount
   useEffect(() => {
@@ -186,6 +189,17 @@ export default function CustomerHomePage() {
     fetchRestaurants();
   }, []);
 
+  // Handle city change
+  const handleCityChange = (newCity: string) => {
+    setCity(newCity);
+    try {
+      localStorage.setItem(CITY_STORAGE_KEY, newCity);
+    } catch {
+      // localStorage not available
+    }
+    setShowCityPicker(false);
+  };
+
   // Filter restaurants by search query and selected category
   const filteredRestaurants = useMemo(() => {
     return restaurants.filter((restaurant) => {
@@ -216,14 +230,17 @@ export default function CustomerHomePage() {
             ================================================================ */}
         <header className="bg-white px-4 pt-6 pb-4">
           <div className="flex items-center justify-between mb-5">
-            <div>
+            <button
+              onClick={() => setShowCityPicker(true)}
+              className="text-left tap-target"
+            >
               <p className="text-sm text-gray-400 mb-0.5">Delivering to</p>
               <div className="flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-brand-orange" />
                 <span className="font-semibold text-gray-900">{city}, Abia State</span>
-                <ChevronRight className="w-4 h-4 text-gray-400" />
+                <ChevronDown className="w-4 h-4 text-gray-400" />
               </div>
-            </div>
+            </button>
             <button className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center min-h-[44px] min-w-[44px]">
               <Bell className="w-5 h-5 text-gray-600" />
             </button>
@@ -356,6 +373,50 @@ export default function CustomerHomePage() {
           )}
         </section>
       </div>
+
+      {/* City Picker Modal */}
+      {showCityPicker && (
+        <div className="fixed inset-0 z-[100] flex items-end justify-center">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setShowCityPicker(false)}
+          />
+          {/* Sheet */}
+          <div className="relative w-full max-w-lg bg-white rounded-t-3xl p-6 pb-8 animate-slide-up">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-gray-900">Select your city</h2>
+              <button
+                onClick={() => setShowCityPicker(false)}
+                className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
+              >
+                <X className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              {CITIES.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => handleCityChange(c)}
+                  className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all active:scale-[0.98] min-h-[44px] ${
+                    city === c
+                      ? 'border-brand-orange bg-orange-50'
+                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <MapPin className={`w-5 h-5 ${city === c ? 'text-brand-orange' : 'text-gray-400'}`} />
+                    <span className={`font-medium ${city === c ? 'text-gray-900' : 'text-gray-600'}`}>
+                      {c}, Abia State
+                    </span>
+                  </div>
+                  {city === c && <Check className="w-5 h-5 text-brand-orange" />}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

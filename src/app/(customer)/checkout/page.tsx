@@ -242,7 +242,7 @@ export default function CheckoutPage() {
           {/* Success header */}
           <div className="text-center pt-12 pb-8">
             <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
-            <h1 className="font-bodytext-2xl font-bold text-gray-900 mb-2">
+            <h1 className="font-body text-2xl font-bold text-gray-900 mb-2">
               Order Placed!
             </h1>
             <p className="text-gray-500 text-sm max-w-[280px] mx-auto">
@@ -261,8 +261,8 @@ export default function CheckoutPage() {
           </div>
 
           {/* Payment details card */}
-          <div className="bg-dark-card border border-orange-200 rounded-2xl p-5 mb-4 space-y-4">
-            <h2 className="font-bodytext-base font-semibold text-gray-900">
+          <div className="bg-white border border-orange-200 rounded-2xl p-5 mb-4 space-y-4">
+            <h2 className="font-body text-base font-semibold text-gray-900">
               OPay Transfer Details
             </h2>
 
@@ -367,7 +367,7 @@ export default function CheckoutPage() {
           >
             <ArrowLeft className="w-5 h-5 text-gray-900" />
           </Link>
-          <h1 className="font-bodytext-xl font-bold text-gray-900">
+          <h1 className="font-body text-xl font-bold text-gray-900">
             Checkout
           </h1>
         </header>
@@ -376,7 +376,7 @@ export default function CheckoutPage() {
             Delivery Address Section
             ================================================================ */}
         <section className="mb-6">
-          <h2 className="font-bodytext-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <h2 className="font-body text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-brand-orange" />
             Delivery Address
           </h2>
@@ -398,7 +398,7 @@ export default function CheckoutPage() {
                     setCustomerName(e.target.value);
                     if (errors.customerName) setErrors((prev) => ({ ...prev, customerName: '' }));
                   }}
-                  className={`w-full bg-dark-card border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
+                  className={`w-full bg-white border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
                     errors.customerName
                       ? 'border-error focus:border-error focus:ring-1 focus:ring-error/50'
                       : 'border-gray-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
@@ -426,7 +426,7 @@ export default function CheckoutPage() {
                     setPhone(e.target.value);
                     if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
                   }}
-                  className={`w-full bg-dark-card border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
+                  className={`w-full bg-white border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
                     errors.phone
                       ? 'border-error focus:border-error focus:ring-1 focus:ring-error/50'
                       : 'border-gray-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
@@ -454,7 +454,7 @@ export default function CheckoutPage() {
                     setDeliveryAddress(e.target.value);
                     if (errors.deliveryAddress) setErrors((prev) => ({ ...prev, deliveryAddress: '' }));
                   }}
-                  className={`w-full bg-dark-card border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
+                  className={`w-full bg-white border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
                     errors.deliveryAddress
                       ? 'border-error focus:border-error focus:ring-1 focus:ring-error/50'
                       : 'border-gray-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
@@ -492,7 +492,7 @@ export default function CheckoutPage() {
             onClick={() => setSummaryExpanded(!summaryExpanded)}
             className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 min-h-[44px] active:scale-[0.99] transition-transform"
           >
-            <h2 className="font-bodytext-base font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="font-body text-base font-semibold text-gray-900 flex items-center gap-2">
               Order Summary
               <span className="text-gray-400 text-xs font-body font-normal">
                 ({items.length} {items.length === 1 ? 'item' : 'items'})
@@ -563,7 +563,7 @@ export default function CheckoutPage() {
             Payment Method Section
             ================================================================ */}
         <section className="mb-8">
-          <h2 className="font-bodytext-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <h2 className="font-body text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-brand-orange" />
             Payment Method
           </h2>
