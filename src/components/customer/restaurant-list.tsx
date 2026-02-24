@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Star, Clock, MapPin, Utensils } from 'lucide-react';
+import { Search, Star, Clock, MapPin } from 'lucide-react';
 import type { Restaurant } from '@/types/database';
 import { formatPrice } from '@/lib/utils';
 
@@ -37,13 +37,13 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
     <div>
       {/* Search Bar */}
       <div className="relative mb-6">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/40" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
           placeholder="Search restaurants..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full min-h-[48px] pl-11 pr-4 bg-dark-card border border-dark-border rounded-xl text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+          className="w-full min-h-[48px] pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all"
         />
       </div>
 
@@ -55,8 +55,8 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
             onClick={() => setSelectedTag(tag.value)}
             className={`tap-target whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-[0.97] ${
               selectedTag === tag.value
-                ? 'gradient-orange text-white border-transparent'
-                : 'bg-dark-card border-dark-border text-foreground/60 hover:border-dark-border-light'
+                ? 'gradient-orange text-white border-transparent shadow-md shadow-brand-orange/20'
+                : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
             }`}
           >
             {tag.label}
@@ -65,7 +65,7 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
       </div>
 
       {/* Results Count */}
-      <p className="text-sm text-foreground/40 mb-4">
+      <p className="text-sm text-gray-400 mb-4">
         {filtered.length} restaurant{filtered.length !== 1 ? 's' : ''} found
       </p>
 
@@ -76,10 +76,10 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
             <Link
               key={restaurant.id}
               href={`/restaurants/${restaurant.id}`}
-              className="group rounded-2xl bg-dark-card border border-dark-border overflow-hidden hover:border-dark-border-light transition-all active:scale-[0.99]"
+              className="group rounded-2xl bg-white overflow-hidden card-shadow hover:card-shadow-md transition-all active:scale-[0.99]"
             >
               {/* Image */}
-              <div className="aspect-video bg-dark-border/30 relative overflow-hidden flex items-center justify-center">
+              <div className="aspect-video bg-gray-50 relative overflow-hidden flex items-center justify-center">
                 {restaurant.cover_image_url ? (
                   <img
                     src={restaurant.cover_image_url}
@@ -88,42 +88,48 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
                     loading="lazy"
                   />
                 ) : (
-                  <Utensils className="w-10 h-10 text-foreground/10" />
+                  <div className="w-full h-full bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
+                    <span className="text-4xl">
+                      {restaurant.cuisine_tags.includes('grills') ? '🍖' :
+                       restaurant.cuisine_tags.includes('shawarma') ? '🌯' :
+                       restaurant.cuisine_tags.includes('bakery') ? '🍞' :
+                       restaurant.cuisine_tags.includes('drinks') ? '🥤' :
+                       '🍽️'}
+                    </span>
+                  </div>
                 )}
                 {/* Open/Closed badge */}
-                <div
-                  className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-medium ${
-                    restaurant.is_open
-                      ? 'bg-green-500/20 text-green-400'
-                      : 'bg-red-500/20 text-red-400'
-                  }`}
-                >
-                  {restaurant.is_open ? 'Open' : 'Closed'}
-                </div>
+                {!restaurant.is_open && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <span className="bg-white/90 text-gray-800 text-sm font-semibold px-4 py-1.5 rounded-full">
+                      Closed
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Info */}
               <div className="p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-heading font-semibold text-foreground group-hover:text-brand-orange transition-colors truncate">
+                    <h3 className="font-semibold text-gray-900 group-hover:text-brand-orange transition-colors truncate">
                       {restaurant.name}
                     </h3>
                     {restaurant.description && (
-                      <p className="text-xs text-foreground/50 truncate mt-0.5">
+                      <p className="text-xs text-gray-500 truncate mt-0.5">
                         {restaurant.description}
                       </p>
                     )}
                   </div>
                   {restaurant.rating_count > 0 && (
-                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-xs font-medium ml-2 flex-shrink-0">
+                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-xs font-medium ml-2 flex-shrink-0">
                       <Star className="w-3 h-3 fill-current" />
                       {restaurant.average_rating.toFixed(1)}
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center gap-3 text-xs text-foreground/50 mb-3">
+                <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5" />
                     {restaurant.min_delivery_time}-{restaurant.max_delivery_time} min
@@ -139,13 +145,13 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
                   {restaurant.cuisine_tags.slice(0, 3).map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-0.5 rounded-full bg-dark-border/50 text-xs text-foreground/60"
+                      className="px-2 py-0.5 rounded-full bg-gray-100 text-xs text-gray-500"
                     >
                       {tag}
                     </span>
                   ))}
                   {restaurant.cuisine_tags.length > 3 && (
-                    <span className="px-2 py-0.5 rounded-full bg-dark-border/50 text-xs text-foreground/40">
+                    <span className="px-2 py-0.5 rounded-full bg-gray-100 text-xs text-gray-400">
                       +{restaurant.cuisine_tags.length - 3}
                     </span>
                   )}
@@ -158,8 +164,8 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
         /* Empty state */
         <div className="text-center py-16">
           <div className="text-5xl mb-4">🍽️</div>
-          <h3 className="font-heading text-lg font-semibold mb-2">No restaurants found</h3>
-          <p className="text-sm text-foreground/50 max-w-xs mx-auto">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No restaurants found</h3>
+          <p className="text-sm text-gray-500 max-w-xs mx-auto">
             {search
               ? `No restaurants match "${search}". Try a different search.`
               : 'No restaurants available right now. Check back soon!'}

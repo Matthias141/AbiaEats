@@ -60,7 +60,6 @@ export default function OnboardingPage() {
 
   const animateTransition = useCallback((next: () => void) => {
     setTransitioning(true);
-    // Brief fade-out, then switch, then fade-in via animate-slide-in-right
     setTimeout(() => {
       next();
       setTransitioning(false);
@@ -98,7 +97,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <main className="min-h-dvh bg-dark-bg text-foreground flex items-center justify-center overflow-x-hidden">
+    <main className="min-h-dvh bg-white text-gray-900 flex items-center justify-center overflow-x-hidden">
       <div className="w-full max-w-[480px] mx-auto px-6 py-10 flex flex-col min-h-dvh">
         {/* ----------------------------------------------------------------
             STEP 1: Splash Carousel
@@ -113,7 +112,7 @@ export default function OnboardingPage() {
             <div className="flex justify-end">
               <button
                 onClick={() => animateTransition(() => setStep('city'))}
-                className="text-sm text-foreground/50 hover:text-foreground/80 transition-colors tap-target px-2"
+                className="text-sm text-gray-400 hover:text-gray-600 transition-colors tap-target px-2"
               >
                 Skip
               </button>
@@ -125,10 +124,10 @@ export default function OnboardingPage() {
               className="flex-1 flex flex-col items-center justify-center text-center animate-slide-in-right"
             >
               <div className="text-8xl mb-8">{SLIDES[slideIndex].emoji}</div>
-              <h1 className="font-heading text-3xl font-bold mb-4 text-foreground">
+              <h1 className="text-3xl font-bold mb-4 text-gray-900">
                 {SLIDES[slideIndex].title}
               </h1>
-              <p className="text-foreground/60 text-base leading-relaxed max-w-[320px]">
+              <p className="text-gray-500 text-base leading-relaxed max-w-[320px]">
                 {SLIDES[slideIndex].subtitle}
               </p>
             </div>
@@ -143,7 +142,7 @@ export default function OnboardingPage() {
                     className={`rounded-full transition-all duration-300 ${
                       i === slideIndex
                         ? 'w-8 h-2 bg-brand-orange'
-                        : 'w-2 h-2 bg-foreground/20'
+                        : 'w-2 h-2 bg-gray-200'
                     }`}
                   />
                 ))}
@@ -154,7 +153,7 @@ export default function OnboardingPage() {
                 onClick={handleNextSlide}
                 className="gradient-orange w-full rounded-2xl py-4 text-white font-semibold text-lg
                            tap-target active:scale-[0.97] transition-transform duration-100
-                           flex items-center justify-center gap-2 min-h-[44px]"
+                           flex items-center justify-center gap-2 min-h-[44px] shadow-lg shadow-brand-orange/20"
               >
                 {slideIndex < SLIDES.length - 1 ? (
                   <>
@@ -185,14 +184,14 @@ export default function OnboardingPage() {
               {/* Header */}
               <div className="flex items-center gap-2 mb-2">
                 <MapPin className="w-5 h-5 text-brand-orange" />
-                <span className="text-sm font-medium text-foreground/50 uppercase tracking-wider">
+                <span className="text-sm font-medium text-gray-400 uppercase tracking-wider">
                   Location
                 </span>
               </div>
-              <h1 className="font-heading text-3xl font-bold mb-2 text-foreground">
+              <h1 className="text-3xl font-bold mb-2 text-gray-900">
                 Where are we delivering to?
               </h1>
-              <p className="text-foreground/50 text-base mb-10">
+              <p className="text-gray-500 text-base mb-10">
                 Select your city to see nearby restaurants.
               </p>
 
@@ -208,16 +207,16 @@ export default function OnboardingPage() {
                                   tap-target active:scale-[0.97] border-2
                                   ${
                                     isSelected
-                                      ? 'border-brand-orange bg-brand-orange/10'
-                                      : 'border-dark-border bg-dark-card hover:border-dark-border-light'
+                                      ? 'border-brand-orange bg-orange-50'
+                                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
                                   }`}
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <h2 className="text-xl font-semibold text-foreground">
+                          <h2 className="text-xl font-semibold text-gray-900">
                             {city.name}
                           </h2>
-                          <p className="text-sm text-foreground/50 mt-1">
+                          <p className="text-sm text-gray-500 mt-1">
                             {city.hint}
                           </p>
                         </div>
@@ -226,7 +225,7 @@ export default function OnboardingPage() {
                                       ${
                                         isSelected
                                           ? 'border-brand-orange bg-brand-orange'
-                                          : 'border-foreground/20'
+                                          : 'border-gray-300'
                                       }`}
                         >
                           {isSelected && (
@@ -250,8 +249,8 @@ export default function OnboardingPage() {
                             flex items-center justify-center gap-2 min-h-[44px]
                             ${
                               selectedCity
-                                ? 'gradient-orange text-white'
-                                : 'bg-dark-card text-foreground/30 cursor-not-allowed'
+                                ? 'gradient-orange text-white shadow-lg shadow-brand-orange/20'
+                                : 'bg-gray-100 text-gray-300 cursor-not-allowed'
                             }`}
               >
                 Continue
@@ -272,14 +271,14 @@ export default function OnboardingPage() {
           >
             <div className="flex-1 flex flex-col items-center justify-center text-center animate-slide-in-right">
               {/* Logo / Brand mark */}
-              <div className="w-20 h-20 rounded-2xl gradient-orange flex items-center justify-center mb-8">
+              <div className="w-20 h-20 rounded-2xl gradient-orange flex items-center justify-center mb-8 shadow-lg shadow-brand-orange/20">
                 <UtensilsCrossed className="w-10 h-10 text-white" />
               </div>
 
-              <h1 className="font-heading text-3xl font-bold mb-3 text-foreground">
+              <h1 className="text-3xl font-bold mb-3 text-gray-900">
                 Welcome to AbiaEats
               </h1>
-              <p className="text-foreground/50 text-base leading-relaxed max-w-[300px]">
+              <p className="text-gray-500 text-base leading-relaxed max-w-[300px]">
                 Your favorite local food, one tap away.
               </p>
             </div>
@@ -291,7 +290,7 @@ export default function OnboardingPage() {
                 onClick={() => completeOnboarding('/auth/signup')}
                 className="gradient-orange w-full rounded-2xl py-4 text-white font-semibold text-lg
                            tap-target active:scale-[0.97] transition-transform duration-100
-                           flex items-center justify-center min-h-[44px] animate-pulse-glow"
+                           flex items-center justify-center min-h-[44px] shadow-lg shadow-brand-orange/20"
               >
                 Sign Up
               </button>
@@ -303,7 +302,7 @@ export default function OnboardingPage() {
                            tap-target active:scale-[0.97] transition-transform duration-100
                            flex items-center justify-center min-h-[44px]
                            border-2 border-brand-orange text-brand-orange
-                           hover:bg-brand-orange/10"
+                           hover:bg-orange-50"
               >
                 Log In
               </button>
@@ -311,7 +310,7 @@ export default function OnboardingPage() {
               {/* Skip — tertiary link */}
               <button
                 onClick={() => completeOnboarding('/home')}
-                className="w-full py-3 text-foreground/40 hover:text-foreground/70
+                className="w-full py-3 text-gray-400 hover:text-gray-600
                            transition-colors text-sm font-medium tap-target"
               >
                 Browse first
