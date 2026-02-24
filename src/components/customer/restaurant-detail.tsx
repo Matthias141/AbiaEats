@@ -32,6 +32,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
   const categoryRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const tabsRef = useRef<HTMLDivElement>(null);
   const tabButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const isManualScroll = useRef(false);
 
   // Build categories from available menu items, preserving sort_order
   const categories = useMemo(() => {
@@ -56,16 +57,15 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
     }
   }, [categoryNames, activeCategory]);
 
-  // Scroll active tab into view
+  // Scroll active tab into view (horizontal only — never scroll the page)
   useEffect(() => {
     if (activeCategory && tabsRef.current) {
       const btn = tabButtonRefs.current.get(activeCategory);
       if (btn) {
-        btn.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'center',
-        });
+        const container = tabsRef.current;
+        const scrollLeft =
+          btn.offsetLeft - container.offsetWidth / 2 + btn.offsetWidth / 2;
+        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
       }
     }
   }, [activeCategory]);
@@ -78,7 +78,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (entry.isIntersecting) {
+            if (entry.isIntersecting && !isManualScroll.current) {
               setActiveCategory(category);
             }
           });
@@ -95,6 +95,8 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
   }, [categoryNames]);
 
   const scrollToCategory = useCallback((category: string) => {
+    // Suppress observer updates during programmatic scroll
+    isManualScroll.current = true;
     setActiveCategory(category);
     const el = categoryRefs.current.get(category);
     if (el) {
@@ -102,6 +104,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
       const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
+    // Re-enable observer after scroll animation settles
+    setTimeout(() => {
+      isManualScroll.current = false;
+    }, 800);
   }, []);
 
   const handleAddItem = useCallback(
