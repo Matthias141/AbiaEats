@@ -89,7 +89,7 @@ export default function LandingPage() {
               Log in
             </Link>
             <Link
-              href="/auth/signup"
+              href="/onboarding"
               className="tap-target px-5 py-2.5 text-sm font-medium rounded-xl gradient-orange text-white shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 transition-all active:scale-[0.97]"
             >
               Sign up
@@ -125,14 +125,14 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 animate-slide-up">
               <Link
-                href="/restaurants"
+                href="/onboarding"
                 className="tap-target inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium rounded-xl gradient-orange text-white shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40 transition-all active:scale-[0.97]"
               >
                 Order Now
                 <ChevronRight className="w-5 h-5" />
               </Link>
               <Link
-                href="/auth/signup"
+                href="/onboarding"
                 className="tap-target inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium rounded-xl border border-dark-border-light text-foreground hover:border-brand-orange hover:text-brand-orange transition-all active:scale-[0.97]"
               >
                 Create Account
@@ -207,7 +207,7 @@ export default function LandingPage() {
               Popular Restaurants
             </h2>
             <Link
-              href="/restaurants"
+              href="/onboarding"
               className="text-sm text-brand-orange hover:text-brand-orange-light flex items-center gap-1 transition-colors"
             >
               View all <ChevronRight className="w-4 h-4" />
@@ -309,13 +309,13 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
-                  href="/restaurants"
+                  href="/onboarding"
                   className="tap-target inline-flex items-center justify-center gap-2 px-8 py-3.5 text-base font-medium rounded-xl bg-white text-brand-orange hover:bg-white/90 transition-all active:scale-[0.97]"
                 >
                   Browse Restaurants
                 </Link>
                 <Link
-                  href="/auth/signup"
+                  href="/onboarding"
                   className="tap-target inline-flex items-center justify-center gap-2 px-8 py-3.5 text-base font-medium rounded-xl border-2 border-white/30 text-white hover:bg-white/10 transition-all active:scale-[0.97]"
                 >
                   Sign Up Free
@@ -346,10 +346,10 @@ export default function LandingPage() {
             <div>
               <h4 className="font-heading font-semibold mb-4">Quick Links</h4>
               <div className="space-y-2 text-sm text-foreground/50">
-                <Link href="/restaurants" className="block hover:text-brand-orange transition-colors">
+                <Link href="/onboarding" className="block hover:text-brand-orange transition-colors">
                   Restaurants
                 </Link>
-                <Link href="/auth/signup" className="block hover:text-brand-orange transition-colors">
+                <Link href="/onboarding" className="block hover:text-brand-orange transition-colors">
                   Sign Up
                 </Link>
                 <Link href="/auth/login" className="block hover:text-brand-orange transition-colors">
