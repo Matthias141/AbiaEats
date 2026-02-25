@@ -16,14 +16,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={id}
-            className="block text-sm font-medium text-foreground/70 mb-1.5"
+            className="block text-sm font-medium text-gray-600 mb-1.5"
           >
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               {icon}
             </div>
           )}
@@ -31,7 +31,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={id}
             className={cn(
-              'w-full min-h-[44px] px-4 py-2.5 bg-dark-card border border-dark-border rounded-xl text-foreground placeholder:text-foreground/30 transition-colors focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50',
+              'w-full min-h-[44px] px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 focus:bg-white',
               icon && 'pl-10',
               error && 'border-red-500 focus:border-red-500 focus:ring-red-500/50',
               className
