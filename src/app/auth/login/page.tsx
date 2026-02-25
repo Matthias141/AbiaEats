@@ -33,7 +33,8 @@ export default function LoginPage() {
     });
 
     if (authError) {
-      setError(authError.message);
+      // Never expose specific auth errors — prevents account enumeration
+      setError('Invalid email or password. Please try again.');
       setIsLoading(false);
       return;
     }
