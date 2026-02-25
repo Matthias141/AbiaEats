@@ -50,7 +50,8 @@ export default function SignupPage() {
     });
 
     if (authError) {
-      setError(authError.message);
+      // Never expose specific auth errors — prevents account enumeration
+      setError('Something went wrong. Please try again.');
       setIsLoading(false);
       return;
     }
