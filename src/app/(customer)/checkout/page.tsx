@@ -17,7 +17,7 @@ import {
   Info,
 } from 'lucide-react';
 import { useCart } from '@/contexts/cart-context';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/use-auth';
 import { formatPrice } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import type { CartItem } from '@/types/database';

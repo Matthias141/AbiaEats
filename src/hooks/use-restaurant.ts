@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { Restaurant, MenuItem } from '@/types/database';
-import { useAuth } from './useAuth';
+import { useAuth } from './use-auth';
 
 export function useRestaurant() {
   const { user, isRestaurantOwner } = useAuth();
