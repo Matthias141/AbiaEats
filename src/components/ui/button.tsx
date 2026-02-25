@@ -19,10 +19,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'tap-target inline-flex items-center justify-center gap-2 rounded-xl font-body font-medium transition-all duration-200 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none',
           {
             'gradient-orange text-white shadow-lg shadow-brand-orange/25 hover:shadow-brand-orange/40': variant === 'primary',
-            'bg-dark-card border border-dark-border text-foreground hover:bg-dark-border': variant === 'secondary',
-            'text-foreground hover:bg-dark-card': variant === 'ghost',
+            'bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200': variant === 'secondary',
+            'text-gray-700 hover:bg-gray-100': variant === 'ghost',
             'bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20': variant === 'danger',
-            'border border-dark-border-light text-foreground hover:border-brand-orange hover:text-brand-orange': variant === 'outline',
+            'border border-gray-200 text-gray-700 hover:border-brand-orange hover:text-brand-orange': variant === 'outline',
           },
           {
             'px-3 py-1.5 text-sm min-h-[36px]': size === 'sm',

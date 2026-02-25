@@ -13,9 +13,9 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         className={cn(
           'rounded-2xl',
           {
-            'bg-dark-card border border-dark-border': variant === 'default',
+            'bg-white border border-gray-200 card-shadow': variant === 'default',
             'glass-card': variant === 'glass',
-            'border border-dark-border-light': variant === 'bordered',
+            'border border-gray-200': variant === 'bordered',
           },
           className
         )}
