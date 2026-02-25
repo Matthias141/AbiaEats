@@ -1,6 +1,3 @@
-@APEX_ENGINEER.md
-@CYBERSEC_BLUE.md
-@CYBERSEC_RED.md
 # CLAUDE.md — AbiaEats Development Guide
 
 ## What Is This File?
