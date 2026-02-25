@@ -18,7 +18,7 @@ const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
         className={cn(
           'inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full border',
           {
-            'bg-dark-card border-dark-border text-foreground': variant === 'default' && !status,
+            'bg-gray-100 border-gray-200 text-gray-700': variant === 'default' && !status,
           },
           status && statusStyles && `${statusStyles.bgColor} ${statusStyles.textColor} border-current/20`,
           className
