@@ -73,12 +73,16 @@ export async function requireRole(...roles: UserRole[]): Promise<
  * FIX RED-5: Admin client with runtime guardrail.
  * Throws if called outside webhook/cron context. Bypasses ALL RLS — never
  * use this in customer-facing code. Use createClient() everywhere else.
+ *
+ * Accepts either WEBHOOK_SECRET (for webhook handlers) or CRON_SECRET (for
+ * scheduled jobs) as proof that this call is intentional.
  */
 export async function createAdminClient_WEBHOOKS_AND_CRONS_ONLY() {
-  if (!process.env.WEBHOOK_SECRET) {
+  if (!process.env.WEBHOOK_SECRET && !process.env.CRON_SECRET) {
     throw new Error(
-      '[SECURITY] createAdminClient called but WEBHOOK_SECRET is not set. ' +
-      'This bypasses ALL RLS. Only use in /api/webhooks/* and /api/cron/*.'
+      '[SECURITY] createAdminClient called but neither WEBHOOK_SECRET nor ' +
+      'CRON_SECRET is set. This bypasses ALL RLS. Only use in ' +
+      '/api/webhooks/* and /api/cron/*.'
     );
   }
   const { createClient: sb } = await import('@supabase/supabase-js');
