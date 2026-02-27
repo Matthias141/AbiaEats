@@ -1,48 +1,23 @@
-#!/bin/sh
-# AbiaEats pre-commit hook — blocks secret files and detects credentials.
+#!/bin/bash
+# .githooks/pre-commit
 #
 # Installation (one-time per developer):
-#   git config core.hooksPath .githooks
-#   chmod +x .githooks/pre-commit
-#
-# Or run: npm run setup-hooks (if added to package.json)
+#   npm run setup-hooks
+# That runs: git config core.hooksPath .githooks
 
-set -e
-
-# ── 1. Block staged .env files ────────────────────────────────────────────────
+# ── Block staged .env files before even running gitleaks ─────────────────────
 STAGED_ENV=$(git diff --cached --name-only | grep -E "(^|\/)\.env(\.|$)" | grep -v "\.example$" || true)
 if [ -n "$STAGED_ENV" ]; then
-  echo ""
-  echo "╔══════════════════════════════════════════════════════════════╗"
-  echo "║  ❌  COMMIT BLOCKED: Secret file detected in staging area   ║"
-  echo "╚══════════════════════════════════════════════════════════════╝"
-  echo ""
-  echo "  Staged file(s) that must NOT be committed:"
-  echo "$STAGED_ENV" | sed 's/^/    /'
-  echo ""
-  echo "  These files contain real credentials. Remove them:"
-  echo "    git reset HEAD <file>"
-  echo "    (or: git restore --staged <file>)"
-  echo ""
+  echo "SECRET DETECTED — commit blocked."
+  echo "$STAGED_ENV"
+  echo "Remove the secret, then commit again."
   exit 1
 fi
 
-# ── 2. Run gitleaks if installed ──────────────────────────────────────────────
-if command -v gitleaks > /dev/null 2>&1; then
-  if ! gitleaks protect --staged --redact -v 2>&1; then
-    echo ""
-    echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║  ❌  COMMIT BLOCKED: gitleaks detected potential secrets     ║"
-    echo "╚══════════════════════════════════════════════════════════════╝"
-    echo ""
-    echo "  Review the output above and remove any credentials before committing."
-    echo "  If this is a false positive, see .gitleaks.toml for allowlisting."
-    echo ""
-    exit 1
-  fi
-else
-  echo "⚠  gitleaks not installed — skipping secret scan."
-  echo "   Install with: brew install gitleaks  (or: go install github.com/zricethezav/gitleaks/v8@latest)"
+# ── Gitleaks — scan staged files for any other secrets ───────────────────────
+gitleaks protect --staged --redact --no-git
+if [ $? -ne 0 ]; then
+  echo "SECRET DETECTED — commit blocked."
+  echo "Remove the secret, then commit again."
+  exit 1
 fi
-
-exit 0
