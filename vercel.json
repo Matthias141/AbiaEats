@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/export-logs",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/security-monitor",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}
