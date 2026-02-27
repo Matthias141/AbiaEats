@@ -1,12 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/cron/export-logs",
+      "path": "/api/cron/daily-tasks",
       "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/security-monitor",
-      "schedule": "*/5 * * * *"
     }
   ]
 }
