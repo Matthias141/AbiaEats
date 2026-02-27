@@ -13,7 +13,7 @@
  *
  * Usage:
  *   export async function POST(req: Request) {
- *     const guard = await requireRole(req, 'admin');
+ *     const guard = await requireRole('admin');
  *     if (guard.response) return guard.response;  // auto-blocks if not admin
  *     const { user } = guard;                     // typed + verified
  *   }
@@ -24,7 +24,7 @@ import { createClient } from '@/lib/supabase/server';
 import type { UserRole } from '@/types/database';
 import type { User } from '@supabase/supabase-js';
 
-export async function requireAuth(req: Request): Promise
+export async function requireAuth(): Promise<
   { user: User; response: null } | { user: null; response: Response }
 > {
   const supabase = await createClient();
@@ -42,11 +42,11 @@ export async function requireAuth(req: Request): Promise
   return { user, response: null };
 }
 
-export async function requireRole(req: Request, ...roles: UserRole[]): Promise
+export async function requireRole(...roles: UserRole[]): Promise<
   { user: User; role: UserRole; response: null } |
   { user: null; role: null; response: Response }
 > {
-  const auth = await requireAuth(req);
+  const auth = await requireAuth();
   if (auth.response) return { user: null, role: null, response: auth.response };
 
   const supabase = await createClient();
