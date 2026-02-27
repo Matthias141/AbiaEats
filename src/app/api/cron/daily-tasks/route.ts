@@ -1,9 +1,13 @@
 import { createAdminClient_WEBHOOKS_AND_CRONS_ONLY } from '@/lib/auth-guard';
 import { NextResponse } from 'next/server';
 
-// Unified daily cron — replaces separate export-logs and security-monitor crons.
-// Vercel Hobby plan allows only 1 cron job, running at most once per day.
+// Daily cron — auto-cancel stale orders + audit log export check.
 // Schedule: 0 2 * * * (2am daily) — set in vercel.json
+//
+// Security monitoring is handled by /api/cron/security-monitor, which an
+// external cron service (e.g. cron-job.org) calls every 5 minutes.
+// This restores the 5-min detection window that was lost when consolidating
+// to a single Vercel Hobby cron job (NEW-3 fix).
 
 export async function GET(request: Request) {
   // Verify the request comes from Vercel Cron.
@@ -85,45 +89,8 @@ export async function GET(request: Request) {
     results.exportLogsError = err instanceof Error ? err.message : 'unknown';
   }
 
-  // ─── Task 3: Daily security check ────────────────────────────────────────
-  // Previously handled by /api/cron/security-monitor (ran every 5 min).
-  // On Hobby plan this now runs once daily — catches anomalies from the prior day.
-  try {
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-
-    // Check for suspicious patterns: multiple failed logins, bulk order anomalies, etc.
-    const { data: recentAuditEntries, error: auditError } = await supabase
-      .from('audit_log')
-      .select('action, created_at')
-      .gte('created_at', oneDayAgo)
-      .order('created_at', { ascending: false });
-
-    if (auditError) throw auditError;
-
-    const actionCounts: Record<string, number> = {};
-    for (const entry of recentAuditEntries ?? []) {
-      actionCounts[entry.action] = (actionCounts[entry.action] ?? 0) + 1;
-    }
-
-    // Flag if payment confirmations are unusually high (potential fraud signal)
-    const paymentConfirmations = actionCounts['payment_confirmed'] ?? 0;
-    const autoCancellations = actionCounts['order_auto_cancelled'] ?? 0;
-
-    await supabase.rpc('log_audit', {
-      p_action: 'daily_security_check',
-      p_target_type: 'audit_log',
-      p_metadata: {
-        period: '24h',
-        action_summary: actionCounts,
-        payment_confirmations: paymentConfirmations,
-        auto_cancellations: autoCancellations,
-      },
-    });
-
-    results.securityCheck = { actionCounts, paymentConfirmations, autoCancellations };
-  } catch (err) {
-    results.securityCheckError = err instanceof Error ? err.message : 'unknown';
-  }
+  // Security monitoring is intentionally NOT here — it runs at 5-min intervals
+  // via /api/cron/security-monitor called by an external cron service.
 
   return NextResponse.json({ ok: true, timestamp: new Date().toISOString(), results });
 }
