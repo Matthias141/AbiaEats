@@ -27,11 +27,6 @@ export async function createClient() {
   );
 }
 
-// Admin client bypasses RLS — only use in webhooks/crons
-export async function createAdminClient() {
-  const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
-  return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-}
+// createAdminClient() has been removed from this file (P3 security fix).
+// Accidental use in customer-facing routes bypasses ALL RLS policies.
+// For webhooks/crons, use: import { createAdminClient_WEBHOOKS_AND_CRONS_ONLY } from '@/lib/auth-guard'
