@@ -87,6 +87,16 @@ export async function applyRateLimit(
   limiter: Ratelimit,
   request: Request
 ): Promise<Response | null> {
+  // When Upstash Redis is not configured (local dev, CI without secrets),
+  // skip rate limiting entirely rather than crashing. In production both
+  // vars MUST be set — the health check in /api/health will flag this.
+  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[rate-limit] Upstash Redis not configured — rate limiting disabled');
+    }
+    return null; // allow the request
+  }
+
   const ip = getClientIp(request);
   const { success, limit, remaining, reset } = await limiter.limit(ip);
 
