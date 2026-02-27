@@ -42,7 +42,7 @@ interface CreateOrderInput {
   notes?: string;
 }
 
-interface CreateOrderResult {
+type CreateOrderResult = {
   success: true;
   order_id: string;
   order_number: string;
