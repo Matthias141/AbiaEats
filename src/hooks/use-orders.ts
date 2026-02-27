@@ -7,11 +7,13 @@ import type { OrderWithDetails, OrderStatus } from '@/types/database';
 interface UseOrdersOptions {
   status?: OrderStatus[];
   restaurantId?: string;
+  /** Scope Realtime events to a specific customer. Pass the authenticated user's ID. */
+  userId?: string;
   realtime?: boolean;
 }
 
 export function useOrders(options: UseOrdersOptions = {}) {
-  const { status, restaurantId, realtime = true } = options;
+  const { status, restaurantId, userId, realtime = true } = options;
   const [orders, setOrders] = useState<OrderWithDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,14 +49,33 @@ export function useOrders(options: UseOrdersOptions = {}) {
 
     if (!realtime) return;
 
+    // Build a server-side filter for the Realtime channel so Supabase only
+    // broadcasts changes relevant to this subscriber. Without a filter the
+    // channel fires on every order row change on the entire table, leaking
+    // metadata (not data — RLS still gates the actual fetch) and wasting
+    // bandwidth. Priority: restaurantId > userId > no filter (admin).
+    const filter = restaurantId
+      ? `restaurant_id=eq.${restaurantId}`
+      : userId
+      ? `customer_id=eq.${userId}`
+      : undefined;
+
+    // Use a unique channel name so multiple hook instances don't share state
+    const channelName = restaurantId
+      ? `orders-restaurant-${restaurantId}`
+      : userId
+      ? `orders-customer-${userId}`
+      : 'orders-admin';
+
     const channel = supabase
-      .channel('orders-changes')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'orders',
+          ...(filter ? { filter } : {}),
         },
         () => {
           fetchOrders();
@@ -65,7 +86,7 @@ export function useOrders(options: UseOrdersOptions = {}) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, fetchOrders, realtime]);
+  }, [supabase, fetchOrders, realtime, restaurantId, userId]);
 
   return { orders, isLoading, error, refetch: fetchOrders };
 }
