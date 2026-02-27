@@ -24,7 +24,7 @@ import { createClient } from '@/lib/supabase/server';
 import type { UserRole } from '@/types/database';
 import type { User } from '@supabase/supabase-js';
 
-export async function requireAuth(req: Request): Promise<
+export async function requireAuth(_req: Request): Promise<
   { user: User; response: null } | { user: null; response: Response }
 > {
   const supabase = await createClient();
