@@ -1,0 +1,23 @@
+#!/bin/bash
+# .githooks/pre-commit
+#
+# Installation (one-time per developer):
+#   npm run setup-hooks
+# That runs: git config core.hooksPath .githooks
+
+# ── Block staged .env files before even running gitleaks ─────────────────────
+STAGED_ENV=$(git diff --cached --name-only | grep -E "(^|\/)\.env(\.|$)" | grep -v "\.example$" || true)
+if [ -n "$STAGED_ENV" ]; then
+  echo "SECRET DETECTED — commit blocked."
+  echo "$STAGED_ENV"
+  echo "Remove the secret, then commit again."
+  exit 1
+fi
+
+# ── Gitleaks — scan staged files for any other secrets ───────────────────────
+gitleaks protect --staged --redact --no-git
+if [ $? -ne 0 ]; then
+  echo "SECRET DETECTED — commit blocked."
+  echo "Remove the secret, then commit again."
+  exit 1
+fi
