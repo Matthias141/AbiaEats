@@ -1,0 +1,23 @@
+title = "AbiaEats gitleaks configuration"
+
+# Extend the default ruleset (catches JWT tokens, API keys, etc.)
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlist for .env.example placeholder values and docs"
+paths = [
+  '''^\.env\.example$''',
+  '''^CLAUDE\.md$''',
+  '''^APEX_ENGINEER\.md$''',
+  '''^CYBERSEC_BLUE\.md$''',
+  '''^CYBERSEC_RED\.md$''',
+]
+regexes = [
+  # Placeholder tokens in docs and example files
+  '''eyJ\.\.\.$''',
+  '''AXxx\.\.\.$''',
+  '''replace-with-random-secret''',
+  '''your-project\.supabase\.co''',
+  '''https://xxx\.upstash\.io''',
+]

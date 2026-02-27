@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "setup-hooks": "git config core.hooksPath .githooks && chmod +x .githooks/pre-commit && echo 'Git hooks installed.'"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",

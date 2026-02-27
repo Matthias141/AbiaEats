@@ -5,6 +5,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://*.supabase.
 const supabaseWss = supabaseUrl.replace(/^https?:\/\//, 'wss://');
 
 const securityHeaders = [
+  // HSTS: force HTTPS for 2 years, all subdomains, eligible for preload list
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
   { key: 'X-DNS-Prefetch-Control', value: 'on' },
   // X-Frame-Options kept for legacy browsers; CSP frame-ancestors below takes precedence
   { key: 'X-Frame-Options', value: 'DENY' },
