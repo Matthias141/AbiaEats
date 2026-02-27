@@ -1,4 +1,4 @@
-import { createAdminClient } from '@/lib/supabase/server';
+import { createAdminClient_WEBHOOKS_AND_CRONS_ONLY } from '@/lib/auth-guard';
 import { NextResponse } from 'next/server';
 
 // Unified daily cron — replaces separate export-logs and security-monitor crons.
@@ -6,13 +6,15 @@ import { NextResponse } from 'next/server';
 // Schedule: 0 2 * * * (2am daily) — set in vercel.json
 
 export async function GET(request: Request) {
-  // Verify the request comes from Vercel Cron
+  // Verify the request comes from Vercel Cron.
+  // Guard against null-bypass: if CRON_SECRET is unset, reject ALL requests —
+  // never match on "Bearer undefined".
   const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const supabase = await createAdminClient();
+  const supabase = await createAdminClient_WEBHOOKS_AND_CRONS_ONLY();
   const results: Record<string, unknown> = {};
 
   // ─── Task 1: Cancel orders unpaid for 2+ hours ────────────────────────────
@@ -43,9 +45,9 @@ export async function GET(request: Request) {
         staleIds.map((orderId) =>
           supabase.rpc('log_audit', {
             p_action: 'order_auto_cancelled',
-            p_table_name: 'orders',
-            p_record_id: orderId,
-            p_new_values: { status: 'cancelled', reason: 'payment_timeout_2h' },
+            p_target_type: 'orders',
+            p_target_id: orderId,
+            p_metadata: { status: 'cancelled', reason: 'payment_timeout_2h' },
           })
         )
       );
@@ -74,9 +76,8 @@ export async function GET(request: Request) {
     // This log entry confirms the daily job ran and what volume is eligible.
     await supabase.rpc('log_audit', {
       p_action: 'daily_log_export_check',
-      p_table_name: 'audit_log',
-      p_record_id: null,
-      p_new_values: { eligible_for_archive: count, cutoff: thirtyDaysAgo },
+      p_target_type: 'audit_log',
+      p_metadata: { eligible_for_archive: count, cutoff: thirtyDaysAgo },
     });
 
     results.auditLogsEligibleForArchive = count;
@@ -110,9 +111,8 @@ export async function GET(request: Request) {
 
     await supabase.rpc('log_audit', {
       p_action: 'daily_security_check',
-      p_table_name: 'audit_log',
-      p_record_id: null,
-      p_new_values: {
+      p_target_type: 'audit_log',
+      p_metadata: {
         period: '24h',
         action_summary: actionCounts,
         payment_confirmations: paymentConfirmations,

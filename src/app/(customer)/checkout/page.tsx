@@ -20,6 +20,7 @@ import { useCart } from '@/contexts/cart-context';
 import { useAuth } from '@/hooks/use-auth';
 import { formatPrice } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
+import { createOrderAction } from '@/app/actions/create-order';
 import type { CartItem } from '@/types/database';
 
 // ============================================================================
@@ -118,89 +119,40 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
-      const supabase = createClient();
+      // Server action re-fetches all prices from DB — client-side cart values
+      // (subtotal, deliveryFee) are intentionally NOT passed. This prevents
+      // the price-manipulation attack where an attacker modifies localStorage
+      // before submitting.
+      const result = await createOrderAction({
+        restaurant_id: restaurantId,
+        items: items.map((item: CartItem) => ({
+          menu_item_id: item.menu_item_id,
+          name: item.name,
+          quantity: item.quantity,
+        })),
+        delivery_address: deliveryAddress.trim(),
+        delivery_landmark: landmark.trim() || undefined,
+        customer_phone: phone.replace(/\s|-/g, ''),
+        customer_name: customerName.trim(),
+      });
 
-      // Build order items payload
-      const orderItems = items.map((item: CartItem) => ({
-        menu_item_id: item.menu_item_id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-      }));
-
-      // Fetch the restaurant's commission rate for the order snapshot
-      const { data: restaurant } = await supabase
-        .from('restaurants')
-        .select('commission_rate')
-        .eq('id', restaurantId)
-        .single();
-
-      const commissionRate = restaurant?.commission_rate ?? 6;
-
-      // Insert the order
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          customer_id: user.id,
-          restaurant_id: restaurantId,
-          status: 'awaiting_payment' as const,
-          subtotal,
-          delivery_fee: deliveryFee,
-          commission_rate: commissionRate,
-          delivery_address: deliveryAddress.trim(),
-          delivery_landmark: landmark.trim() || null,
-          customer_phone: phone.replace(/\s|-/g, ''),
-          customer_name: customerName.trim(),
-          payment_method: 'opay_transfer' as const,
-          payment_reference: null,
-          payment_confirmed_by: null,
-          payment_confirmed_at: null,
-          notes: null,
-          rating: null,
-          rating_comment: null,
-          cancellation_reason: null,
-          rider_id: null,
-        })
-        .select('id, order_number, total')
-        .single();
-
-      if (orderError || !order) {
-        throw new Error(orderError?.message || 'Failed to create order');
+      if (!result.success) {
+        setErrors({ submit: result.error });
+        return;
       }
 
-      // Insert order items
-      const itemsToInsert = orderItems.map((item) => ({
-        order_id: order.id,
-        menu_item_id: item.menu_item_id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-        subtotal: item.price * item.quantity,
-        notes: null,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(itemsToInsert);
-
-      if (itemsError) {
-        throw new Error(itemsError.message || 'Failed to add order items');
-      }
-
-      // Update customer's default address for future convenience
+      // Persist default address for future convenience (non-critical, client-side ok)
       if (profile && deliveryAddress.trim() !== profile.default_address) {
+        const supabase = createClient();
         await supabase
           .from('profiles')
           .update({ default_address: deliveryAddress.trim() })
           .eq('id', user.id);
       }
 
-      // Store order info and show payment sheet
-      setOrderNumber(order.order_number);
-      setOrderTotal(order.total);
+      setOrderNumber(result.order_number);
+      setOrderTotal(result.total);
       setShowPaymentSheet(true);
-
-      // Clear the cart after successful order creation
       clearCart();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
