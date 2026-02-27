@@ -6,12 +6,12 @@ import { z } from 'zod';
 
 export const loginSchema = z.object({
   email: z.string().email('Enter a valid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().min(12, 'Password must be at least 12 characters'),
 });
 
 export const signupSchema = z.object({
   email: z.string().email('Enter a valid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().min(12, 'Password must be at least 12 characters'),
   full_name: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().regex(/^(\+234|0)[789][01]\d{8}$/, 'Enter a valid Nigerian phone number'),
 });
@@ -66,10 +66,9 @@ export const createOrderSchema = z.object({
     .array(
       z.object({
         menu_item_id: z.string().uuid(),
-        name: z.string(),
-        price: z.number().min(0),
-        quantity: z.number().min(1).max(20),
+        quantity: z.number().int().min(1).max(20),
         notes: z.string().optional(),
+        // price and name are intentionally excluded — always fetched from DB server-side
       })
     )
     .min(1, 'Order must have at least 1 item')
