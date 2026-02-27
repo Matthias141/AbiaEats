@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, User, Phone, Eye, EyeOff, ArrowLeft, UtensilsCrossed, CheckCircle } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
 import { signupSchema } from '@/lib/validations';
 
 export default function SignupPage() {
@@ -35,23 +34,16 @@ export default function SignupPage() {
     }
 
     setIsLoading(true);
-    const supabase = createClient();
 
-    const { error: authError } = await supabase.auth.signUp({
-      email: parsed.data.email,
-      password: parsed.data.password,
-      options: {
-        data: {
-          full_name: parsed.data.full_name,
-          phone: parsed.data.phone,
-          role: 'customer',
-        },
-      },
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, full_name: fullName, phone }),
     });
 
-    if (authError) {
-      // Never expose specific auth errors — prevents account enumeration
-      setError('Something went wrong. Please try again.');
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || 'Something went wrong. Please try again.');
       setIsLoading(false);
       return;
     }
@@ -185,7 +177,7 @@ export default function SignupPage() {
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Min. 6 characters"
+                  placeholder="Min. 8 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="new-password"

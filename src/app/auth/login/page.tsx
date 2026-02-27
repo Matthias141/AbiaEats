@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft, UtensilsCrossed } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
 import { loginSchema } from '@/lib/validations';
 
 export default function LoginPage() {
@@ -26,15 +25,16 @@ export default function LoginPage() {
     }
 
     setIsLoading(true);
-    const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email: parsed.data.email,
-      password: parsed.data.password,
+
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
     });
 
-    if (authError) {
-      // Never expose specific auth errors — prevents account enumeration
-      setError('Invalid email or password. Please try again.');
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || 'Invalid email or password. Please try again.');
       setIsLoading(false);
       return;
     }
