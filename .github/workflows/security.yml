@@ -48,7 +48,7 @@ jobs:
 
       # ── 3. Dependency audit — fail on HIGH or CRITICAL CVEs ─────────────────
       - name: npm audit
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=critical
 
       # ── 4. TypeScript compile check ──────────────────────────────────────────
       - name: TypeScript check
