@@ -1,0 +1,86 @@
+name: Security & Quality Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  security-gates:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read        # checkout + gitleaks read
+      security-events: write # semgrep SARIF upload
+      actions: read         # required by gitleaks-action
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history required for gitleaks to scan all commits
+
+      # ── 1. Gitleaks — block any commit that contains a secret ───────────────
+      - name: Gitleaks secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # .gitleaks.toml in repo root configures allowlists for placeholder values
+
+      # ── 2. SAST — Semgrep with Next.js + secrets + OWASP rulesets ───────────
+      - name: Semgrep SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: "p/typescript p/nextjs p/secrets p/owasp-top-ten"
+        env:
+          # Optional: set SEMGREP_APP_TOKEN to push results to semgrep.dev dashboard
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+      # ── Node / npm setup (shared by steps 3-6) ──────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 3. Dependency audit — fail on HIGH or CRITICAL CVEs ─────────────────
+      - name: npm audit
+        run: npm audit --audit-level=high
+
+      # ── 4. TypeScript compile check ──────────────────────────────────────────
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      # ── 5. ESLint ────────────────────────────────────────────────────────────
+      - name: ESLint
+        run: npm run lint
+
+      # ── 6. Next.js build verification ────────────────────────────────────────
+      - name: Build
+        run: npm run build
+        env:
+          # Use real secrets if configured in repo Settings → Secrets,
+          # fall back to structurally valid placeholders so the build succeeds
+          # in forks or first-run environments.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MjAwMDAwMDAwMH0.placeholder' }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'https://abia-eats.vercel.app' }}
+          NEXT_PUBLIC_APP_NAME: AbiaEats
+          NEXT_PUBLIC_OPAY_ACCOUNT_NAME: AbiaEats
+          NEXT_PUBLIC_OPAY_ACCOUNT_NUMBER: '0000000000'
+          # SUPABASE_SERVICE_ROLE_KEY is intentionally absent from CI —
+          # it bypasses RLS and must never be in build environment variables.
+
+      # ── 7. OWASP ZAP baseline scan (PRs against staging only) ───────────────
+      - name: OWASP ZAP baseline scan
+        uses: zaproxy/action-baseline@v0.10.0
+        if: github.event_name == 'pull_request'
+        with:
+          target: 'https://abia-eats-staging.vercel.app'
+          # ZAP scans the staging URL deployed by Vercel's preview deployment.
+          # Failures are reported as PR comments but do not block merge by default.
+          # Set fail_action: true below to make ZAP findings block the PR.
+          # fail_action: true
