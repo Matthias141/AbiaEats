@@ -25,14 +25,15 @@ import { markSettlementPaidSchema } from '@/lib/validations';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const guard = await requireRole('admin');
   if (guard.response) return guard.response;
 
   const body = await request.json().catch(() => null);
   const parsed = markSettlementPaidSchema.safeParse({
-    settlement_id: params.id,
+    settlement_id: id,
     ...body,
   });
   if (!parsed.success) {
@@ -45,7 +46,7 @@ export async function POST(
   const { data: settlement, error: fetchError } = await supabase
     .from('settlements')
     .select('id, status, net_payout, restaurant_id, payment_reference, period_start, period_end')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (fetchError || !settlement) {
@@ -72,7 +73,7 @@ export async function POST(
       payment_reference: parsed.data.payment_reference,
       paid_by: guard.user.id,
     })
-    .eq('id', params.id);
+    .eq('id', id);
 
   if (updateError) {
     return NextResponse.json({ error: updateError.message }, { status: 500 });
@@ -84,7 +85,7 @@ export async function POST(
     p_action: 'settlement_paid',
     p_actor_id: guard.user.id,
     p_target_type: 'settlements',
-    p_target_id: params.id,
+    p_target_id: id,
     p_ip_address: ip,
     p_metadata: {
       restaurant_id:     settlement.restaurant_id,
