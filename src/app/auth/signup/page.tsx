@@ -177,7 +177,7 @@ export default function SignupPage() {
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Min. 8 characters"
+                  placeholder="Min. 12 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="new-password"

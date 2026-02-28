@@ -45,9 +45,42 @@ export async function POST(request: Request) {
   });
 
   if (error) {
-    // Generic message — never expose whether the email already exists
+    console.error('[signup] Supabase auth error:', error.message);
+
+    // Map known Supabase errors to user-friendly messages
+    const msg = error.message.toLowerCase();
+
+    if (msg.includes('already registered') || msg.includes('already been registered')) {
+      return NextResponse.json(
+        { error: 'An account with this email already exists. Try signing in instead.' },
+        { status: 409 }
+      );
+    }
+
+    if (msg.includes('password') && (msg.includes('least') || msg.includes('weak') || msg.includes('short'))) {
+      return NextResponse.json(
+        { error: 'Password is too weak. Use at least 12 characters with an uppercase letter and a number.' },
+        { status: 400 }
+      );
+    }
+
+    if (msg.includes('email') && (msg.includes('invalid') || msg.includes('format'))) {
+      return NextResponse.json(
+        { error: 'Please enter a valid email address.' },
+        { status: 400 }
+      );
+    }
+
+    if (msg.includes('rate') || msg.includes('too many')) {
+      return NextResponse.json(
+        { error: 'Too many signup attempts. Please wait a few minutes and try again.' },
+        { status: 429 }
+      );
+    }
+
+    // Fallback — generic message for unexpected errors
     return NextResponse.json(
-      { error: 'Something went wrong. Please try again.' },
+      { error: 'Unable to create account. Please try again later.' },
       { status: 500 }
     );
   }
