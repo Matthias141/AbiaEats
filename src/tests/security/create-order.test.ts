@@ -166,7 +166,7 @@ describe('🔴 RED TEAM — Price Injection (CRIT-1)', () => {
     const result = await createOrderAction(validInput);
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain('logged in');
+    expect((result as any).error).toContain('logged in');
   });
 
   it('rejects order when menu item does not exist in DB', async () => {
@@ -194,7 +194,7 @@ describe('🔴 RED TEAM — Price Injection (CRIT-1)', () => {
     const result = await createOrderAction(validInput);
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain('unavailable');
+    expect((result as any).error).toContain('unavailable');
   });
 
   // T1078: Cross-restaurant item injection
@@ -210,7 +210,7 @@ describe('🔴 RED TEAM — Price Injection (CRIT-1)', () => {
     const result = await createOrderAction(validInput);
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain('multiple restaurants');
+    expect((result as any).error).toContain('multiple restaurants');
   });
 
   it('rejects order when restaurant is closed', async () => {
@@ -230,7 +230,7 @@ describe('🔴 RED TEAM — Price Injection (CRIT-1)', () => {
     const result = await createOrderAction(validInput);
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain('closed');
+    expect((result as any).error).toContain('closed');
   });
 
   it('rejects order when restaurant is inactive (delisted)', async () => {
@@ -250,7 +250,7 @@ describe('🔴 RED TEAM — Price Injection (CRIT-1)', () => {
     const result = await createOrderAction(validInput);
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain('closed');
+    expect((result as any).error).toContain('closed');
   });
 });
 
@@ -348,7 +348,7 @@ describe('🔍 DFIR — Order Audit Trail', () => {
     expect(mockRpc).toHaveBeenCalled();
 
     // DFIR: audit call must include 'order_created' action
-    const auditCall = mockRpc.mock.calls.find(call => call[0] === 'log_audit');
+    const auditCall = (mockRpc.mock.calls as any[]).find((call: any[]) => call[0] === 'log_audit');
     expect(auditCall).toBeTruthy();
     if (auditCall) {
       expect(auditCall[1]).toMatchObject({
@@ -374,7 +374,7 @@ describe('🔍 DFIR — Order Audit Trail', () => {
 
     await createOrderAction(validInput);
 
-    const auditCall = mockRpc.mock.calls.find(call => call[0] === 'log_audit');
+    const auditCall = (mockRpc.mock.calls as any[]).find((call: any[]) => call[0] === 'log_audit');
     if (auditCall) {
       const metadata = auditCall[1].p_metadata;
       // DFIR: metadata must contain financial details for reconciliation
@@ -401,7 +401,7 @@ describe('🔍 DFIR — Order Audit Trail', () => {
     expect(result.success).toBe(false);
     // DFIR: No audit log for failed auth — would pollute the audit trail
     // (auth failures are logged at the auth layer, not the order layer)
-    const orderAuditCall = mockRpc.mock.calls.find(
+    const orderAuditCall = (mockRpc.mock.calls as any[]).find(
       call => call[0] === 'log_audit' && call[1]?.p_action === 'order_created'
     );
     expect(orderAuditCall).toBeFalsy();

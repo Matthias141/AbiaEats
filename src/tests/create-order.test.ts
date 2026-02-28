@@ -46,7 +46,7 @@ const DIFFERENT_RESTAURANT_ID = '999e4567-e89b-12d3-a456-426614174999';
 
 const validInput = {
   restaurant_id: RESTAURANT_ID,
-  items: [{ menu_item_id: ITEM_ID_1, quantity: 1 }],
+  items: [{ menu_item_id: ITEM_ID_1, name: "Jollof Rice", quantity: 1 }],
   delivery_address: '15 Asa Road, Aba',
   customer_phone: '08012345678',
   customer_name: 'John Doe',
@@ -159,7 +159,7 @@ describe('[RED] CRIT-1 — Price injection attack prevention', () => {
     // by checking what gets inserted into orders table
     const result = await createOrderAction({
       ...validInput,
-      items: [{ menu_item_id: ITEM_ID_1, quantity: 1 }],
+      items: [{ menu_item_id: ITEM_ID_1, name: "Jollof Rice", quantity: 1 }],
     });
 
     expect(result.success).toBe(true);
@@ -167,7 +167,7 @@ describe('[RED] CRIT-1 — Price injection attack prevention', () => {
     // Verify the order was inserted — the DB mock returns the correct total
     // In real flow: subtotal = DB price (2500) + delivery_fee (500) = 3000
     // Not: subtotal = client price (1) + delivery_fee = 501
-    const orderInsertCall = mock.from.mock.results.find(
+    const orderInsertCall = (mock.from.mock.results as any[]).find(
       (r: { value: { insert: ReturnType<typeof vi.fn> } }) => r.value?.insert
     );
     expect(orderInsertCall).toBeDefined();
@@ -182,8 +182,8 @@ describe('[RED] CRIT-1 — Price injection attack prevention', () => {
     const result = await createOrderAction({
       ...validInput,
       items: [
-        { menu_item_id: ITEM_ID_1, quantity: 2 }, // 2 × 2500 = 5000
-        { menu_item_id: ITEM_ID_2, quantity: 1 }, // 1 × 1500 = 1500
+        { menu_item_id: ITEM_ID_1, name: "Jollof Rice", quantity: 2 }, // 2 × 2500 = 5000
+        { menu_item_id: ITEM_ID_2, name: "Chicken", quantity: 1 }, // 1 × 1500 = 1500
       ],
     });
 

@@ -28,7 +28,7 @@
  *   - Burst of 403 on /api/admin/* from non-admin = privilege escalation attempt
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { createClient } from '@/lib/supabase/server';
 import { requireAuth, requireRole, createAdminClient_WEBHOOKS_AND_CRONS_ONLY } from '@/lib/auth-guard';
 

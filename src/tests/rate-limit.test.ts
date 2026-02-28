@@ -26,7 +26,7 @@
  *   - Rate limit analytics in Upstash console provides attack timeline
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach , afterEach } from 'vitest';
 import { getClientIp, applyRateLimit } from '@/lib/rate-limit';
 
 // ─────────────────────────────────────────────────────────────────────────────
