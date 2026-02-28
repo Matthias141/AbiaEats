@@ -51,6 +51,7 @@ export async function GET(request: Request) {
             p_action: 'order_auto_cancelled',
             p_target_type: 'orders',
             p_target_id: orderId,
+            p_ip_address: 'cron:vercel',
             p_metadata: { status: 'cancelled', reason: 'payment_timeout_2h' },
           })
         )
@@ -81,6 +82,7 @@ export async function GET(request: Request) {
     await supabase.rpc('log_audit', {
       p_action: 'daily_log_export_check',
       p_target_type: 'audit_log',
+      p_ip_address: 'cron:vercel',
       p_metadata: { eligible_for_archive: count, cutoff: thirtyDaysAgo },
     });
 

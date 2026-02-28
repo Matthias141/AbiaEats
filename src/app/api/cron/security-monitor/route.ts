@@ -55,6 +55,7 @@ export async function GET(request: Request) {
   await supabase.rpc('log_audit', {
     p_action: 'security_monitor_check',
     p_target_type: 'audit_log',
+    p_ip_address: 'cron:external',
     p_metadata: {
       period: '5m',
       action_summary: actionCounts,
