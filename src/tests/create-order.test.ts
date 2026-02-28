@@ -32,7 +32,7 @@
  *   - Failed orders do NOT write to audit log (no false positives)
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { createClient } from '@/lib/supabase/server';
 import { createOrderAction } from '@/app/actions/create-order';
 

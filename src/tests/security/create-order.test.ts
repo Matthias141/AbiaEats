@@ -14,7 +14,7 @@
  *   T1078     — Valid Accounts (ordering from wrong restaurant)
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { createOrderAction } from '@/app/actions/create-order';
 
 // ============================================================================

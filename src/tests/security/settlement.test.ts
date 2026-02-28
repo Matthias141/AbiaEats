@@ -15,9 +15,10 @@
  *   T1059     — Command Injection (SQL injection via period params)
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 // ── Shared UUIDs ─────────────────────────────────────────────────────────────
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const UUID = {
   restaurant:  '3fa85f64-5717-4562-b3fc-2c963f66afa6',
   restaurant2: '99e9c714-f33e-4c1d-8b9a-6d9f7e2c1b4a',

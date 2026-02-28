@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { formatPrice, orderStatusConfig } from '@/lib/utils';
-import { Check, ChevronDown } from 'lucide-react';
+import { Check } from 'lucide-react';
 import type { OrderStatus } from '@/types/database';
 
 const STATUS_FILTERS = [

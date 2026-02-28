@@ -26,7 +26,6 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { createOrderSchema } from '@/lib/validations';
-import { headers } from 'next/headers';
 
 interface CreateOrderInput {
   restaurant_id: string;

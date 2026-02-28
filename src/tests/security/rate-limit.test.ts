@@ -323,7 +323,7 @@ describe('🟣 PURPLE TEAM — T1110 Brute Force Coverage', () => {
     const sprayingIp = '41.58.123.45';
     const requests = ['user1@test.com', 'user2@test.com', 'user3@test.com'];
 
-    for (const _email of requests) {
+    for (const __email of requests) {
       const req = new Request('https://abiaeats.com/api/auth/login', {
         method: 'POST',
         headers: { 'x-forwarded-for': sprayingIp },

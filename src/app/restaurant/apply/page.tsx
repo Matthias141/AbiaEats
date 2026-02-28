@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CheckCircle, Store, MapPin, Phone, Clock, CreditCard, ChevronDown } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Store, MapPin, Clock, CreditCard, ChevronDown } from 'lucide-react';
 
 const CUISINE_OPTIONS = [
   'Fast Food', 'Rice Dishes', 'Pepper Soup', 'Grills', 'Shawarma',
