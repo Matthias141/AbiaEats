@@ -45,7 +45,18 @@ export async function POST(request: Request) {
   });
 
   if (error) {
-    // Generic message — never expose whether the email already exists
+    // Log the actual error server-side for debugging — never sent to the client
+    console.error('[signup] Supabase error:', error.message, error.status);
+
+    // Expose safe, non-enumeration errors to help the user
+    if (
+      error.message?.toLowerCase().includes('password') ||
+      error.message?.toLowerCase().includes('weak')
+    ) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Generic message for all other errors — never reveal whether the email exists
     return NextResponse.json(
       { error: 'Something went wrong. Please try again.' },
       { status: 500 }
