@@ -40,7 +40,7 @@ export async function updateSession(request: NextRequest) {
     "default-src 'self'",
     // nonce-based: only scripts Next.js stamps with this nonce are allowed
     `script-src 'self' 'nonce-${nonce}'`,
-    `connect-src 'self' ${supabaseUrl} ${supabaseWss}`,
+    `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com`,
     "img-src 'self' data: blob: https://*.supabase.co",
     "font-src 'self' https://fonts.gstatic.com",
     // style-src still needs unsafe-inline (CSS-in-JS, Tailwind) — acceptable trade-off
