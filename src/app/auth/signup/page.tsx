@@ -37,10 +37,11 @@ export default function SignupPage() {
     setIsLoading(true);
     const supabase = createClient();
 
-    const { error: authError } = await supabase.auth.signUp({
+    const { data, error: authError } = await supabase.auth.signUp({
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
         data: {
           full_name: parsed.data.full_name,
           phone: parsed.data.phone,
@@ -50,7 +51,27 @@ export default function SignupPage() {
     });
 
     if (authError) {
-      // Never expose specific auth errors — prevents account enumeration
+      // Show helpful messages for non-sensitive errors.
+      // Only genericise "user already registered" to prevent account enumeration.
+      const msg = authError.message.toLowerCase();
+      if (msg.includes('already registered') || msg.includes('already been registered') || msg.includes('duplicate') || msg.includes('already exists')) {
+        setError('Something went wrong. Please try again.');
+      } else if (msg.includes('rate limit') || msg.includes('too many requests')) {
+        setError('Too many attempts. Please wait a moment and try again.');
+      } else if (msg.includes('password')) {
+        setError('Password must be at least 6 characters.');
+      } else if (msg.includes('email')) {
+        setError('Please enter a valid email address.');
+      } else {
+        setError('Unable to create account. Please check your connection and try again.');
+      }
+      setIsLoading(false);
+      return;
+    }
+
+    // Some Supabase configurations return success with identities: []
+    // when the email is already registered (to prevent enumeration).
+    if (data?.user?.identities?.length === 0) {
       setError('Something went wrong. Please try again.');
       setIsLoading(false);
       return;
