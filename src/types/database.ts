@@ -150,6 +150,33 @@ export interface Settlement {
   updated_at: string;
 }
 
+
+export type ApplicationStatus = 'pending' | 'approved' | 'rejected';
+
+export interface RestaurantApplication {
+  id: string;
+  applicant_id: string;
+  name: string;
+  description: string | null;
+  phone: string;
+  address: string;
+  city: 'aba' | 'umuahia';
+  cuisine_tags: string[];
+  delivery_fee: number;
+  min_delivery_time: number;
+  max_delivery_time: number;
+  bank_name: string | null;
+  bank_account_number: string | null;
+  bank_account_name: string | null;
+  status: ApplicationStatus;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  rejection_reason: string | null;
+  restaurant_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AuditLog {
   id: string; // UUID
   action: string;

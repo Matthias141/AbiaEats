@@ -94,5 +94,90 @@ export async function GET(request: Request) {
   // Security monitoring is intentionally NOT here — it runs at 5-min intervals
   // via /api/cron/security-monitor called by an external cron service.
 
+  // ─── Task 3: Auto-generate weekly settlements (Sundays only) ─────────────
+  // Runs every Sunday at 2am. Generates one settlement per active restaurant
+  // covering Mon–Sun of the previous week.
+  // Idempotent: skip if a settlement already exists for the period.
+  try {
+    const today = new Date();
+    if (today.getUTCDay() === 0) { // 0 = Sunday
+      const prevSunday = new Date(today);
+      prevSunday.setUTCDate(today.getUTCDate() - 7);
+      const prevSaturday = new Date(today);
+      prevSaturday.setUTCDate(today.getUTCDate() - 1);
+
+      const periodStart = prevSunday.toISOString().split('T')[0];   // YYYY-MM-DD
+      const periodEnd   = prevSaturday.toISOString().split('T')[0];
+
+      // Fetch all active restaurants
+      const { data: restaurants } = await supabase
+        .from('restaurants')
+        .select('id')
+        .eq('is_active', true);
+
+      let created = 0;
+      let skipped = 0;
+
+      for (const restaurant of restaurants ?? []) {
+        // Idempotency: skip if settlement already exists
+        const { data: exists } = await supabase
+          .from('settlements')
+          .select('id')
+          .eq('restaurant_id', restaurant.id)
+          .eq('period_start', periodStart)
+          .eq('period_end', periodEnd)
+          .maybeSingle();
+
+        if (exists) { skipped++; continue; }
+
+        // Aggregate delivered orders for the period
+        const { data: orders } = await supabase
+          .from('orders')
+          .select('subtotal, delivery_fee, commission_amount')
+          .eq('restaurant_id', restaurant.id)
+          .eq('status', 'delivered')
+          .gte('delivered_at', `${periodStart}T00:00:00.000Z`)
+          .lte('delivered_at', `${periodEnd}T23:59:59.999Z`);
+
+        if (!orders || orders.length === 0) { skipped++; continue; }
+
+        const totals = orders.reduce(
+          (acc, o) => ({
+            order_count:         acc.order_count + 1,
+            total_gmv:           acc.total_gmv + o.subtotal,
+            total_commission:    acc.total_commission + o.commission_amount,
+            total_delivery_fees: acc.total_delivery_fees + o.delivery_fee,
+          }),
+          { order_count: 0, total_gmv: 0, total_commission: 0, total_delivery_fees: 0 }
+        );
+
+        const net_payout = totals.total_gmv - totals.total_commission;
+
+        const { data: settlement } = await supabase
+          .from('settlements')
+          .insert({ restaurant_id: restaurant.id, period_start: periodStart, period_end: periodEnd, ...totals, net_payout, status: 'pending' })
+          .select('id')
+          .single();
+
+        if (settlement) {
+          await supabase.rpc('log_audit', {
+            p_action: 'settlement_auto_generated',
+            p_target_type: 'settlements',
+            p_target_id: settlement.id,
+            p_ip_address: 'cron:vercel',
+            p_metadata: { restaurant_id: restaurant.id, period_start: periodStart, period_end: periodEnd, net_payout },
+          });
+          created++;
+        }
+      }
+
+      results.settlements = { period: `${periodStart} → ${periodEnd}`, created, skipped };
+    } else {
+      results.settlements = 'skipped (not Sunday)';
+    }
+  } catch (err) {
+    results.settlementsError = err instanceof Error ? err.message : 'unknown';
+  }
+
   return NextResponse.json({ ok: true, timestamp: new Date().toISOString(), results });
 }
