@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
     // Generic message for all other errors — never reveal whether the email exists
     return NextResponse.json(
-      { error: 'Something went wrong. Please try again.' },
+      { error: 'Unable to create account. Please try again later.' },
       { status: 500 }
     );
   }
