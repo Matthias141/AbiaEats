@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     console.error('[signup] Supabase error:', error.message, error.status, error.code);
     // Generic message to client — never expose internal details
     return NextResponse.json(
-      { error: 'Something went wrong. Please try again.' },
+      { error: 'Unable to create account. Please try again later.' },
       { status: 500 }
     );
   }
