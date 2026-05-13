@@ -4,6 +4,13 @@ import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { Search, MapPin, Star, Clock, ChevronRight, ChevronDown, Bell, Check, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import {
+  CITY_OPTIONS,
+  CUISINE_FILTERS,
+  filterRestaurants,
+  formatCityName,
+  normalizeCityValue,
+} from '@/lib/discovery';
 import { formatPrice } from '@/lib/utils';
 import { MOCK_RESTAURANTS } from '@/lib/mock-data';
 import type { Restaurant } from '@/types/database';
@@ -13,15 +20,15 @@ import type { Restaurant } from '@/types/database';
 // ============================================================================
 
 const CUISINE_CATEGORIES = [
-  { label: 'All', icon: '🍽️', value: 'all' },
-  { label: 'Fast Food', icon: '🍔', value: 'fast food' },
-  { label: 'Rice', icon: '🍚', value: 'rice dishes' },
-  { label: 'Pepper Soup', icon: '🍲', value: 'pepper soup' },
-  { label: 'Grills', icon: '🍖', value: 'grills' },
-  { label: 'Shawarma', icon: '🌯', value: 'shawarma' },
-  { label: 'Drinks', icon: '🥤', value: 'drinks' },
-  { label: 'Local', icon: '🥘', value: 'local' },
-  { label: 'Bakery', icon: '🍞', value: 'bakery' },
+  { ...CUISINE_FILTERS[0], icon: '🍽️' },
+  { ...CUISINE_FILTERS[1], icon: '🍔' },
+  { ...CUISINE_FILTERS[2], icon: '🍚' },
+  { ...CUISINE_FILTERS[3], icon: '🍲' },
+  { ...CUISINE_FILTERS[4], icon: '🍖' },
+  { ...CUISINE_FILTERS[5], icon: '🌯' },
+  { ...CUISINE_FILTERS[6], icon: '🥤' },
+  { ...CUISINE_FILTERS[7], icon: '🥘' },
+  { ...CUISINE_FILTERS[8], icon: '🍞' },
 ];
 
 const CITY_STORAGE_KEY = 'abiaeats_city';
@@ -139,22 +146,21 @@ function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
 // Main customer home page
 // ============================================================================
 
-const CITIES = ['Aba', 'Umuahia'] as const;
-
 export default function CustomerHomePage() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
-  const [city, setCity] = useState('Aba');
+  const [city, setCity] = useState('aba');
   const [showCityPicker, setShowCityPicker] = useState(false);
 
   // Load city from localStorage on mount
   useEffect(() => {
     try {
       const savedCity = localStorage.getItem(CITY_STORAGE_KEY);
-      if (savedCity) {
-        setCity(savedCity);
+      const normalizedCity = normalizeCityValue(savedCity);
+      if (normalizedCity) {
+        setCity(normalizedCity);
       }
     } catch {
       // localStorage not available, use default
@@ -202,25 +208,12 @@ export default function CustomerHomePage() {
 
   // Filter restaurants by search query and selected category
   const filteredRestaurants = useMemo(() => {
-    return restaurants.filter((restaurant) => {
-      const matchesSearch =
-        searchQuery.trim() === '' ||
-        restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (restaurant.description &&
-          restaurant.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        restaurant.cuisine_tags.some((tag) =>
-          tag.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-
-      const matchesCategory =
-        activeCategory === 'all' ||
-        restaurant.cuisine_tags.some((tag) =>
-          tag.toLowerCase().includes(activeCategory.toLowerCase())
-        );
-
-      return matchesSearch && matchesCategory;
+    return filterRestaurants(restaurants, {
+      search: searchQuery,
+      cuisine: activeCategory,
+      city,
     });
-  }, [restaurants, searchQuery, activeCategory]);
+  }, [restaurants, searchQuery, activeCategory, city]);
 
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
@@ -237,7 +230,7 @@ export default function CustomerHomePage() {
               <p className="text-sm text-gray-400 mb-0.5">Delivering to</p>
               <div className="flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-brand-orange" />
-                <span className="font-semibold text-gray-900">{city}, Abia State</span>
+                <span className="font-semibold text-gray-900">{formatCityName(city)}, Abia State</span>
                 <ChevronDown className="w-4 h-4 text-gray-400" />
               </div>
             </button>
@@ -316,7 +309,7 @@ export default function CustomerHomePage() {
               Popular Near You
             </h2>
             <Link
-              href="/restaurants"
+              href={`/restaurants?city=${city}`}
               className="flex items-center gap-0.5 text-brand-orange text-sm font-medium tap-target"
             >
               See all
@@ -394,23 +387,23 @@ export default function CustomerHomePage() {
               </button>
             </div>
             <div className="space-y-2">
-              {CITIES.map((c) => (
+              {CITY_OPTIONS.map((option) => (
                 <button
-                  key={c}
-                  onClick={() => handleCityChange(c)}
+                  key={option.value}
+                  onClick={() => handleCityChange(option.value)}
                   className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all active:scale-[0.98] min-h-[44px] ${
-                    city === c
+                    city === option.value
                       ? 'border-brand-orange bg-orange-50'
                       : 'border-gray-200 bg-gray-50 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <MapPin className={`w-5 h-5 ${city === c ? 'text-brand-orange' : 'text-gray-400'}`} />
-                    <span className={`font-medium ${city === c ? 'text-gray-900' : 'text-gray-600'}`}>
-                      {c}, Abia State
+                    <MapPin className={`w-5 h-5 ${city === option.value ? 'text-brand-orange' : 'text-gray-400'}`} />
+                    <span className={`font-medium ${city === option.value ? 'text-gray-900' : 'text-gray-600'}`}>
+                      {option.label}, Abia State
                     </span>
                   </div>
-                  {city === c && <Check className="w-5 h-5 text-brand-orange" />}
+                  {city === option.value && <Check className="w-5 h-5 text-brand-orange" />}
                 </button>
               ))}
             </div>

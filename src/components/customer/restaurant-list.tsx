@@ -4,33 +4,30 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Search, Star, Clock, MapPin } from 'lucide-react';
 import type { Restaurant } from '@/types/database';
+import { CITY_OPTIONS, CUISINE_FILTERS, filterRestaurants, formatCityName } from '@/lib/discovery';
 import { formatPrice } from '@/lib/utils';
-
-const CUISINE_TAGS = [
-  { label: 'All', value: '' },
-  { label: 'Jollof', value: 'jollof' },
-  { label: 'Pepper Soup', value: 'pepper-soup' },
-  { label: 'Grills', value: 'grills' },
-  { label: 'Shawarma', value: 'shawarma' },
-  { label: 'Local', value: 'local' },
-  { label: 'Drinks', value: 'drinks' },
-  { label: 'Rice', value: 'rice' },
-];
 
 interface RestaurantListProps {
   restaurants: Restaurant[];
   activeTag?: string;
   searchQuery?: string;
+  activeCity?: string;
 }
 
-export function RestaurantList({ restaurants, activeTag, searchQuery }: RestaurantListProps) {
+export function RestaurantList({
+  restaurants,
+  activeTag,
+  searchQuery,
+  activeCity,
+}: RestaurantListProps) {
   const [search, setSearch] = useState(searchQuery || '');
-  const [selectedTag, setSelectedTag] = useState(activeTag || '');
+  const [selectedTag, setSelectedTag] = useState(activeTag || 'all');
+  const [selectedCity, setSelectedCity] = useState(activeCity || '');
 
-  const filtered = restaurants.filter((r) => {
-    const matchesSearch = !search || r.name.toLowerCase().includes(search.toLowerCase());
-    const matchesTag = !selectedTag || r.cuisine_tags.includes(selectedTag);
-    return matchesSearch && matchesTag;
+  const filtered = filterRestaurants(restaurants, {
+    search,
+    cuisine: selectedTag,
+    city: selectedCity,
   });
 
   return (
@@ -47,9 +44,36 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
         />
       </div>
 
+      {/* City Filters */}
+      <div className="flex gap-2 overflow-x-auto pb-3 mb-3 no-scrollbar">
+        <button
+          onClick={() => setSelectedCity('')}
+          className={`tap-target whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-[0.97] ${
+            selectedCity === ''
+              ? 'gradient-orange text-white border-transparent shadow-md shadow-brand-orange/20'
+              : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+          }`}
+        >
+          All cities
+        </button>
+        {CITY_OPTIONS.map((city) => (
+          <button
+            key={city.value}
+            onClick={() => setSelectedCity(city.value)}
+            className={`tap-target whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-[0.97] ${
+              selectedCity === city.value
+                ? 'gradient-orange text-white border-transparent shadow-md shadow-brand-orange/20'
+                : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+            }`}
+          >
+            {city.label}
+          </button>
+        ))}
+      </div>
+
       {/* Tag Filters */}
       <div className="flex gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
-        {CUISINE_TAGS.map((tag) => (
+        {CUISINE_FILTERS.map((tag) => (
           <button
             key={tag.value}
             onClick={() => setSelectedTag(tag.value)}
@@ -67,6 +91,7 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
       {/* Results Count */}
       <p className="text-sm text-gray-400 mb-4">
         {filtered.length} restaurant{filtered.length !== 1 ? 's' : ''} found
+        {selectedCity ? ` in ${formatCityName(selectedCity)}` : ''}
       </p>
 
       {/* Restaurant Grid */}
@@ -170,11 +195,12 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
               ? `No restaurants match "${search}". Try a different search.`
               : 'No restaurants available right now. Check back soon!'}
           </p>
-          {(search || selectedTag) && (
+          {(search || selectedTag !== 'all' || selectedCity) && (
             <button
               onClick={() => {
                 setSearch('');
-                setSelectedTag('');
+                setSelectedTag('all');
+                setSelectedCity('');
               }}
               className="mt-4 tap-target px-5 py-2.5 rounded-xl text-sm font-medium gradient-orange text-white"
             >

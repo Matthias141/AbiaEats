@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 const FEATURED_CATEGORIES = [
-  { name: 'Jollof Rice', emoji: '🍚', slug: 'jollof' },
+  { name: 'Jollof Rice', emoji: '🍚', slug: 'rice-dishes' },
   { name: 'Pepper Soup', emoji: '🍲', slug: 'pepper-soup' },
   { name: 'Grills & BBQ', emoji: '🍖', slug: 'grills' },
   { name: 'Shawarma', emoji: '🌯', slug: 'shawarma' },
@@ -127,7 +127,7 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 animate-slide-up">
               <Link
-                href="/onboarding"
+                href="/home"
                 className="tap-target inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium rounded-xl gradient-orange text-white shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/30 transition-all active:scale-[0.97]"
               >
                 Order Now
@@ -209,7 +209,7 @@ export default function LandingPage() {
               Popular Restaurants
             </h2>
             <Link
-              href="/onboarding"
+              href="/restaurants"
               className="text-sm text-brand-orange hover:text-brand-orange-light flex items-center gap-1 transition-colors"
             >
               View all <ChevronRight className="w-4 h-4" />
@@ -311,7 +311,7 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
-                  href="/onboarding"
+                  href="/restaurants"
                   className="tap-target inline-flex items-center justify-center gap-2 px-8 py-3.5 text-base font-medium rounded-xl bg-white text-brand-orange hover:bg-white/90 transition-all active:scale-[0.97]"
                 >
                   Browse Restaurants
@@ -348,7 +348,7 @@ export default function LandingPage() {
             <div>
               <h4 className="font-semibold text-gray-900 mb-4">Quick Links</h4>
               <div className="space-y-2 text-sm text-gray-500">
-                <Link href="/onboarding" className="block hover:text-brand-orange transition-colors">
+                <Link href="/restaurants" className="block hover:text-brand-orange transition-colors">
                   Restaurants
                 </Link>
                 <Link href="/onboarding" className="block hover:text-brand-orange transition-colors">

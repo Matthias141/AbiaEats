@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { RestaurantList } from '@/components/customer/restaurant-list';
 import { MOCK_RESTAURANTS } from '@/lib/mock-data';
+import { formatCityName, normalizeCityValue } from '@/lib/discovery';
 import Link from 'next/link';
 import { ArrowLeft, MapPin } from 'lucide-react';
 
@@ -15,6 +16,7 @@ export default async function RestaurantsPage({
   searchParams: Promise<{ tag?: string; q?: string; city?: string }>;
 }) {
   const params = await searchParams;
+  const city = normalizeCityValue(params.city);
 
   let restaurants;
   try {
@@ -26,16 +28,8 @@ export default async function RestaurantsPage({
       .eq('is_active', true)
       .order('total_orders', { ascending: false });
 
-    if (params.city) {
-      query = query.eq('city', params.city);
-    }
-
-    if (params.tag) {
-      query = query.contains('cuisine_tags', [params.tag]);
-    }
-
-    if (params.q) {
-      query = query.ilike('name', `%${params.q}%`);
+    if (city) {
+      query = query.eq('city', city);
     }
 
     const { data } = await query;
@@ -62,7 +56,7 @@ export default async function RestaurantsPage({
                 <h1 className="text-lg font-semibold text-gray-900">Restaurants</h1>
                 <div className="flex items-center gap-1 text-xs text-gray-400">
                   <MapPin className="w-3 h-3" />
-                  <span>Aba & Umuahia</span>
+                  <span>{city ? `${formatCityName(city)}, Abia` : 'Aba & Umuahia'}</span>
                 </div>
               </div>
             </div>
@@ -81,6 +75,7 @@ export default async function RestaurantsPage({
           restaurants={restaurants}
           activeTag={params.tag}
           searchQuery={params.q}
+          activeCity={city ?? undefined}
         />
       </div>
     </div>
