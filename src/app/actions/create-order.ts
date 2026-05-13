@@ -79,122 +79,35 @@ export async function createOrderAction(
     return { success: false, error: parsed.error.issues[0].message };
   }
 
-  // ── STEP 3: Re-fetch authoritative prices from DB ─────────────────────────
-  // This is the core security fix. Client prices are DISCARDED.
-  const menuItemIds = input.items.map(i => i.menu_item_id);
-
-  const { data: dbItems, error: itemsError } = await supabase
-    .from('menu_items')
-    .select('id, price, is_available, restaurant_id, name')
-    .in('id', menuItemIds);
-
-  if (itemsError || !dbItems || dbItems.length === 0) {
-    return { success: false, error: 'Could not verify menu items. Please try again.' };
-  }
-
-  // ── STEP 4: Validate every item belongs to the stated restaurant ──────────
-  for (const item of input.items) {
-    const dbItem = dbItems.find(d => d.id === item.menu_item_id);
-
-    if (!dbItem) {
-      return { success: false, error: `Item "${item.name}" no longer exists` };
-    }
-    if (!dbItem.is_available) {
-      return { success: false, error: `"${dbItem.name}" is currently unavailable` };
-    }
-    if (dbItem.restaurant_id !== input.restaurant_id) {
-      // This should never happen via UI — catches Postman attacks
-      return { success: false, error: 'Cart contains items from multiple restaurants' };
-    }
-  }
-
-  // ── STEP 5: Calculate subtotal from DB prices ─────────────────────────────
-  // The client's price field is NEVER used. Only DB prices count.
-  const subtotal = input.items.reduce((sum, item) => {
-    const dbItem = dbItems.find(d => d.id === item.menu_item_id)!;
-    return sum + dbItem.price * item.quantity;
-  }, 0);
-
-  // ── STEP 6: Fetch authoritative delivery fee + commission rate ────────────
-  const { data: restaurant, error: restaurantError } = await supabase
-    .from('restaurants')
-    .select('delivery_fee, commission_rate, is_active, is_open')
-    .eq('id', input.restaurant_id)
-    .single();
-
-  if (restaurantError || !restaurant) {
-    return { success: false, error: 'Restaurant not found' };
-  }
-  if (!restaurant.is_active || !restaurant.is_open) {
-    return { success: false, error: 'This restaurant is currently closed' };
-  }
-
-  // ── STEP 7: Insert the order with DB-verified values ─────────────────────
-  const { data: order, error: orderError } = await supabase
-    .from('orders')
-    .insert({
-      customer_id: user.id,
-      restaurant_id: input.restaurant_id,
-      subtotal,                               // ← DB-calculated, not client
-      delivery_fee: restaurant.delivery_fee,  // ← DB-authoritative
-      commission_rate: restaurant.commission_rate, // ← DB-authoritative
-      delivery_address: input.delivery_address,
-      delivery_landmark: input.delivery_landmark ?? null,
-      customer_phone: input.customer_phone,
-      customer_name: input.customer_name,
-      notes: input.notes ?? null,
-      payment_method: 'opay_transfer',
-    })
-    .select('id, order_number, total')
-    .single();
-
-  if (orderError || !order) {
-    return { success: false, error: 'Failed to place order. Please try again.' };
-  }
-
-  // ── STEP 8: Insert order items with DB prices (snapshot) ─────────────────
-  const orderItems = input.items.map(item => {
-    const dbItem = dbItems.find(d => d.id === item.menu_item_id)!;
-    return {
-      order_id: order.id,
+  // ── STEP 3: Create order via hardened DB RPC ──────────────────────────────
+  // The RPC runs in one DB transaction, refetches authoritative menu prices,
+  // and is the only path allowed to insert customer orders through RLS.
+  const { data, error } = await supabase.rpc('create_order_secure', {
+    p_restaurant_id: parsed.data.restaurant_id,
+    p_items: parsed.data.items.map((item) => ({
       menu_item_id: item.menu_item_id,
-      name: dbItem.name,          // use DB name, not client name
-      price: dbItem.price,        // DB price — the snapshot that matters legally
       quantity: item.quantity,
-      subtotal: dbItem.price * item.quantity,
       notes: item.notes ?? null,
+    })),
+    p_delivery_address: parsed.data.delivery_address,
+    p_delivery_landmark: parsed.data.delivery_landmark ?? null,
+    p_customer_phone: parsed.data.customer_phone,
+    p_customer_name: parsed.data.customer_name,
+    p_notes: parsed.data.notes ?? null,
+  });
+
+  const order = Array.isArray(data) ? data[0] : data;
+
+  if (error || !order) {
+    return {
+      success: false,
+      error: error?.message ?? 'Failed to place order. Please try again.',
     };
-  });
-
-  const { error: itemsInsertError } = await supabase
-    .from('order_items')
-    .insert(orderItems);
-
-  if (itemsInsertError) {
-    // Order was created but items failed — this needs cleanup
-    // In production: add a cleanup trigger or transaction rollback
-    await supabase.from('orders').delete().eq('id', order.id);
-    return { success: false, error: 'Failed to save order items. Please try again.' };
   }
-
-  // ── STEP 9: Log the order creation to audit trail ─────────────────────────
-  await supabase.rpc('log_audit', {
-    p_action: 'order_created',
-    p_actor_id: user.id,
-    p_target_type: 'orders',
-    p_target_id: order.id,
-    p_metadata: {
-      order_number: order.order_number,
-      restaurant_id: input.restaurant_id,
-      subtotal,
-      total: order.total,
-      item_count: input.items.length,
-    },
-  });
 
   return {
     success: true,
-    order_id: order.id,
+    order_id: order.order_id,
     order_number: order.order_number,
     total: order.total,
   };

@@ -21,7 +21,7 @@ export default async function RestaurantsPage({
     const supabase = await createClient();
 
     let query = supabase
-      .from('restaurants')
+      .from('restaurants_public')
       .select('*')
       .eq('is_active', true)
       .order('total_orders', { ascending: false });

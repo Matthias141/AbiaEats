@@ -19,13 +19,13 @@ export default async function RestaurantPortalHome() {
   if (restaurant) {
     // Dashboard for approved restaurant owners
     const [ordersToday, totalOrders, revenue] = await Promise.all([
-      supabase.from('orders').select('id', { count: 'exact', head: true })
+      supabase.from('orders_for_restaurants').select('id', { count: 'exact', head: true })
         .eq('restaurant_id', restaurant.id)
         .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString()),
-      supabase.from('orders').select('id', { count: 'exact', head: true })
+      supabase.from('orders_for_restaurants').select('id', { count: 'exact', head: true })
         .eq('restaurant_id', restaurant.id)
         .eq('status', 'delivered'),
-      supabase.from('orders').select('total').eq('restaurant_id', restaurant.id).eq('status', 'delivered'),
+      supabase.from('orders_for_restaurants').select('total').eq('restaurant_id', restaurant.id).eq('status', 'delivered'),
     ]);
 
     const totalRevenue = (revenue.data || []).reduce((s, o) => s + o.total, 0);
