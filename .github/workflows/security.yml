@@ -13,6 +13,7 @@ jobs:
       contents: read        # checkout + gitleaks read
       security-events: write # semgrep SARIF upload
       actions: read         # required by gitleaks-action
+      pull-requests: write  # required for posting PR comments
 
     steps:
       - name: Checkout
@@ -54,7 +55,7 @@ jobs:
       - name: TypeScript check
         run: npx tsc --noEmit
 
-      # ── 5. ESLint ────────────────────────────────────────────────────────────
+      # ── 5. ESLint ─────────────────────────────────────────────────────────[...]
       - name: ESLint
         run: npm run lint
 
@@ -66,7 +67,7 @@ jobs:
           # fall back to structurally valid placeholders so the build succeeds
           # in forks or first-run environments.
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MjAwMDAwMDAwMH0.placeholder' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJp[...]
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'https://abia-eats.vercel.app' }}
           NEXT_PUBLIC_APP_NAME: AbiaEats
           NEXT_PUBLIC_OPAY_ACCOUNT_NAME: AbiaEats
