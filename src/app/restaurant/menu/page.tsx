@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { Plus, Pencil, Trash2, ImagePlus, X, ToggleLeft, ToggleRight, Star } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import type { MenuItem } from '@/types/database';
@@ -174,9 +175,15 @@ export default function RestaurantMenuPage() {
                 {categoryItems.map(item => (
                   <div key={item.id} className={`flex items-center gap-4 p-4 ${!item.is_available ? 'opacity-50' : ''}`}>
                     {/* Image */}
-                    <div className="w-16 h-16 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden">
+                    <div className="relative w-16 h-16 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden">
                       {item.image_url ? (
-                        <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                        <Image
+                          src={item.image_url}
+                          alt={item.name}
+                          fill
+                          sizes="64px"
+                          className="object-cover"
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-2xl">🍽️</div>
                       )}
@@ -234,7 +241,13 @@ export default function RestaurantMenuPage() {
                 >
                   {form.image_url ? (
                     <>
-                      <img src={form.image_url} alt="preview" className="absolute inset-0 w-full h-full object-cover" />
+                      <Image
+                        src={form.image_url}
+                        alt="preview"
+                        fill
+                        sizes="(max-width: 640px) 100vw, 512px"
+                        className="object-cover"
+                      />
                       <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                         <p className="text-white text-xs font-medium">Change photo</p>
                       </div>

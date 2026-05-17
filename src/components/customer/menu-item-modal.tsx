@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { X, Minus, Plus, Clock, ShoppingBag } from 'lucide-react';
 import type { MenuItem, Restaurant } from '@/types/database';
 import { useCart } from '@/contexts/cart-context';
@@ -88,10 +89,12 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
           {/* Image */}
           <div className="aspect-[16/10] bg-gray-50 relative overflow-hidden">
             {item.image_url ? (
-              <img
+              <Image
                 src={item.image_url}
                 alt={item.name}
-                className="w-full h-full object-cover"
+                fill
+                sizes="100vw"
+                className="object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">

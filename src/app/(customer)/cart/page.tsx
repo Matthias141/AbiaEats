@@ -3,6 +3,7 @@
 import { useCart } from '@/contexts/cart-context';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 
 // ============================================================================
@@ -100,12 +101,14 @@ export default function CartPage() {
                   className="flex items-center gap-3 liquid-glass rounded-2xl p-3"
                 >
                   {/* Item image */}
-                  <div className="w-16 h-16 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                  <div className="relative w-16 h-16 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center overflow-hidden">
                     {item.image_url ? (
-                      <img
+                      <Image
                         src={item.image_url}
                         alt={item.name}
-                        className="w-full h-full object-cover"
+                        fill
+                        sizes="64px"
+                        className="object-cover"
                         loading="lazy"
                       />
                     ) : (

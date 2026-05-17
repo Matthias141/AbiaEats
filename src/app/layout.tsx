@@ -1,6 +1,25 @@
 import type { Metadata, Viewport } from "next";
+import { JetBrains_Mono, Outfit, Playfair_Display } from "next/font/google";
 import { CartProvider } from "@/contexts/cart-context";
 import "./globals.css";
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -40,15 +59,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="font-body antialiased bg-white text-gray-900 overflow-x-hidden">
+      <body
+        className={`${outfit.variable} ${playfair.variable} ${jetBrainsMono.variable} font-body antialiased bg-white text-gray-900 overflow-x-hidden`}
+      >
         <CartProvider>{children}</CartProvider>
       </body>
     </html>

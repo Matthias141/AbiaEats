@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search, Star, Clock, MapPin } from 'lucide-react';
 import type { Restaurant } from '@/types/database';
 import { CITY_OPTIONS, CUISINE_FILTERS, filterRestaurants, formatCityName } from '@/lib/discovery';
@@ -106,10 +107,12 @@ export function RestaurantList({
               {/* Image */}
               <div className="aspect-video bg-gray-50 relative overflow-hidden flex items-center justify-center">
                 {restaurant.cover_image_url ? (
-                  <img
+                  <Image
                     src={restaurant.cover_image_url}
                     alt={restaurant.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
                 ) : (

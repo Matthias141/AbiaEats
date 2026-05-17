@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Star, Clock, MapPin, Plus, ShoppingBag, Share2 } from 'lucide-react';
 import type { Restaurant, MenuItem } from '@/types/database';
 import { useCart } from '@/contexts/cart-context';
@@ -199,10 +200,13 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
         {/* Cover Image */}
         <div className="aspect-[16/9] relative overflow-hidden bg-gray-100">
           {restaurant.cover_image_url || restaurant.image_url ? (
-            <img
+            <Image
               src={restaurant.cover_image_url || restaurant.image_url || ''}
               alt={restaurant.name}
-              className="w-full h-full object-cover"
+              fill
+              sizes="100vw"
+              className="object-cover"
+              priority
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50 flex items-center justify-center">
@@ -242,10 +246,12 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
               {/* Logo */}
               <div className="w-14 h-14 rounded-xl liquid-chip overflow-hidden flex-shrink-0 flex items-center justify-center">
                 {restaurant.image_url ? (
-                  <img
+                  <Image
                     src={restaurant.image_url}
                     alt={restaurant.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="56px"
+                    className="object-cover"
                   />
                 ) : (
                   <span className="text-xl font-bold text-brand-orange">
@@ -376,10 +382,12 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                       {/* Image area */}
                       <div className="relative aspect-square overflow-hidden bg-gray-50">
                         {item.image_url ? (
-                          <img
+                          <Image
                             src={item.image_url}
                             alt={item.name}
-                            className="w-full h-full object-cover"
+                            fill
+                            sizes="(max-width: 640px) 50vw, 320px"
+                            className="object-cover"
                             loading="lazy"
                           />
                         ) : (

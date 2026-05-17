@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search, MapPin, Star, Clock, ChevronRight, ChevronDown, Bell, Check, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import {
@@ -69,10 +70,12 @@ function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
       {/* Cover image */}
       <div className="h-40 bg-gray-50 relative flex items-center justify-center">
         {restaurant.cover_image_url || restaurant.image_url ? (
-          <img
+          <Image
             src={restaurant.cover_image_url || restaurant.image_url || ''}
             alt={restaurant.name}
-            className="w-full h-full object-cover"
+            fill
+            sizes="(max-width: 640px) 100vw, 512px"
+            className="object-cover"
             loading="lazy"
           />
         ) : (
