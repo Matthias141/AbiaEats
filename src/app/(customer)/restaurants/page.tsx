@@ -40,15 +40,15 @@ export default async function RestaurantsPage({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen liquid-surface overflow-x-hidden">
       {/* Header */}
-      <div className="sticky top-0 z-40 border-b border-gray-100 backdrop-blur-xl bg-white/95">
+      <div className="sticky top-0 z-40 liquid-glass-nav border-x-0 border-t-0">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link
                 href="/home"
-                className="tap-target w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                className="tap-target w-10 h-10 rounded-xl liquid-chip flex items-center justify-center hover:bg-white/80 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4 text-gray-700" />
               </Link>

@@ -25,15 +25,15 @@ export default function CartPage() {
   const isEmpty = items.length === 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen liquid-surface overflow-x-hidden">
       <div className="max-w-lg mx-auto pb-24">
         {/* ================================================================
             Header
             ================================================================ */}
-        <header className="bg-white px-4 flex items-center gap-3 pt-6 pb-4">
+        <header className="liquid-glass-nav px-4 flex items-center gap-3 pt-6 pb-4 rounded-b-[2rem] border-t-0 border-x-0">
           <Link
             href="/home"
-            className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 active:scale-95 transition-transform min-h-[44px] min-w-[44px]"
+            className="flex items-center justify-center w-10 h-10 rounded-xl liquid-chip active:scale-95 transition-transform min-h-[44px] min-w-[44px]"
             aria-label="Go back"
           >
             <ArrowLeft className="w-5 h-5 text-gray-700" />
@@ -53,7 +53,7 @@ export default function CartPage() {
             ================================================================ */}
         {isEmpty && (
           <div className="text-center py-24 px-4">
-            <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+            <div className="w-20 h-20 rounded-full liquid-chip flex items-center justify-center mx-auto mb-4">
               <ShoppingBag className="w-10 h-10 text-gray-300" />
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
@@ -97,7 +97,7 @@ export default function CartPage() {
               {items.map((item) => (
                 <div
                   key={item.menu_item_id}
-                  className="flex items-center gap-3 bg-white rounded-2xl p-3 card-shadow"
+                  className="flex items-center gap-3 liquid-glass rounded-2xl p-3"
                 >
                   {/* Item image */}
                   <div className="w-16 h-16 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center overflow-hidden">
@@ -163,7 +163,7 @@ export default function CartPage() {
             {/* ================================================================
                 Order Summary
                 ================================================================ */}
-            <div className="bg-white rounded-2xl p-4 mb-6 space-y-3 card-shadow">
+            <div className="liquid-glass rounded-2xl p-4 mb-6 space-y-3">
               <h3 className="text-sm font-semibold text-gray-900 mb-2">
                 Order Summary
               </h3>

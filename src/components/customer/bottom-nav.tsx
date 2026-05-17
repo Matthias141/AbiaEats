@@ -18,7 +18,7 @@ export function BottomNav() {
   const { itemCount } = useCart();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-gray-100 safe-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 liquid-glass-nav border-x-0 border-b-0 safe-bottom">
       <div className="max-w-lg mx-auto flex items-center justify-around px-2 h-16">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive =
@@ -30,10 +30,10 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                'flex flex-col items-center justify-center gap-0.5 w-16 h-14 rounded-xl transition-colors relative',
+                'flex flex-col items-center justify-center gap-0.5 w-16 h-14 rounded-xl transition-all relative',
                 isActive
-                  ? 'text-brand-orange'
-                  : 'text-gray-400 hover:text-gray-600'
+                  ? 'liquid-chip text-brand-orange shadow-sm'
+                  : 'text-gray-400 hover:text-gray-600 hover:bg-white/35'
               )}
             >
               <div className="relative">

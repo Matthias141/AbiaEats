@@ -51,7 +51,7 @@ export default async function RestaurantPortalHome() {
             { label: 'Total Delivered', value: totalOrders.count ?? 0 },
             { label: 'Total Revenue', value: formatPrice(totalRevenue) },
           ].map(({ label, value }) => (
-            <div key={label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+            <div key={label} className="liquid-glass rounded-2xl p-5">
               <p className="text-2xl font-bold text-gray-900">{value}</p>
               <p className="text-sm text-gray-500 mt-0.5">{label}</p>
             </div>
@@ -59,11 +59,11 @@ export default async function RestaurantPortalHome() {
         </div>
 
         <div className="flex gap-4">
-          <Link href="/restaurant/menu" className="flex-1 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:border-brand-orange/30 transition-colors group">
+          <Link href="/restaurant/menu" className="flex-1 liquid-glass liquid-lift rounded-2xl p-5 transition-colors group">
             <h3 className="font-semibold text-gray-900 group-hover:text-brand-orange transition-colors">Manage Menu →</h3>
             <p className="text-sm text-gray-500 mt-1">Add, edit, and organise your menu items</p>
           </Link>
-          <Link href="/restaurant/orders" className="flex-1 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:border-brand-orange/30 transition-colors group">
+          <Link href="/restaurant/orders" className="flex-1 liquid-glass liquid-lift rounded-2xl p-5 transition-colors group">
             <h3 className="font-semibold text-gray-900 group-hover:text-brand-orange transition-colors">View Orders →</h3>
             <p className="text-sm text-gray-500 mt-1">Track incoming and active orders</p>
           </Link>
@@ -92,7 +92,7 @@ export default async function RestaurantPortalHome() {
 
     return (
       <div className="max-w-lg mx-auto text-center py-20">
-        <div className={`w-16 h-16 ${s.bg} rounded-2xl flex items-center justify-center mx-auto mb-5`}>
+        <div className={`w-16 h-16 ${s.bg} liquid-chip rounded-2xl flex items-center justify-center mx-auto mb-5`}>
           <Icon className={`w-8 h-8 ${s.color}`} />
         </div>
         <h2 className="text-xl font-bold text-gray-900 mb-2">Application {s.label}</h2>
@@ -110,7 +110,7 @@ export default async function RestaurantPortalHome() {
   // No restaurant, no application — show CTA
   return (
     <div className="max-w-lg mx-auto text-center py-20">
-      <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
+      <div className="w-16 h-16 liquid-chip rounded-2xl flex items-center justify-center mx-auto mb-5">
         <Store className="w-8 h-8 text-brand-orange" />
       </div>
       <h2 className="text-xl font-bold text-gray-900 mb-2">List your restaurant</h2>

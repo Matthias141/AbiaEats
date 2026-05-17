@@ -193,7 +193,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
   const cartTotal = subtotal + deliveryFee;
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden pb-24">
+    <div className="min-h-screen liquid-surface overflow-x-hidden pb-24">
       {/* Hero Section */}
       <div className="relative">
         {/* Cover Image */}
@@ -223,13 +223,13 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20">
           <Link
             href="/restaurants"
-            className="w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm shadow-sm flex items-center justify-center active:scale-[0.97] transition-transform"
+            className="w-10 h-10 rounded-xl liquid-chip flex items-center justify-center active:scale-[0.97] transition-transform"
           >
             <ArrowLeft className="w-5 h-5 text-gray-700" />
           </Link>
           <button
             onClick={handleShare}
-            className="w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm shadow-sm flex items-center justify-center active:scale-[0.97] transition-transform"
+            className="w-10 h-10 rounded-xl liquid-chip flex items-center justify-center active:scale-[0.97] transition-transform"
           >
             <Share2 className="w-5 h-5 text-gray-700" />
           </button>
@@ -237,10 +237,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
 
         {/* Restaurant info block */}
         <div className="relative z-10 -mt-8 px-4">
-          <div className="max-w-2xl mx-auto bg-white rounded-2xl p-5 card-shadow-md">
+          <div className="max-w-2xl mx-auto liquid-glass rounded-2xl p-5">
             <div className="flex items-start gap-4">
               {/* Logo */}
-              <div className="w-14 h-14 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0 flex items-center justify-center">
+              <div className="w-14 h-14 rounded-xl liquid-chip overflow-hidden flex-shrink-0 flex items-center justify-center">
                 {restaurant.image_url ? (
                   <img
                     src={restaurant.image_url}
@@ -304,7 +304,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                     {restaurant.cuisine_tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-0.5 rounded-full bg-orange-50 text-brand-orange text-xs font-medium"
+                        className="px-2 py-0.5 rounded-full liquid-chip text-brand-orange text-xs font-medium"
                       >
                         {tag}
                       </span>
@@ -319,7 +319,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
 
       {/* Category Tabs - Sticky */}
       {categoryNames.length > 0 && (
-        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-gray-100 mt-4">
+        <div className="sticky top-0 z-30 liquid-glass-nav border-x-0 mt-4">
           <div
             ref={tabsRef}
             className="max-w-2xl mx-auto flex overflow-x-auto no-scrollbar px-4 gap-1"
@@ -371,7 +371,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                     <div
                       key={item.id}
                       onClick={() => handleItemClick(item)}
-                      className="rounded-2xl bg-white overflow-hidden cursor-pointer card-shadow hover:card-shadow-md transition-all active:scale-[0.97]"
+                      className="liquid-glass liquid-lift rounded-2xl overflow-hidden cursor-pointer transition-all active:scale-[0.97]"
                     >
                       {/* Image area */}
                       <div className="relative aspect-square overflow-hidden bg-gray-50">
@@ -452,7 +452,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
 
       {/* Floating Cart Bar */}
       {itemCount > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white/90 backdrop-blur-xl border-t border-gray-100 safe-bottom">
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 liquid-glass-nav border-x-0 border-b-0 safe-bottom">
           <div className="max-w-2xl mx-auto">
             <Link href="/cart">
               <div className="w-full min-h-[52px] flex items-center justify-between gap-3 px-5 py-3 rounded-2xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/25 active:scale-[0.97] transition-transform cursor-pointer">

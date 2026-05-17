@@ -40,7 +40,7 @@ export function RestaurantList({
           placeholder="Search restaurants..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full min-h-[48px] pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all"
+          className="w-full min-h-[48px] pl-11 pr-4 liquid-input rounded-2xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all"
         />
       </div>
 
@@ -51,7 +51,7 @@ export function RestaurantList({
           className={`tap-target whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-[0.97] ${
             selectedCity === ''
               ? 'gradient-orange text-white border-transparent shadow-md shadow-brand-orange/20'
-              : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+              : 'liquid-chip text-gray-600 hover:border-white'
           }`}
         >
           All cities
@@ -63,7 +63,7 @@ export function RestaurantList({
             className={`tap-target whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-[0.97] ${
               selectedCity === city.value
                 ? 'gradient-orange text-white border-transparent shadow-md shadow-brand-orange/20'
-                : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                : 'liquid-chip text-gray-600 hover:border-white'
             }`}
           >
             {city.label}
@@ -80,7 +80,7 @@ export function RestaurantList({
             className={`tap-target whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-[0.97] ${
               selectedTag === tag.value
                 ? 'gradient-orange text-white border-transparent shadow-md shadow-brand-orange/20'
-                : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                : 'liquid-chip text-gray-600 hover:border-white'
             }`}
           >
             {tag.label}
@@ -101,7 +101,7 @@ export function RestaurantList({
             <Link
               key={restaurant.id}
               href={`/restaurants/${restaurant.id}`}
-              className="group rounded-2xl bg-white overflow-hidden card-shadow hover:card-shadow-md transition-all active:scale-[0.99]"
+              className="group liquid-glass liquid-lift rounded-2xl overflow-hidden transition-all active:scale-[0.99]"
             >
               {/* Image */}
               <div className="aspect-video bg-gray-50 relative overflow-hidden flex items-center justify-center">
@@ -147,7 +147,7 @@ export function RestaurantList({
                     )}
                   </div>
                   {restaurant.rating_count > 0 && (
-                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-xs font-medium ml-2 flex-shrink-0">
+                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full liquid-chip text-amber-600 text-xs font-medium ml-2 flex-shrink-0">
                       <Star className="w-3 h-3 fill-current" />
                       {restaurant.average_rating.toFixed(1)}
                     </div>
@@ -170,13 +170,13 @@ export function RestaurantList({
                   {restaurant.cuisine_tags.slice(0, 3).map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-0.5 rounded-full bg-gray-100 text-xs text-gray-500"
+                      className="px-2 py-0.5 rounded-full liquid-chip text-xs text-gray-500"
                     >
                       {tag}
                     </span>
                   ))}
                   {restaurant.cuisine_tags.length > 3 && (
-                    <span className="px-2 py-0.5 rounded-full bg-gray-100 text-xs text-gray-400">
+                    <span className="px-2 py-0.5 rounded-full liquid-chip text-xs text-gray-400">
                       +{restaurant.cuisine_tags.length - 3}
                     </span>
                   )}

@@ -39,17 +39,17 @@ const CITY_STORAGE_KEY = 'abiaeats_city';
 
 function RestaurantCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl overflow-hidden card-shadow animate-pulse">
-      <div className="h-40 bg-gray-100" />
+    <div className="liquid-glass rounded-2xl overflow-hidden animate-pulse">
+      <div className="h-40 bg-white/50" />
       <div className="p-4 space-y-3">
-        <div className="h-5 bg-gray-100 rounded-lg w-3/4" />
+        <div className="h-5 bg-white/70 rounded-lg w-3/4" />
         <div className="flex gap-2">
-          <div className="h-4 bg-gray-100 rounded-lg w-16" />
-          <div className="h-4 bg-gray-100 rounded-lg w-16" />
+          <div className="h-4 bg-white/70 rounded-lg w-16" />
+          <div className="h-4 bg-white/70 rounded-lg w-16" />
         </div>
         <div className="flex items-center justify-between">
-          <div className="h-4 bg-gray-100 rounded-lg w-20" />
-          <div className="h-4 bg-gray-100 rounded-lg w-24" />
+          <div className="h-4 bg-white/70 rounded-lg w-20" />
+          <div className="h-4 bg-white/70 rounded-lg w-24" />
         </div>
       </div>
     </div>
@@ -64,7 +64,7 @@ function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
   return (
     <Link
       href={`/restaurants/${restaurant.id}`}
-      className="block bg-white rounded-2xl overflow-hidden card-shadow active:scale-[0.98] transition-all hover:card-shadow-md"
+      className="liquid-glass liquid-lift block rounded-2xl overflow-hidden active:scale-[0.98] transition-all"
     >
       {/* Cover image */}
       <div className="h-40 bg-gray-50 relative flex items-center justify-center">
@@ -91,7 +91,7 @@ function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
 
         {/* Rating badge */}
         {restaurant.rating_count > 0 && (
-          <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-sm">
+          <div className="absolute top-3 right-3 flex items-center gap-1 liquid-chip px-2.5 py-1 rounded-full">
             <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
             <span className="text-xs font-semibold text-gray-800">
               {restaurant.average_rating.toFixed(1)}
@@ -216,16 +216,16 @@ export default function CustomerHomePage() {
   }, [restaurants, searchQuery, activeCategory, city]);
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen liquid-surface overflow-x-hidden">
       <div className="max-w-lg mx-auto pb-24">
         {/* ================================================================
             Header
             ================================================================ */}
-        <header className="bg-white px-4 pt-6 pb-4">
+        <header className="liquid-glass-nav px-4 pt-6 pb-4 rounded-b-[2rem] border-t-0 border-x-0">
           <div className="flex items-center justify-between mb-5">
             <button
               onClick={() => setShowCityPicker(true)}
-              className="text-left tap-target"
+              className="text-left tap-target rounded-2xl px-2 -ml-2 transition-colors hover:bg-white/35"
             >
               <p className="text-sm text-gray-400 mb-0.5">Delivering to</p>
               <div className="flex items-center gap-1.5">
@@ -234,7 +234,7 @@ export default function CustomerHomePage() {
                 <ChevronDown className="w-4 h-4 text-gray-400" />
               </div>
             </button>
-            <button className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center min-h-[44px] min-w-[44px]">
+            <button className="w-10 h-10 rounded-full liquid-chip flex items-center justify-center min-h-[44px] min-w-[44px]">
               <Bell className="w-5 h-5 text-gray-600" />
             </button>
           </div>
@@ -247,7 +247,7 @@ export default function CustomerHomePage() {
               placeholder="Search restaurants, cuisines..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50 rounded-2xl py-3.5 pl-12 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-brand-orange/20 focus:bg-white transition-all min-h-[44px]"
+              className="w-full liquid-input rounded-2xl py-3.5 pl-12 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-brand-orange/20 transition-all min-h-[44px]"
             />
           </div>
         </header>
@@ -255,7 +255,7 @@ export default function CustomerHomePage() {
         {/* ================================================================
             Cuisine Categories (horizontal scroll)
             ================================================================ */}
-        <section className="bg-white px-4 pb-4 mb-2">
+        <section className="px-4 pb-4 mb-2 pt-4">
           <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4">
             {CUISINE_CATEGORIES.map((cat) => (
               <button
@@ -263,8 +263,8 @@ export default function CustomerHomePage() {
                 onClick={() => setActiveCategory(cat.value)}
                 className={`flex flex-col items-center gap-1.5 min-w-[68px] py-2.5 px-2 rounded-2xl transition-all tap-target shrink-0 ${
                   activeCategory === cat.value
-                    ? 'bg-brand-orange text-white shadow-md shadow-brand-orange/25'
-                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                    ? 'liquid-glass-strong text-white shadow-md shadow-brand-orange/25'
+                    : 'liquid-chip text-gray-600 hover:bg-white/80'
                 }`}
               >
                 <span className="text-2xl" role="img" aria-label={cat.label}>
@@ -282,7 +282,7 @@ export default function CustomerHomePage() {
             Promo Banner
             ================================================================ */}
         <section className="px-4 mb-4">
-          <div className="gradient-orange rounded-2xl p-5 relative overflow-hidden">
+          <div className="liquid-glass-strong rounded-2xl p-5 relative overflow-hidden">
             <div className="relative z-10">
               <p className="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">
                 Limited Offer
@@ -328,7 +328,7 @@ export default function CustomerHomePage() {
 
           {/* Empty state */}
           {!loading && filteredRestaurants.length === 0 && (
-            <div className="text-center py-16 bg-white rounded-2xl card-shadow">
+            <div className="text-center py-16 liquid-glass rounded-2xl">
               <span className="text-5xl block mb-4" role="img" aria-label="No restaurants">
                 🍽️
               </span>
@@ -372,16 +372,16 @@ export default function CustomerHomePage() {
         <div className="fixed inset-0 z-[100] flex items-end justify-center">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/40"
+            className="absolute inset-0 bg-black/35 backdrop-blur-sm"
             onClick={() => setShowCityPicker(false)}
           />
           {/* Sheet */}
-          <div className="relative w-full max-w-lg bg-white rounded-t-3xl p-6 pb-8 animate-slide-up">
+          <div className="relative w-full max-w-lg liquid-glass rounded-t-3xl p-6 pb-8 animate-slide-up-sheet">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-gray-900">Select your city</h2>
               <button
                 onClick={() => setShowCityPicker(false)}
-                className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
+                className="w-8 h-8 rounded-full liquid-chip flex items-center justify-center"
               >
                 <X className="w-4 h-4 text-gray-500" />
               </button>
@@ -394,7 +394,7 @@ export default function CustomerHomePage() {
                   className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all active:scale-[0.98] min-h-[44px] ${
                     city === option.value
                       ? 'border-brand-orange bg-orange-50'
-                      : 'border-gray-200 bg-gray-50 hover:border-gray-300'
+                      : 'border-white/60 bg-white/50 hover:border-white'
                   }`}
                 >
                   <div className="flex items-center gap-3">

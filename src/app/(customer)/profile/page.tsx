@@ -36,10 +36,10 @@ export default async function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+      <div className="min-h-screen liquid-surface overflow-x-hidden">
         <div className="max-w-lg mx-auto px-4 pt-10 pb-28">
-          <div className="bg-white rounded-2xl card-shadow p-6 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center mx-auto mb-5">
+          <div className="liquid-glass rounded-2xl p-6 text-center">
+            <div className="w-16 h-16 rounded-2xl liquid-chip flex items-center justify-center mx-auto mb-5">
               <User className="w-8 h-8 text-brand-orange" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Your profile</h1>
@@ -55,7 +55,7 @@ export default async function ProfilePage() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="tap-target rounded-xl border border-gray-200 bg-white text-gray-700 font-medium"
+                className="tap-target rounded-xl liquid-chip text-gray-700 font-medium"
               >
                 Create account
               </Link>
@@ -80,7 +80,7 @@ export default async function ProfilePage() {
   const orders = (recentOrders || []) as unknown as RecentOrder[];
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen liquid-surface overflow-x-hidden">
       <div className="max-w-lg mx-auto px-4 pt-6 pb-28">
         <header className="mb-5">
           <p className="text-sm text-gray-400 mb-1">Profile</p>
@@ -89,7 +89,7 @@ export default async function ProfilePage() {
           </h1>
         </header>
 
-        <section className="bg-white rounded-2xl card-shadow p-5 mb-4">
+        <section className="liquid-glass rounded-2xl p-5 mb-4">
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 rounded-2xl gradient-orange text-white flex items-center justify-center flex-shrink-0">
               <User className="w-7 h-7" />
@@ -107,7 +107,7 @@ export default async function ProfilePage() {
           </div>
         </section>
 
-        <section className="bg-white rounded-2xl card-shadow divide-y divide-gray-100 mb-4">
+        <section className="liquid-glass rounded-2xl divide-y divide-white/60 mb-4">
           <div className="p-4 flex items-center gap-3">
             <Mail className="w-4 h-4 text-gray-400" />
             <div className="min-w-0">
@@ -133,7 +133,7 @@ export default async function ProfilePage() {
           </div>
         </section>
 
-        <section className="bg-white rounded-2xl card-shadow p-4 mb-4">
+        <section className="liquid-glass rounded-2xl p-4 mb-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-gray-900 flex items-center gap-2">
               <ReceiptText className="w-4 h-4 text-brand-orange" />
@@ -149,7 +149,7 @@ export default async function ProfilePage() {
               {orders.map((order) => {
                 const cfg = orderStatusConfig[order.status];
                 return (
-                  <div key={order.id} className="rounded-xl bg-gray-50 p-3">
+                  <div key={order.id} className="rounded-xl liquid-glass-soft p-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-gray-900">{order.order_number}</p>
@@ -186,7 +186,7 @@ export default async function ProfilePage() {
         </section>
 
         <form action="/api/auth/signout" method="POST">
-          <button className="tap-target w-full rounded-xl bg-white border border-gray-200 text-gray-600 font-medium gap-2">
+          <button className="tap-target w-full rounded-xl liquid-chip text-gray-600 font-medium gap-2">
             <LogOut className="w-4 h-4" />
             Sign out
           </button>

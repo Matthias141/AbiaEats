@@ -145,7 +145,7 @@ export default async function RestaurantOrdersPage() {
           { label: 'Active now', value: activeCount },
           { label: 'Awaiting payment', value: awaitingPaymentCount },
         ].map(({ label, value }) => (
-          <div key={label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+          <div key={label} className="liquid-glass rounded-2xl p-5">
             <p className="text-2xl font-bold text-gray-900">{value}</p>
             <p className="text-sm text-gray-500 mt-0.5">{label}</p>
           </div>
@@ -153,7 +153,7 @@ export default async function RestaurantOrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+        <div className="liquid-glass rounded-2xl p-12 text-center">
           <ReceiptText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
           <h2 className="font-semibold text-gray-900 mb-1">No orders yet</h2>
           <p className="text-sm text-gray-500">New customer orders will show up here.</p>
@@ -167,7 +167,7 @@ export default async function RestaurantOrdersPage() {
             return (
               <div
                 key={order.id}
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5"
+                className="liquid-glass rounded-2xl p-5"
               >
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
@@ -204,7 +204,7 @@ export default async function RestaurantOrdersPage() {
                       </div>
                     )}
 
-                    <div className="rounded-xl bg-gray-50 divide-y divide-gray-100">
+                    <div className="rounded-xl liquid-glass-soft divide-y divide-white/60">
                       {order.order_items.map((item) => (
                         <div
                           key={`${order.id}-${item.name}`}
@@ -221,7 +221,7 @@ export default async function RestaurantOrdersPage() {
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-xl p-4 h-fit">
+                  <div className="liquid-glass-soft rounded-xl p-4 h-fit">
                     <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
                       <Clock className="w-4 h-4" />
                       <span>Next step</span>
