@@ -46,13 +46,14 @@ export function useRestaurant() {
 
   const toggleOpen = useCallback(async () => {
     if (!restaurant) return;
-    const { error } = await supabase
-      .from('restaurants')
-      .update({ is_open: !restaurant.is_open })
-      .eq('id', restaurant.id);
+    const nextOpenStatus = !restaurant.is_open;
+    const { error } = await supabase.rpc('set_restaurant_open_status', {
+      p_restaurant_id: restaurant.id,
+      p_is_open: nextOpenStatus,
+    });
 
     if (!error) {
-      setRestaurant((prev) => prev ? { ...prev, is_open: !prev.is_open } : null);
+      setRestaurant((prev) => prev ? { ...prev, is_open: nextOpenStatus } : null);
     }
   }, [restaurant, supabase]);
 

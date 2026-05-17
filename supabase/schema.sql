@@ -289,6 +289,42 @@ AS $$
 $$;
 
 -- --------------------------------------------------------------------------
+-- restaurant_is_public: active restaurant check for public menu item reads
+-- --------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION restaurant_is_public(restaurant_uuid uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM restaurants
+    WHERE id = restaurant_uuid
+      AND is_active = true
+  );
+$$;
+
+-- --------------------------------------------------------------------------
+-- owns_order_restaurant: check if current user owns an order's restaurant
+-- --------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION owns_order_restaurant(order_uuid uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM orders
+    JOIN restaurants ON restaurants.id = orders.restaurant_id
+    WHERE orders.id = order_uuid
+      AND restaurants.owner_id = auth.uid()
+  );
+$$;
+
+-- --------------------------------------------------------------------------
 -- log_audit: SECURITY DEFINER function for inserting audit records
 -- Called from application code; bypasses RLS on audit_log
 -- --------------------------------------------------------------------------
@@ -314,6 +350,290 @@ BEGIN
   RETURN v_id;
 END;
 $$;
+
+-- --------------------------------------------------------------------------
+-- create_order_secure: only supported customer order creation path
+-- Re-fetches authoritative prices and restaurant fees inside one transaction.
+-- --------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION create_order_secure(
+  p_restaurant_id uuid,
+  p_items jsonb,
+  p_delivery_address text,
+  p_delivery_landmark text DEFAULT NULL,
+  p_customer_phone text DEFAULT NULL,
+  p_customer_name text DEFAULT NULL,
+  p_notes text DEFAULT NULL
+)
+RETURNS TABLE(order_id uuid, order_number text, total integer)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_user_id uuid := auth.uid();
+  v_restaurant record;
+  v_item jsonb;
+  v_item_id uuid;
+  v_quantity integer;
+  v_item_notes text;
+  v_db_item record;
+  v_subtotal integer := 0;
+  v_order_items jsonb := '[]'::jsonb;
+  v_order_id uuid;
+  v_order_number text;
+  v_total integer;
+BEGIN
+  IF v_user_id IS NULL THEN
+    RAISE EXCEPTION 'Authentication required';
+  END IF;
+
+  IF p_delivery_address IS NULL OR length(trim(p_delivery_address)) < 5 THEN
+    RAISE EXCEPTION 'Delivery address is required';
+  END IF;
+
+  IF p_customer_name IS NULL OR length(trim(p_customer_name)) < 2 THEN
+    RAISE EXCEPTION 'Customer name is required';
+  END IF;
+
+  IF p_customer_phone IS NULL OR p_customer_phone !~ '^(\+234|0)[789][01][0-9]{8}$' THEN
+    RAISE EXCEPTION 'Valid customer phone is required';
+  END IF;
+
+  IF p_items IS NULL OR jsonb_typeof(p_items) <> 'array' THEN
+    RAISE EXCEPTION 'Order items must be an array';
+  END IF;
+
+  IF jsonb_array_length(p_items) < 1 OR jsonb_array_length(p_items) > 20 THEN
+    RAISE EXCEPTION 'Order must contain between 1 and 20 items';
+  END IF;
+
+  SELECT delivery_fee, commission_rate, is_active, is_open
+  INTO v_restaurant
+  FROM restaurants
+  WHERE id = p_restaurant_id;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Restaurant not found';
+  END IF;
+
+  IF NOT v_restaurant.is_active OR NOT v_restaurant.is_open THEN
+    RAISE EXCEPTION 'This restaurant is currently closed';
+  END IF;
+
+  FOR v_item IN SELECT * FROM jsonb_array_elements(p_items)
+  LOOP
+    v_item_id := (v_item ->> 'menu_item_id')::uuid;
+    v_quantity := (v_item ->> 'quantity')::integer;
+    v_item_notes := NULLIF(v_item ->> 'notes', '');
+
+    IF v_quantity < 1 OR v_quantity > 20 THEN
+      RAISE EXCEPTION 'Invalid item quantity';
+    END IF;
+
+    SELECT id, price, is_available, restaurant_id, name
+    INTO v_db_item
+    FROM menu_items
+    WHERE id = v_item_id;
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Menu item no longer exists';
+    END IF;
+
+    IF NOT v_db_item.is_available THEN
+      RAISE EXCEPTION 'Menu item is currently unavailable';
+    END IF;
+
+    IF v_db_item.restaurant_id <> p_restaurant_id THEN
+      RAISE EXCEPTION 'Cart contains items from multiple restaurants';
+    END IF;
+
+    v_subtotal := v_subtotal + (v_db_item.price * v_quantity);
+    v_order_items := v_order_items || jsonb_build_array(jsonb_build_object(
+      'menu_item_id', v_db_item.id,
+      'name', v_db_item.name,
+      'price', v_db_item.price,
+      'quantity', v_quantity,
+      'subtotal', v_db_item.price * v_quantity,
+      'notes', v_item_notes
+    ));
+  END LOOP;
+
+  INSERT INTO orders (
+    customer_id,
+    restaurant_id,
+    subtotal,
+    delivery_fee,
+    commission_rate,
+    delivery_address,
+    delivery_landmark,
+    customer_phone,
+    customer_name,
+    notes,
+    payment_method
+  )
+  VALUES (
+    v_user_id,
+    p_restaurant_id,
+    v_subtotal,
+    v_restaurant.delivery_fee,
+    v_restaurant.commission_rate,
+    trim(p_delivery_address),
+    NULLIF(trim(COALESCE(p_delivery_landmark, '')), ''),
+    p_customer_phone,
+    trim(p_customer_name),
+    NULLIF(trim(COALESCE(p_notes, '')), ''),
+    'opay_transfer'
+  )
+  RETURNING id, orders.order_number, orders.total
+  INTO v_order_id, v_order_number, v_total;
+
+  FOR v_item IN SELECT * FROM jsonb_array_elements(v_order_items)
+  LOOP
+    INSERT INTO order_items (
+      order_id,
+      menu_item_id,
+      name,
+      price,
+      quantity,
+      subtotal,
+      notes
+    )
+    VALUES (
+      v_order_id,
+      (v_item ->> 'menu_item_id')::uuid,
+      v_item ->> 'name',
+      (v_item ->> 'price')::integer,
+      (v_item ->> 'quantity')::integer,
+      (v_item ->> 'subtotal')::integer,
+      NULLIF(v_item ->> 'notes', '')
+    );
+  END LOOP;
+
+  INSERT INTO audit_log (action, actor_id, target_type, target_id, metadata)
+  VALUES (
+    'order_created',
+    v_user_id,
+    'orders',
+    v_order_id::text,
+    jsonb_build_object(
+      'order_number', v_order_number,
+      'restaurant_id', p_restaurant_id,
+      'subtotal', v_subtotal,
+      'total', v_total,
+      'item_count', jsonb_array_length(v_order_items)
+    )
+  );
+
+  RETURN QUERY SELECT v_order_id, v_order_number, v_total;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION create_order_secure(uuid, jsonb, text, text, text, text, text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION create_order_secure(uuid, jsonb, text, text, text, text, text) TO authenticated;
+
+-- --------------------------------------------------------------------------
+-- set_restaurant_open_status: owner-only operational toggle
+-- Prevents direct owner updates to commission, banking, or activation fields.
+-- --------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION set_restaurant_open_status(
+  p_restaurant_id uuid,
+  p_is_open boolean
+)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_user_id uuid := auth.uid();
+  v_is_open boolean;
+BEGIN
+  IF v_user_id IS NULL THEN
+    RAISE EXCEPTION 'Authentication required';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM restaurants
+    WHERE id = p_restaurant_id
+      AND (owner_id = v_user_id OR is_admin())
+  ) THEN
+    RAISE EXCEPTION 'Restaurant not found or not yours';
+  END IF;
+
+  UPDATE restaurants
+  SET is_open = p_is_open
+  WHERE id = p_restaurant_id
+  RETURNING is_open INTO v_is_open;
+
+  INSERT INTO audit_log (action, actor_id, target_type, target_id, metadata)
+  VALUES (
+    'restaurant_open_status_updated',
+    v_user_id,
+    'restaurants',
+    p_restaurant_id::text,
+    jsonb_build_object('is_open', v_is_open)
+  );
+
+  RETURN v_is_open;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION set_restaurant_open_status(uuid, boolean) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION set_restaurant_open_status(uuid, boolean) TO authenticated;
+
+-- --------------------------------------------------------------------------
+-- Safe read views for public browsing and restaurant-owned order dashboards
+-- --------------------------------------------------------------------------
+CREATE OR REPLACE VIEW restaurants_public AS
+SELECT
+  id, name, slug, description, phone, address, city,
+  image_url, cover_image_url, cuisine_tags,
+  delivery_fee, min_delivery_time, max_delivery_time,
+  is_open, is_active, total_orders, average_rating, rating_count,
+  created_at
+FROM restaurants
+WHERE is_active = true;
+
+GRANT SELECT ON restaurants_public TO anon, authenticated;
+
+CREATE OR REPLACE VIEW orders_for_restaurants AS
+SELECT
+  o.id,
+  o.order_number,
+  o.restaurant_id,
+  o.rider_id,
+  o.status,
+  o.subtotal,
+  o.delivery_fee,
+  o.total,
+  o.delivery_address,
+  o.delivery_landmark,
+  o.customer_name,
+  CASE
+    WHEN o.status IN ('confirmed', 'preparing', 'out_for_delivery')
+    THEN o.customer_phone
+    ELSE NULL
+  END AS customer_phone,
+  o.notes,
+  o.rating,
+  o.rating_comment,
+  o.confirmed_at,
+  o.preparing_at,
+  o.out_for_delivery_at,
+  o.delivered_at,
+  o.cancelled_at,
+  o.cancellation_reason,
+  o.created_at,
+  o.updated_at
+FROM orders o
+WHERE is_admin()
+  OR EXISTS (
+    SELECT 1 FROM restaurants r
+    WHERE r.id = o.restaurant_id
+      AND r.owner_id = auth.uid()
+  );
+
+GRANT SELECT ON orders_for_restaurants TO authenticated;
 
 -- ============================================================================
 -- 5. TRIGGERS
@@ -597,21 +917,16 @@ CREATE POLICY "profiles_update_admin"
   USING (is_admin());
 
 -- --------------------------------------------------------------------------
--- restaurants RLS (3 policies)
+-- restaurants RLS (2 policies + public view)
 -- --------------------------------------------------------------------------
 
--- 5. Anyone (including anonymous) can read active restaurants
-CREATE POLICY "restaurants_select_public"
+-- 5. Owners can read their own full restaurant row. Public browsing uses
+-- restaurants_public, which omits banking and platform-controlled fields.
+CREATE POLICY "restaurants_select_owner"
   ON restaurants FOR SELECT
-  USING (is_active = true);
+  USING (owner_id = auth.uid());
 
--- 6. Restaurant owners can update their own restaurant
-CREATE POLICY "restaurants_update_owner"
-  ON restaurants FOR UPDATE
-  USING (owner_id = auth.uid())
-  WITH CHECK (owner_id = auth.uid());
-
--- 7. Admins have full access to all restaurants (select, insert, update, delete)
+-- 6. Admins have full access to all restaurants (select, insert, update, delete)
 CREATE POLICY "restaurants_all_admin"
   ON restaurants FOR ALL
   USING (is_admin());
@@ -623,14 +938,7 @@ CREATE POLICY "restaurants_all_admin"
 -- 8. Public can read available items at active restaurants
 CREATE POLICY "menu_items_select_public"
   ON menu_items FOR SELECT
-  USING (
-    is_available = true
-    AND EXISTS (
-      SELECT 1 FROM restaurants
-      WHERE restaurants.id = menu_items.restaurant_id
-        AND restaurants.is_active = true
-    )
-  );
+  USING (is_available = true AND restaurant_is_public(restaurant_id));
 
 -- 9. Restaurant owners can manage their own menu items (select, insert, update, delete)
 CREATE POLICY "menu_items_all_owner"
@@ -657,50 +965,19 @@ CREATE POLICY "riders_all_admin"
   USING (is_admin());
 
 -- --------------------------------------------------------------------------
--- orders RLS (3 policies)
+-- orders RLS (2 policies + secured RPC/view paths)
 -- --------------------------------------------------------------------------
 
--- 13. Customers can see their own orders
+-- 13. Customers can see their own orders. Inserts go through
+-- create_order_secure() so totals cannot be forged via the public API.
 CREATE POLICY "orders_select_customer"
   ON orders FOR SELECT
   USING (customer_id = auth.uid());
 
--- 14. Restaurant owners can see orders for their restaurants
-CREATE POLICY "orders_select_restaurant"
-  ON orders FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM restaurants
-      WHERE restaurants.id = orders.restaurant_id
-        AND restaurants.owner_id = auth.uid()
-    )
-  );
-
--- 15. Admins have full access to all orders
+-- 14. Admins have full access to all orders
 CREATE POLICY "orders_all_admin"
   ON orders FOR ALL
   USING (is_admin());
-
--- Allow customers to insert their own orders
-CREATE POLICY "orders_insert_customer"
-  ON orders FOR INSERT
-  WITH CHECK (customer_id = auth.uid());
-
--- Allow restaurant owners to update orders for their restaurants
-CREATE POLICY "orders_update_restaurant"
-  ON orders FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM restaurants
-      WHERE restaurants.id = orders.restaurant_id
-        AND restaurants.owner_id = auth.uid()
-    )
-  );
-
--- Allow customers to update their own orders (e.g., add rating)
-CREATE POLICY "orders_update_customer"
-  ON orders FOR UPDATE
-  USING (customer_id = auth.uid());
 
 -- --------------------------------------------------------------------------
 -- order_items RLS (follows parent order access)
@@ -720,30 +997,12 @@ CREATE POLICY "order_items_select_customer"
 -- Restaurant owners see order items for their restaurant's orders
 CREATE POLICY "order_items_select_restaurant"
   ON order_items FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM orders
-      JOIN restaurants ON restaurants.id = orders.restaurant_id
-      WHERE orders.id = order_items.order_id
-        AND restaurants.owner_id = auth.uid()
-    )
-  );
+  USING (owns_order_restaurant(order_id));
 
 -- Admins have full access to all order items
 CREATE POLICY "order_items_all_admin"
   ON order_items FOR ALL
   USING (is_admin());
-
--- Customers can insert order items for their own orders
-CREATE POLICY "order_items_insert_customer"
-  ON order_items FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM orders
-      WHERE orders.id = order_items.order_id
-        AND orders.customer_id = auth.uid()
-    )
-  );
 
 -- --------------------------------------------------------------------------
 -- settlements RLS (2 policies)

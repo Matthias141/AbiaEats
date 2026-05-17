@@ -177,7 +177,7 @@ export default function CustomerHomePage() {
       try {
         const supabase = createClient();
         const { data, error } = await supabase
-          .from('restaurants')
+          .from('restaurants_public')
           .select('*')
           .eq('is_active', true)
           .order('total_orders', { ascending: false });

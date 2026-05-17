@@ -15,7 +15,7 @@ export default async function RestaurantPage({
     const supabase = await createClient();
 
     const { data: restaurant } = await supabase
-      .from('restaurants')
+      .from('restaurants_public')
       .select('*')
       .eq('id', id)
       .eq('is_active', true)
