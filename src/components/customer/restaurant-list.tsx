@@ -2,35 +2,33 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search, Star, Clock, MapPin } from 'lucide-react';
 import type { Restaurant } from '@/types/database';
+import { CITY_OPTIONS, CUISINE_FILTERS, filterRestaurants, formatCityName } from '@/lib/discovery';
 import { formatPrice } from '@/lib/utils';
-
-const CUISINE_TAGS = [
-  { label: 'All', value: '' },
-  { label: 'Jollof', value: 'jollof' },
-  { label: 'Pepper Soup', value: 'pepper-soup' },
-  { label: 'Grills', value: 'grills' },
-  { label: 'Shawarma', value: 'shawarma' },
-  { label: 'Local', value: 'local' },
-  { label: 'Drinks', value: 'drinks' },
-  { label: 'Rice', value: 'rice' },
-];
 
 interface RestaurantListProps {
   restaurants: Restaurant[];
   activeTag?: string;
   searchQuery?: string;
+  activeCity?: string;
 }
 
-export function RestaurantList({ restaurants, activeTag, searchQuery }: RestaurantListProps) {
+export function RestaurantList({
+  restaurants,
+  activeTag,
+  searchQuery,
+  activeCity,
+}: RestaurantListProps) {
   const [search, setSearch] = useState(searchQuery || '');
-  const [selectedTag, setSelectedTag] = useState(activeTag || '');
+  const [selectedTag, setSelectedTag] = useState(activeTag || 'all');
+  const [selectedCity, setSelectedCity] = useState(activeCity || '');
 
-  const filtered = restaurants.filter((r) => {
-    const matchesSearch = !search || r.name.toLowerCase().includes(search.toLowerCase());
-    const matchesTag = !selectedTag || r.cuisine_tags.includes(selectedTag);
-    return matchesSearch && matchesTag;
+  const filtered = filterRestaurants(restaurants, {
+    search,
+    cuisine: selectedTag,
+    city: selectedCity,
   });
 
   return (
@@ -43,20 +41,47 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
           placeholder="Search restaurants..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full min-h-[48px] pl-11 pr-4 bg-gray-50 border border-gray-200 rounded-2xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all"
+          className="w-full min-h-[48px] pl-11 pr-4 liquid-input rounded-2xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all"
         />
+      </div>
+
+      {/* City Filters */}
+      <div className="flex gap-2 overflow-x-auto pb-3 mb-3 no-scrollbar">
+        <button
+          onClick={() => setSelectedCity('')}
+          className={`tap-target whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-[0.97] ${
+            selectedCity === ''
+              ? 'gradient-orange text-white border-transparent shadow-md shadow-brand-orange/20'
+              : 'liquid-chip text-gray-600 hover:border-white'
+          }`}
+        >
+          All cities
+        </button>
+        {CITY_OPTIONS.map((city) => (
+          <button
+            key={city.value}
+            onClick={() => setSelectedCity(city.value)}
+            className={`tap-target whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-[0.97] ${
+              selectedCity === city.value
+                ? 'gradient-orange text-white border-transparent shadow-md shadow-brand-orange/20'
+                : 'liquid-chip text-gray-600 hover:border-white'
+            }`}
+          >
+            {city.label}
+          </button>
+        ))}
       </div>
 
       {/* Tag Filters */}
       <div className="flex gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
-        {CUISINE_TAGS.map((tag) => (
+        {CUISINE_FILTERS.map((tag) => (
           <button
             key={tag.value}
             onClick={() => setSelectedTag(tag.value)}
             className={`tap-target whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-[0.97] ${
               selectedTag === tag.value
                 ? 'gradient-orange text-white border-transparent shadow-md shadow-brand-orange/20'
-                : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                : 'liquid-chip text-gray-600 hover:border-white'
             }`}
           >
             {tag.label}
@@ -67,6 +92,7 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
       {/* Results Count */}
       <p className="text-sm text-gray-400 mb-4">
         {filtered.length} restaurant{filtered.length !== 1 ? 's' : ''} found
+        {selectedCity ? ` in ${formatCityName(selectedCity)}` : ''}
       </p>
 
       {/* Restaurant Grid */}
@@ -76,15 +102,17 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
             <Link
               key={restaurant.id}
               href={`/restaurants/${restaurant.id}`}
-              className="group rounded-2xl bg-white overflow-hidden card-shadow hover:card-shadow-md transition-all active:scale-[0.99]"
+              className="group liquid-glass liquid-lift rounded-2xl overflow-hidden transition-all active:scale-[0.99]"
             >
               {/* Image */}
               <div className="aspect-video bg-gray-50 relative overflow-hidden flex items-center justify-center">
                 {restaurant.cover_image_url ? (
-                  <img
+                  <Image
                     src={restaurant.cover_image_url}
                     alt={restaurant.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
                 ) : (
@@ -122,7 +150,7 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
                     )}
                   </div>
                   {restaurant.rating_count > 0 && (
-                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-xs font-medium ml-2 flex-shrink-0">
+                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full liquid-chip text-amber-600 text-xs font-medium ml-2 flex-shrink-0">
                       <Star className="w-3 h-3 fill-current" />
                       {restaurant.average_rating.toFixed(1)}
                     </div>
@@ -145,13 +173,13 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
                   {restaurant.cuisine_tags.slice(0, 3).map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-0.5 rounded-full bg-gray-100 text-xs text-gray-500"
+                      className="px-2 py-0.5 rounded-full liquid-chip text-xs text-gray-500"
                     >
                       {tag}
                     </span>
                   ))}
                   {restaurant.cuisine_tags.length > 3 && (
-                    <span className="px-2 py-0.5 rounded-full bg-gray-100 text-xs text-gray-400">
+                    <span className="px-2 py-0.5 rounded-full liquid-chip text-xs text-gray-400">
                       +{restaurant.cuisine_tags.length - 3}
                     </span>
                   )}
@@ -170,11 +198,12 @@ export function RestaurantList({ restaurants, activeTag, searchQuery }: Restaura
               ? `No restaurants match "${search}". Try a different search.`
               : 'No restaurants available right now. Check back soon!'}
           </p>
-          {(search || selectedTag) && (
+          {(search || selectedTag !== 'all' || selectedCity) && (
             <button
               onClick={() => {
                 setSearch('');
-                setSelectedTag('');
+                setSelectedTag('all');
+                setSelectedCity('');
               }}
               className="mt-4 tap-target px-5 py-2.5 rounded-xl text-sm font-medium gradient-orange text-white"
             >

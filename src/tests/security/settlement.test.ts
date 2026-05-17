@@ -17,16 +17,6 @@
 
 import { describe, it, expect } from 'vitest';
 
-// ── Shared UUIDs ─────────────────────────────────────────────────────────────
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const UUID = {
-  restaurant:  '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-  restaurant2: '99e9c714-f33e-4c1d-8b9a-6d9f7e2c1b4a',
-  settlement:  '8465b47a-57eb-4273-bdb1-d0843edee033',
-  admin:       '7f5f0f89-3d48-40f7-bb6f-36bb3780a74d',
-  owner:       'c56a4180-65aa-42ec-a945-5fd21dec0538',
-};
-
 // ── Settlement calculation helpers (pure functions — no DB needed) ─────────────
 
 /**

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { X, Minus, Plus, Clock, ShoppingBag } from 'lucide-react';
 import type { MenuItem, Restaurant } from '@/types/database';
 import { useCart } from '@/contexts/cart-context';
@@ -70,7 +71,7 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
       />
 
       {/* Sheet */}
-      <div className="absolute bottom-0 left-0 right-0 max-h-[90vh] bg-white rounded-t-3xl overflow-hidden animate-slide-up-sheet">
+      <div className="absolute bottom-0 left-0 right-0 max-h-[90vh] liquid-glass rounded-t-3xl overflow-hidden animate-slide-up-sheet">
         {/* Handle bar */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 rounded-full bg-gray-200" />
@@ -79,7 +80,7 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
+          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full liquid-chip flex items-center justify-center"
         >
           <X className="w-4 h-4 text-gray-600" />
         </button>
@@ -88,10 +89,12 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
           {/* Image */}
           <div className="aspect-[16/10] bg-gray-50 relative overflow-hidden">
             {item.image_url ? (
-              <img
+              <Image
                 src={item.image_url}
                 alt={item.name}
-                className="w-full h-full object-cover"
+                fill
+                sizes="100vw"
+                className="object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
@@ -126,7 +129,7 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
             )}
 
             {/* Delivery info */}
-            <div className="mt-6 p-4 rounded-2xl bg-gray-50">
+            <div className="mt-6 p-4 rounded-2xl liquid-glass-soft">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">Delivery fee</span>
                 <span className="font-medium text-gray-900">{formatPrice(restaurant.delivery_fee)}</span>
@@ -140,10 +143,10 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
         </div>
 
         {/* Bottom bar */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 bg-white/95 backdrop-blur-xl border-t border-gray-100 safe-bottom">
+        <div className="absolute bottom-0 left-0 right-0 p-5 liquid-glass-nav border-x-0 border-b-0 safe-bottom">
           <div className="flex items-center gap-4">
             {/* Quantity controls */}
-            <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-3 py-2">
+            <div className="flex items-center gap-3 liquid-chip rounded-xl px-3 py-2">
               <button
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                 className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors active:scale-95"

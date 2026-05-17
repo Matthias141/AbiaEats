@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 const FEATURED_CATEGORIES = [
-  { name: 'Jollof Rice', emoji: '🍚', slug: 'jollof' },
+  { name: 'Jollof Rice', emoji: '🍚', slug: 'rice-dishes' },
   { name: 'Pepper Soup', emoji: '🍲', slug: 'pepper-soup' },
   { name: 'Grills & BBQ', emoji: '🍖', slug: 'grills' },
   { name: 'Shawarma', emoji: '🌯', slug: 'shawarma' },
@@ -72,9 +72,9 @@ const SAMPLE_RESTAURANTS = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen liquid-surface overflow-x-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-gray-100 backdrop-blur-xl bg-white/90">
+      <nav className="fixed top-0 left-0 right-0 z-50 liquid-glass-nav border-x-0 border-t-0">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg gradient-orange flex items-center justify-center">
@@ -103,11 +103,9 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 px-4 sm:px-6">
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-orange-50 blur-[120px] pointer-events-none" />
-
         <div className="max-w-6xl mx-auto relative">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50 border border-orange-100 mb-8 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full liquid-chip mb-8 animate-fade-in">
               <MapPin className="w-4 h-4 text-brand-orange" />
               <span className="text-sm text-gray-500">
                 Delivering in <span className="text-gray-900 font-medium">Aba</span> &{' '}
@@ -127,7 +125,7 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 animate-slide-up">
               <Link
-                href="/onboarding"
+                href="/home"
                 className="tap-target inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium rounded-xl gradient-orange text-white shadow-lg shadow-brand-orange/20 hover:shadow-brand-orange/30 transition-all active:scale-[0.97]"
               >
                 Order Now
@@ -135,7 +133,7 @@ export default function LandingPage() {
               </Link>
               <Link
                 href="/onboarding"
-                className="tap-target inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium rounded-xl border border-gray-200 text-gray-700 hover:border-brand-orange hover:text-brand-orange transition-all active:scale-[0.97]"
+                className="tap-target inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-medium rounded-xl liquid-chip text-gray-700 hover:text-brand-orange transition-all active:scale-[0.97]"
               >
                 Create Account
               </Link>
@@ -156,18 +154,18 @@ export default function LandingPage() {
           <div className="mt-16 sm:mt-0 sm:absolute sm:right-0 sm:top-0 sm:w-[45%] lg:w-[40%]">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-3">
-                <div className="aspect-square rounded-2xl bg-orange-50 border border-orange-100 overflow-hidden flex items-center justify-center text-6xl">
+                <div className="aspect-square rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center text-6xl">
                   🍛
                 </div>
-                <div className="aspect-[4/3] rounded-2xl bg-amber-50 border border-amber-100 overflow-hidden flex items-center justify-center text-5xl">
+                <div className="aspect-[4/3] rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center text-5xl">
                   🍖
                 </div>
               </div>
               <div className="space-y-3 pt-8">
-                <div className="aspect-[4/3] rounded-2xl bg-red-50 border border-red-100 overflow-hidden flex items-center justify-center text-5xl">
+                <div className="aspect-[4/3] rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center text-5xl">
                   🥘
                 </div>
-                <div className="aspect-square rounded-2xl bg-yellow-50 border border-yellow-100 overflow-hidden flex items-center justify-center text-6xl">
+                <div className="aspect-square rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center text-6xl">
                   🍲
                 </div>
               </div>
@@ -177,7 +175,7 @@ export default function LandingPage() {
       </section>
 
       {/* Categories */}
-      <section className="py-16 px-4 sm:px-6 bg-gray-50">
+      <section className="py-16 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">
             What are you craving?
@@ -187,7 +185,7 @@ export default function LandingPage() {
               <Link
                 key={cat.slug}
                 href={`/restaurants?tag=${cat.slug}`}
-                className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white card-shadow hover:card-shadow-md transition-all active:scale-[0.97] group"
+                className="flex flex-col items-center gap-2 p-4 rounded-2xl liquid-glass liquid-lift transition-all active:scale-[0.97] group"
               >
                 <span className="text-3xl group-hover:scale-110 transition-transform">
                   {cat.emoji}
@@ -209,7 +207,7 @@ export default function LandingPage() {
               Popular Restaurants
             </h2>
             <Link
-              href="/onboarding"
+              href="/restaurants"
               className="text-sm text-brand-orange hover:text-brand-orange-light flex items-center gap-1 transition-colors"
             >
               View all <ChevronRight className="w-4 h-4" />
@@ -219,7 +217,7 @@ export default function LandingPage() {
             {SAMPLE_RESTAURANTS.map((restaurant) => (
               <div
                 key={restaurant.name}
-                className="group rounded-2xl bg-white card-shadow overflow-hidden hover:card-shadow-md transition-all"
+                className="group rounded-2xl liquid-glass liquid-lift overflow-hidden transition-all"
               >
                 <div className="aspect-video bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
                   <span className="text-5xl opacity-50">{restaurant.emoji}</span>
@@ -232,7 +230,7 @@ export default function LandingPage() {
                       </h3>
                       <p className="text-xs text-gray-500">{restaurant.cuisine}</p>
                     </div>
-                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-xs font-medium">
+                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full liquid-chip text-amber-600 text-xs font-medium">
                       <Star className="w-3 h-3 fill-current" />
                       {restaurant.rating}
                     </div>
@@ -250,7 +248,7 @@ export default function LandingPage() {
                     {restaurant.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-0.5 rounded-full bg-gray-100 text-xs text-gray-500"
+                        className="px-2 py-0.5 rounded-full liquid-chip text-xs text-gray-500"
                       >
                         {tag}
                       </span>
@@ -264,7 +262,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-16 px-4 sm:px-6 bg-gray-50">
+      <section className="py-16 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
@@ -278,7 +276,7 @@ export default function LandingPage() {
             {HOW_IT_WORKS.map((step) => (
               <div
                 key={step.step}
-                className="relative p-6 rounded-2xl bg-white card-shadow group hover:card-shadow-md transition-all"
+                className="relative p-6 rounded-2xl liquid-glass liquid-lift group transition-all"
               >
                 <span className="absolute top-4 right-4 font-mono text-4xl font-bold text-gray-100 group-hover:text-orange-100 transition-colors">
                   {step.step}
@@ -301,7 +299,7 @@ export default function LandingPage() {
       {/* CTA Banner */}
       <section className="py-16 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12 gradient-orange">
+          <div className="relative rounded-3xl overflow-hidden p-8 sm:p-12 liquid-glass-strong">
             <div className="relative max-w-lg">
               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
                 Hungry? Your favorite food is just a tap away
@@ -311,8 +309,8 @@ export default function LandingPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
-                  href="/onboarding"
-                  className="tap-target inline-flex items-center justify-center gap-2 px-8 py-3.5 text-base font-medium rounded-xl bg-white text-brand-orange hover:bg-white/90 transition-all active:scale-[0.97]"
+                  href="/restaurants"
+                  className="tap-target inline-flex items-center justify-center gap-2 px-8 py-3.5 text-base font-medium rounded-xl liquid-chip text-brand-orange hover:bg-white/90 transition-all active:scale-[0.97]"
                 >
                   Browse Restaurants
                 </Link>
@@ -329,7 +327,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 py-12 px-4 sm:px-6 bg-gray-50">
+      <footer className="border-t border-white/60 py-12 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid sm:grid-cols-3 gap-8 mb-8">
             <div>
@@ -348,7 +346,7 @@ export default function LandingPage() {
             <div>
               <h4 className="font-semibold text-gray-900 mb-4">Quick Links</h4>
               <div className="space-y-2 text-sm text-gray-500">
-                <Link href="/onboarding" className="block hover:text-brand-orange transition-colors">
+                <Link href="/restaurants" className="block hover:text-brand-orange transition-colors">
                   Restaurants
                 </Link>
                 <Link href="/onboarding" className="block hover:text-brand-orange transition-colors">

@@ -28,7 +28,7 @@
 import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
-import { createSettlementSchema, markSettlementPaidSchema } from '@/lib/validations';
+import { createSettlementSchema } from '@/lib/validations';
 
 // ── POST /api/admin/settlements — Generate settlement ─────────────────────────
 export async function POST(request: Request) {

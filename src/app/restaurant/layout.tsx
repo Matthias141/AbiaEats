@@ -30,9 +30,9 @@ export default async function RestaurantLayout({ children }: { children: React.R
   ] : [];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <aside className="w-60 bg-white border-r border-gray-200 flex flex-col fixed h-full z-40">
-        <div className="p-5 border-b border-gray-100">
+    <div className="min-h-screen liquid-surface flex">
+      <aside className="w-60 liquid-glass-nav border-y-0 border-l-0 flex flex-col fixed h-full z-40">
+        <div className="p-5 border-b border-white/60">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg gradient-orange flex items-center justify-center">
               <UtensilsCrossed className="w-4 h-4 text-white" />
@@ -49,7 +49,7 @@ export default async function RestaurantLayout({ children }: { children: React.R
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-white/45 hover:text-gray-900 transition-colors"
             >
               <Icon className="w-4 h-4" />
               {label}
@@ -57,7 +57,7 @@ export default async function RestaurantLayout({ children }: { children: React.R
           ))}
         </nav>
 
-        <div className="p-3 border-t border-gray-100 text-xs text-gray-400 px-4">
+        <div className="p-3 border-t border-white/60 text-xs text-gray-400 px-4">
           {profile?.full_name ?? user.email}
         </div>
       </aside>

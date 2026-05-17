@@ -189,7 +189,7 @@ export default function CheckoutPage() {
 
   if (showPaymentSheet) {
     return (
-      <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+      <div className="min-h-screen liquid-surface overflow-x-hidden">
         <div className="max-w-lg mx-auto px-4 pb-24">
           {/* Success header */}
           <div className="text-center pt-12 pb-8">
@@ -203,7 +203,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Order number */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-4 text-center">
+          <div className="liquid-glass rounded-2xl p-4 mb-4 text-center">
             <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">
               Order Number
             </p>
@@ -213,7 +213,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Payment details card */}
-          <div className="bg-white border border-orange-200 rounded-2xl p-5 mb-4 space-y-4">
+          <div className="liquid-glass rounded-2xl p-5 mb-4 space-y-4">
             <h2 className="font-body text-base font-semibold text-gray-900">
               OPay Transfer Details
             </h2>
@@ -278,7 +278,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Info notice */}
-          <div className="flex items-start gap-3 bg-info/10 border border-info/20 rounded-xl p-3.5 mb-6">
+          <div className="flex items-start gap-3 liquid-glass-soft rounded-xl p-3.5 mb-6">
             <Info className="w-4 h-4 text-info flex-shrink-0 mt-0.5" />
             <p className="text-gray-600 text-xs leading-relaxed">
               Admin will confirm your payment shortly. You will receive a WhatsApp notification once your order is confirmed and being prepared.
@@ -306,7 +306,7 @@ export default function CheckoutPage() {
   // ============================================================================
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen liquid-surface overflow-x-hidden">
       <div className="max-w-lg mx-auto px-4 pb-24">
         {/* ================================================================
             Header
@@ -314,7 +314,7 @@ export default function CheckoutPage() {
         <header className="flex items-center gap-3 pt-6 pb-4">
           <Link
             href="/cart"
-            className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-gray-200 active:scale-95 transition-transform min-h-[44px] min-w-[44px]"
+            className="flex items-center justify-center w-10 h-10 rounded-xl liquid-chip active:scale-95 transition-transform min-h-[44px] min-w-[44px]"
             aria-label="Back to cart"
           >
             <ArrowLeft className="w-5 h-5 text-gray-900" />
@@ -350,7 +350,7 @@ export default function CheckoutPage() {
                     setCustomerName(e.target.value);
                     if (errors.customerName) setErrors((prev) => ({ ...prev, customerName: '' }));
                   }}
-                  className={`w-full bg-white border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
+                  className={`w-full liquid-input rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
                     errors.customerName
                       ? 'border-error focus:border-error focus:ring-1 focus:ring-error/50'
                       : 'border-gray-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
@@ -378,7 +378,7 @@ export default function CheckoutPage() {
                     setPhone(e.target.value);
                     if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
                   }}
-                  className={`w-full bg-white border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
+                  className={`w-full liquid-input rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
                     errors.phone
                       ? 'border-error focus:border-error focus:ring-1 focus:ring-error/50'
                       : 'border-gray-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
@@ -406,7 +406,7 @@ export default function CheckoutPage() {
                     setDeliveryAddress(e.target.value);
                     if (errors.deliveryAddress) setErrors((prev) => ({ ...prev, deliveryAddress: '' }));
                   }}
-                  className={`w-full bg-white border rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
+                  className={`w-full liquid-input rounded-xl min-h-[44px] pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-colors ${
                     errors.deliveryAddress
                       ? 'border-error focus:border-error focus:ring-1 focus:ring-error/50'
                       : 'border-gray-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50'
@@ -430,7 +430,7 @@ export default function CheckoutPage() {
                 placeholder="e.g. Opposite Shoprite, beside the yellow gate"
                 value={landmark}
                 onChange={(e) => setLandmark(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-xl min-h-[44px] px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
+                className="w-full liquid-input rounded-xl min-h-[44px] px-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 transition-colors"
               />
             </div>
           </div>
@@ -442,7 +442,7 @@ export default function CheckoutPage() {
         <section className="mb-6">
           <button
             onClick={() => setSummaryExpanded(!summaryExpanded)}
-            className="w-full flex items-center justify-between bg-white border border-gray-200 rounded-xl px-4 min-h-[44px] active:scale-[0.99] transition-transform"
+            className="w-full flex items-center justify-between liquid-glass rounded-xl px-4 min-h-[44px] active:scale-[0.99] transition-transform"
           >
             <h2 className="font-body text-base font-semibold text-gray-900 flex items-center gap-2">
               Order Summary
@@ -458,7 +458,7 @@ export default function CheckoutPage() {
           </button>
 
           {summaryExpanded && (
-            <div className="bg-white border border-gray-200 border-t-0 rounded-b-xl px-4 pb-4 -mt-2 pt-4 animate-slide-down">
+            <div className="liquid-glass-soft rounded-b-xl px-4 pb-4 -mt-2 pt-4 animate-slide-down">
               {/* Restaurant name */}
               <p className="text-gray-500 text-xs mb-3">
                 From{' '}
@@ -520,7 +520,7 @@ export default function CheckoutPage() {
             Payment Method
           </h2>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center gap-3">
+          <div className="liquid-glass rounded-xl p-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
               <span className="text-lg" role="img" aria-label="Bank">
                 🏦

@@ -35,9 +35,9 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        heading: ["Playfair Display", "serif"],
-        body: ["Outfit", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        heading: ["var(--font-playfair)", "serif"],
+        body: ["var(--font-outfit)", "sans-serif"],
+        mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
       backdropBlur: {
         glass: "16px",
