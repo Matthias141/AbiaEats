@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AbiaEats 🍽️
 
-## Getting Started
+A food delivery marketplace for Aba and Umuahia, Abia State, Nigeria. Restaurants own their riders — AbiaEats handles discovery, ordering, and payments.
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+AbiaEats is a marketplace-model food delivery platform where restaurants list their menus, customers place orders, and restaurant-owned riders handle fulfillment. Payments flow through Paystack with a transfer-first model — restaurants receive funds before delivery is confirmed.
+
+Built during NYSC service in Aba, Abia State.
+
+## Architecture
+
+```
+Customer → Next.js Frontend → Supabase (Auth + DB) → Paystack (Payments)
+                                      ↓
+                            WhatsApp Cloud API (Order notifications)
+                                      ↓
+                            Restaurant Dashboard → Rider Assignment
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Next.js 14 (App Router) · TypeScript · Tailwind CSS |
+| Database | Supabase (PostgreSQL) · Row-Level Security |
+| Auth | Supabase Auth (customer + restaurant roles) |
+| Payments | Paystack (card, bank transfer, USSD) |
+| Notifications | WhatsApp Cloud API (order status updates) |
+| Testing | Vitest |
+| Security | Gitleaks (secret scanning) · CSP headers |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Key Design Decisions
 
-## Learn More
+**Marketplace model, not aggregator** — Restaurants own and manage their riders. AbiaEats does not operate a central rider fleet, eliminating the logistics cold-start problem in a market with limited rider supply.
 
-To learn more about Next.js, take a look at the following resources:
+**Transfer-first payments** — Paystack transfers are initiated at order confirmation, not delivery. This reduces restaurant risk and increases onboarding conversion in a low-trust market.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**WhatsApp-first notifications** — Order status updates are delivered via WhatsApp Cloud API, not push notifications. WhatsApp penetration in Aba/Umuahia is near-universal; app push notifications are not.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Zone-based pricing** — Delivery fees are calculated per zone, not per kilometre. This simplifies rider compensation and customer expectation-setting in a city without reliable address geocoding.
 
-## Deploy on Vercel
+**Row-Level Security** — Supabase RLS policies enforce data isolation between restaurants at the database level, not just the application layer.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (customer)/         # Customer-facing pages
+│   ├── (restaurant)/       # Restaurant dashboard
+│   └── api/                # API routes (Paystack webhooks, WhatsApp)
+├── components/             # Shared UI components
+├── lib/                    # Supabase client, Paystack helpers, WhatsApp SDK
+└── types/                  # TypeScript definitions
+supabase/
+└── migrations/             # Database schema and RLS policies
+infra/
+└── audit-worm/             # AWS infrastructure audit tooling
+```
+
+## Status
+
+Pre-revenue. Core ordering flow and payment integration complete. Rider supply acquisition is the current launch blocker — logistics company partnerships in negotiation.
+
+## Running Locally
+
+```bash
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Fill in: Supabase URL/keys, Paystack keys, WhatsApp Cloud API credentials
+
+# Run database migrations
+npx supabase db push
+
+# Start development server
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Author
+
+**Ifedayo Idowu**
+- GitHub: [@Matthias141](https://github.com/Matthias141)
+- LinkedIn: [linkedin.com/in/ifedayo-idowu](https://linkedin.com/in/ifedayo-idowu)
