@@ -1,7 +1,7 @@
 import { revalidatePath } from 'next/cache';
 import { Clock, MapPin, Phone, ReceiptText, ShoppingBag } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
-import { canTransition, formatPrice, orderStatusConfig, timeAgo } from '@/lib/utils';
+import { formatPrice, orderStatusConfig, timeAgo } from '@/lib/utils';
 import type { OrderStatus } from '@/types/database';
 
 interface RestaurantOrder {
@@ -41,34 +41,13 @@ async function updateRestaurantOrderStatus(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  const { data: restaurant } = await supabase
-    .from('restaurants')
-    .select('id')
-    .eq('owner_id', user.id)
-    .single();
-
-  if (!restaurant) return;
-
-  const { data: order } = await supabase
-    .from('orders')
-    .select('status')
-    .eq('id', orderId)
-    .eq('restaurant_id', restaurant.id)
-    .single();
-
-  if (!order || !canTransition(order.status as OrderStatus, nextStatus)) return;
-
-  const timestampField: Partial<Record<OrderStatus, string>> = {
-    preparing: 'preparing_at',
-    out_for_delivery: 'out_for_delivery_at',
-    delivered: 'delivered_at',
-  };
-
-  const updatePayload: Record<string, unknown> = { status: nextStatus };
-  const timestamp = timestampField[nextStatus];
-  if (timestamp) updatePayload[timestamp] = new Date().toISOString();
-
-  await supabase.from('orders').update(updatePayload).eq('id', orderId);
+  // Ownership + legal-transition checks happen inside the RPC (and the DB
+  // trigger behind it) — restaurant owners have no direct UPDATE grant on
+  // the orders table, so this is the only write path available to them.
+  await supabase.rpc('update_order_status_restaurant', {
+    p_order_id: orderId,
+    p_status: nextStatus,
+  });
 
   revalidatePath('/restaurant');
   revalidatePath('/restaurant/orders');
@@ -100,8 +79,11 @@ export default async function RestaurantOrdersPage() {
     );
   }
 
+  // Restaurant owners have no direct RLS access to the `orders` table — the
+  // orders_for_restaurants view is the sanctioned read path. It redacts
+  // customer_phone unless the order is confirmed/preparing/out_for_delivery.
   const { data } = await supabase
-    .from('orders')
+    .from('orders_for_restaurants')
     .select(
       `
       id,
@@ -114,15 +96,34 @@ export default async function RestaurantOrdersPage() {
       delivery_landmark,
       customer_name,
       customer_phone,
-      created_at,
-      order_items(name, quantity, subtotal)
+      created_at
     `
     )
     .eq('restaurant_id', restaurant.id)
     .order('created_at', { ascending: false })
     .limit(50);
 
-  const orders = (data || []) as unknown as RestaurantOrder[];
+  const baseOrders = data || [];
+  const orderIds = baseOrders.map((o) => o.id);
+
+  const { data: itemsData } = orderIds.length
+    ? await supabase
+        .from('order_items')
+        .select('order_id, name, quantity, subtotal')
+        .in('order_id', orderIds)
+    : { data: [] };
+
+  const itemsByOrder = new Map<string, { name: string; quantity: number; subtotal: number }[]>();
+  for (const item of itemsData || []) {
+    const list = itemsByOrder.get(item.order_id) ?? [];
+    list.push({ name: item.name, quantity: item.quantity, subtotal: item.subtotal });
+    itemsByOrder.set(item.order_id, list);
+  }
+
+  const orders = baseOrders.map((o) => ({
+    ...o,
+    order_items: itemsByOrder.get(o.id) ?? [],
+  })) as unknown as RestaurantOrder[];
   const activeCount = orders.filter((order) =>
     ['confirmed', 'preparing', 'out_for_delivery'].includes(order.status)
   ).length;

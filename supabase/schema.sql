@@ -582,6 +582,63 @@ REVOKE ALL ON FUNCTION set_restaurant_open_status(uuid, boolean) FROM PUBLIC, an
 GRANT EXECUTE ON FUNCTION set_restaurant_open_status(uuid, boolean) TO authenticated;
 
 -- --------------------------------------------------------------------------
+-- update_order_status_restaurant: only supported path for a restaurant owner
+-- to advance an order's status. The base `orders` table intentionally has no
+-- RLS UPDATE policy for restaurant_owner — this RPC is the sole write path,
+-- so owners can never touch money fields (subtotal/total/commission_amount)
+-- directly. validate_order_status_transition still enforces the legal state
+-- machine (defense in depth).
+-- --------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION update_order_status_restaurant(
+  p_order_id uuid,
+  p_status text
+)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_user_id uuid := auth.uid();
+BEGIN
+  IF v_user_id IS NULL THEN
+    RAISE EXCEPTION 'Authentication required';
+  END IF;
+
+  IF p_status NOT IN ('preparing', 'out_for_delivery', 'delivered') THEN
+    RAISE EXCEPTION 'Restaurants may only advance an order to preparing, out_for_delivery, or delivered';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM orders o
+    JOIN restaurants r ON r.id = o.restaurant_id
+    WHERE o.id = p_order_id
+      AND (r.owner_id = v_user_id OR is_admin())
+  ) THEN
+    RAISE EXCEPTION 'Order not found or not yours';
+  END IF;
+
+  UPDATE orders
+  SET status = p_status
+  WHERE id = p_order_id;
+
+  INSERT INTO audit_log (action, actor_id, target_type, target_id, metadata)
+  VALUES (
+    'order_status_updated_by_restaurant',
+    v_user_id,
+    'orders',
+    p_order_id::text,
+    jsonb_build_object('to', p_status)
+  );
+
+  RETURN true;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION update_order_status_restaurant(uuid, text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION update_order_status_restaurant(uuid, text) TO authenticated;
+
+-- --------------------------------------------------------------------------
 -- Safe read views for public browsing and restaurant-owned order dashboards
 -- --------------------------------------------------------------------------
 CREATE OR REPLACE VIEW restaurants_public AS
