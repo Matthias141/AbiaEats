@@ -137,7 +137,11 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Role-based route protection
-  if (pathname.startsWith('/admin') || pathname.startsWith('/restaurant')) {
+  if (
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/restaurant') ||
+    pathname.startsWith('/dashboard/ops')
+  ) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
@@ -153,6 +157,12 @@ export async function updateSession(request: NextRequest) {
       profile?.role !== 'restaurant_owner' &&
       profile?.role !== 'admin'
     ) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
+    // /dashboard/ops is a second, minimal admin surface for restaurant/vendor
+    // onboarding. Same role gate as /admin, kept separate per product request.
+    if (pathname.startsWith('/dashboard/ops') && profile?.role !== 'admin') {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }
