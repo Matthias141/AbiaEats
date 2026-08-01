@@ -95,13 +95,31 @@ async function inviteVendor(formData: FormData) {
   // If either follow-up write fails, there is no rollback and no retry —
   // the invite row is flagged so the ops panel can surface it for a manual
   // fix, per the locked decision on this failure path.
-  const markNeedsManualFix = () =>
-    supabase.from('vendor_invites').update({ status: 'failed_post_auth' }).eq('id', invite.id);
+  const markNeedsManualFix = async () => {
+    // .select().single() so a zero-row update (e.g. the invite row was
+    // deleted or its id is wrong) also surfaces as an error here instead of
+    // being silently swallowed — this is the last line of defense, so its
+    // own failure must not be ignored.
+    const { error } = await supabase
+      .from('vendor_invites')
+      .update({ status: 'failed_post_auth' })
+      .eq('id', invite.id)
+      .select('id')
+      .single();
+    if (error) {
+      console.error(`[vendor-invite] Failed to flag invite ${invite.id} as failed_post_auth:`, error.message);
+    }
+  };
 
+  // .select('id').single() turns a zero-row update (row missing, wrong id,
+  // RLS silently filtering it out) into an error too — plain .update()
+  // returns no error for an update that matched nothing.
   const { error: roleError } = await supabase
     .from('profiles')
     .update({ role: 'restaurant_owner', phone: phone || null })
-    .eq('id', data.user.id);
+    .eq('id', data.user.id)
+    .select('id')
+    .single();
 
   if (roleError) {
     await markNeedsManualFix();
@@ -112,7 +130,9 @@ async function inviteVendor(formData: FormData) {
     const { error: ownerError } = await supabase
       .from('restaurants')
       .update({ owner_id: data.user.id })
-      .eq('id', restaurantId);
+      .eq('id', restaurantId)
+      .select('id')
+      .single();
     if (ownerError) {
       await markNeedsManualFix();
       throw new Error('Vendor account was created but restaurant assignment failed. Flagged for manual fix in the vendors list.');
