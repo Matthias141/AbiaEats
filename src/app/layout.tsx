@@ -52,15 +52,6 @@ export const viewport: Viewport = {
   themeColor: "#FFFFFF",
 };
 
-// Nonce-based CSP (src/lib/supabase/middleware.ts) generates a fresh random
-// nonce per request. A statically prerendered page bakes in whatever nonce
-// was present at build time, which can never match a freshly-generated
-// per-request nonce — every inline hydration script gets blocked and the
-// page never becomes interactive. Force dynamic rendering everywhere so the
-// nonce baked into the HTML always matches the one in that request's CSP
-// header.
-export const dynamic = "force-dynamic";
-
 export default function RootLayout({
   children,
 }: Readonly<{

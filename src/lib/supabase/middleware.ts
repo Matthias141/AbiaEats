@@ -6,9 +6,9 @@ import { NextResponse, type NextRequest } from 'next/server';
  *
  * A prior version of this file implemented textbook nonce-based CSP
  * (script-src 'self' 'nonce-<random>', no unsafe-inline) generated fresh per
- * request. It looked correct and matched Next.js's documented pattern
- * exactly — nonce set on both the request headers (via
- * NextResponse.next({ request: { headers } })) and the response headers.
+ * request, with the nonce threaded through both the request headers (via
+ * NextResponse.next({ request: { headers } })) and the response headers —
+ * exactly matching Next.js's documented pattern.
  *
  * It broke the entire site. Every page's inline hydration/RSC-payload
  * scripts (self.__next_f.push(...)) rendered with no nonce attribute at
@@ -33,7 +33,10 @@ import { NextResponse, type NextRequest } from 'next/server';
  *     independently fatal to nonce-based CSP — a nonce baked into HTML at
  *     build time can never match a nonce generated fresh per request.
  *     (Confirmed: identical HTML byte-for-byte across separate requests,
- *     differing only in the CSP response header's nonce value.)
+ *     differing only in the CSP response header's nonce value.) Forcing
+ *     dynamic rendering everywhere does NOT fix this on its own either —
+ *     tested that combination directly and the nonce-extraction code still
+ *     never fired.
  *
  * Net effect: in this exact Next.js 16.2.12 + Turbopack + self-hosted
  * `next start` combination, Next.js does not reliably nonce-stamp its own
@@ -43,6 +46,15 @@ import { NextResponse, type NextRequest } from 'next/server';
  * reduce. Reverted to 'unsafe-inline', matching the working configuration
  * that shipped before this fix was introduced.
  *
+ * NOTE: a second attempt at nonce-based CSP (request-header threading +
+ * force-dynamic rendering, functionally identical to what's described
+ * above) was independently pushed to main and merged into this branch.
+ * It was verified only against `npm run dev`, not a production build —
+ * dev mode does not reproduce this bug (no static prerendering, different
+ * bundling path), which is almost certainly why it looked fixed there.
+ * Confirmed via `next build && next start` + headless-browser testing that
+ * it does not fix the issue. Reverted again here.
+ *
  * FOLLOW-UP (not done here — needs dedicated investigation time):
  * A hash-based CSP (sha256-<hash> per distinct inline script, computed at
  * build time and injected into next.config headers()) would restore a
@@ -51,14 +63,6 @@ import { NextResponse, type NextRequest } from 'next/server';
  * build step to enumerate and hash Next's generated inline scripts —
  * out of scope for this fix, which prioritizes restoring site
  * functionality immediately.
- * CRITICAL: the nonce must be visible to Next's renderer while it generates
- * the page, which means it has to go on the *request* headers passed into
- * NextResponse.next({ request: { headers } }) — setting it only on the
- * outgoing response (as this file previously did) never reaches the
- * renderer, so none of Next's own inline hydration scripts get stamped with
- * a matching nonce and the browser blocks all of them under CSP. That
- * silently breaks hydration (and therefore every onClick, useEffect, and
- * form submit) on every page while still looking fine in the raw SSR HTML.
  */
 
 export async function updateSession(request: NextRequest) {
@@ -79,20 +83,6 @@ export async function updateSession(request: NextRequest) {
 
   let supabaseResponse = NextResponse.next({ request });
   supabaseResponse.headers.set('Content-Security-Policy', csp);
-  // ── Step 3: Build the response, inject CSP + nonce headers ───────────────
-  // The nonce/CSP must be set on the *request* headers (not just the
-  // response) so Next's renderer sees them for this request and stamps its
-  // own inline hydration scripts with the matching nonce.
-  function nextWithNonceRequest(req: NextRequest) {
-    const requestHeaders = new Headers(req.headers);
-    requestHeaders.set('x-nonce', nonce);
-    requestHeaders.set('Content-Security-Policy', csp);
-    return NextResponse.next({ request: { headers: requestHeaders } });
-  }
-
-  let supabaseResponse = nextWithNonceRequest(request);
-  supabaseResponse.headers.set('Content-Security-Policy', csp);
-  supabaseResponse.headers.set('x-nonce', nonce);
 
   const supabase = createServerClient(
     supabaseUrl,
@@ -107,8 +97,6 @@ export async function updateSession(request: NextRequest) {
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({ request });
-          supabaseResponse = nextWithNonceRequest(request);
-          // Re-apply security headers after response rebuild
           supabaseResponse.headers.set('Content-Security-Policy', csp);
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
