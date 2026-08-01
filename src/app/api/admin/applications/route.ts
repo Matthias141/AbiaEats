@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
+import { applicationStatusEnum } from '@/lib/validations';
 
 export async function GET(request: Request) {
   const guard = await requireRole('admin');
   if (guard.response) return guard.response;
 
   const { searchParams } = new URL(request.url);
-  const status = searchParams.get('status') || 'pending';
+  const status = applicationStatusEnum.safeParse(searchParams.get('status')).data ?? 'pending';
 
   const supabase = await createClient();
 

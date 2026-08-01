@@ -18,6 +18,7 @@
 import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
+import { settlementStatusEnum } from '@/lib/validations';
 
 export async function GET(request: Request) {
   const guard = await requireRole('restaurant_owner');
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const status = searchParams.get('status'); // 'pending' | 'paid'
+  const status = settlementStatusEnum.safeParse(searchParams.get('status')).data ?? null; // 'pending' | 'paid'
   const page = Math.max(1, parseInt(searchParams.get('page') ?? '1'));
   const limit = Math.min(20, parseInt(searchParams.get('limit') ?? '10'));
   const offset = (page - 1) * limit;

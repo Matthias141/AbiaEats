@@ -9,15 +9,21 @@ export const loginSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
+export const passwordSchema = z
+  .string()
+  .min(12, 'Password must be at least 12 characters')
+  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+  .regex(/[0-9]/, 'Password must contain at least one number');
+
 export const signupSchema = z.object({
   email: z.string().email('Enter a valid email address'),
-  password: z
-    .string()
-    .min(12, 'Password must be at least 12 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number'),
+  password: passwordSchema,
   full_name: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().regex(/^(\+234|0)[789][01]\d{8}$/, 'Enter a valid Nigerian phone number'),
+});
+
+export const setPasswordSchema = z.object({
+  password: passwordSchema,
 });
 
 export const phoneOtpSchema = z.object({
@@ -115,6 +121,16 @@ export const markSettlementPaidSchema = z.object({
   settlement_id: z.string().uuid(),
   payment_reference: z.string().min(1, 'Payment reference is required'),
 });
+
+// ============================================================================
+// Query-parameter allowlists (shared across list routes)
+// ============================================================================
+
+export const orderStatusEnum = z.enum([
+  'awaiting_payment', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled',
+]);
+export const settlementStatusEnum = z.enum(['pending', 'paid']);
+export const applicationStatusEnum = z.enum(['pending', 'approved', 'rejected']);
 
 // ============================================================================
 // Rating Schema

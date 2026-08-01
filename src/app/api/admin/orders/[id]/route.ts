@@ -3,7 +3,7 @@ import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
 import { updateOrderStatusSchema } from '@/lib/validations';
 import { canTransition } from '@/lib/utils';
-import type { OrderStatus } from '@/types/database';
+import type { OrderStatus, OrderUpdate, OrderTimestampField } from '@/types/database';
 
 interface Params { params: Promise<{ id: string }> }
 
@@ -48,16 +48,17 @@ export async function PATCH(request: Request, { params }: Params) {
   }
 
   // Build update payload with timestamp
-  const timestampField: Record<string, string> = {
+  const timestampField: Partial<Record<OrderStatus, OrderTimestampField>> = {
     confirmed: 'confirmed_at',
     preparing: 'preparing_at',
     out_for_delivery: 'out_for_delivery_at',
     delivered: 'delivered_at',
     cancelled: 'cancelled_at',
   };
-  const updatePayload: Record<string, unknown> = { status: parsed.data.status };
-  if (timestampField[parsed.data.status]) {
-    updatePayload[timestampField[parsed.data.status]] = new Date().toISOString();
+  const updatePayload: OrderUpdate = { status: parsed.data.status };
+  const field = timestampField[parsed.data.status];
+  if (field) {
+    updatePayload[field] = new Date().toISOString();
   }
   if (parsed.data.status === 'cancelled' && parsed.data.cancellation_reason) {
     updatePayload.cancellation_reason = parsed.data.cancellation_reason;

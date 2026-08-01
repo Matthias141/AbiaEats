@@ -22,6 +22,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import type { UserRole } from '@/types/database';
+import type { Database } from '@/types/supabase';
 import type { User } from '@supabase/supabase-js';
 
 export async function requireAuth(): Promise<
@@ -86,7 +87,31 @@ export async function createAdminClient_WEBHOOKS_AND_CRONS_ONLY() {
     );
   }
   const { createClient: sb } = await import('@supabase/supabase-js');
-  return sb(
+  return sb<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  );
+}
+
+/**
+ * Admin-API client for the ops vendor-invite flow only (/dashboard/ops/vendors).
+ * Creating a Supabase Auth user on someone else's behalf (auth.admin.*) has
+ * no non-service-role equivalent — this is the one legitimate case outside
+ * webhooks/crons that needs it. Callers MUST call requireRole('admin')
+ * themselves before invoking this; it only checks that the key exists, not
+ * who is calling. Fails closed (throws) if the key isn't configured, same
+ * as createAdminClient_WEBHOOKS_AND_CRONS_ONLY above.
+ */
+export async function createAdminClient_OPS_VENDOR_INVITE_ONLY() {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error(
+      '[SECURITY] SUPABASE_SERVICE_ROLE_KEY is not configured — vendor ' +
+      'invites are unavailable in this environment.'
+    );
+  }
+  const { createClient: sb } = await import('@supabase/supabase-js');
+  return sb<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }

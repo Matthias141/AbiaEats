@@ -207,6 +207,33 @@ export interface RestaurantWithMenu extends Restaurant {
   menu_items: MenuItem[];
 }
 
+// Shape returned by the `restaurants_public` view — deliberately omits
+// owner_id, commission_rate, and bank_* fields (see schema.sql). Customer-
+// facing pages query this view, not the base table, so their restaurant
+// prop types should be this, not the full Restaurant.
+export type RestaurantPublic = Pick<
+  Restaurant,
+  | 'id'
+  | 'name'
+  | 'slug'
+  | 'description'
+  | 'phone'
+  | 'address'
+  | 'city'
+  | 'image_url'
+  | 'cover_image_url'
+  | 'cuisine_tags'
+  | 'delivery_fee'
+  | 'min_delivery_time'
+  | 'max_delivery_time'
+  | 'is_open'
+  | 'is_active'
+  | 'total_orders'
+  | 'average_rating'
+  | 'rating_count'
+  | 'created_at'
+>;
+
 export interface SettlementWithRestaurant extends Settlement {
   restaurants: Pick<Restaurant, 'name' | 'bank_name' | 'bank_account_number' | 'bank_account_name'>;
 }
@@ -219,6 +246,8 @@ export type ProfileInsert = Omit<Profile, 'created_at' | 'updated_at'>;
 export type RestaurantInsert = Omit<Restaurant, 'id' | 'slug' | 'total_orders' | 'total_revenue' | 'average_rating' | 'rating_count' | 'created_at' | 'updated_at'>;
 export type MenuItemInsert = Omit<MenuItem, 'id' | 'created_at' | 'updated_at'>;
 export type OrderInsert = Omit<Order, 'id' | 'order_number' | 'commission_amount' | 'total' | 'confirmed_at' | 'preparing_at' | 'out_for_delivery_at' | 'delivered_at' | 'cancelled_at' | 'created_at' | 'updated_at'>;
+export type OrderUpdate = Partial<Omit<Order, 'id' | 'created_at'>>;
+export type OrderTimestampField = 'confirmed_at' | 'preparing_at' | 'out_for_delivery_at' | 'delivered_at' | 'cancelled_at';
 export type OrderItemInsert = Omit<OrderItem, 'id' | 'created_at'>;
 
 // ============================================================================

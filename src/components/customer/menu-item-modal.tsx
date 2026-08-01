@@ -3,13 +3,13 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { X, Minus, Plus, Clock, ShoppingBag, UtensilsCrossed } from 'lucide-react';
-import type { MenuItem, Restaurant } from '@/types/database';
+import type { MenuItem, RestaurantPublic } from '@/types/database';
 import { useCart } from '@/contexts/cart-context';
 import { formatPrice } from '@/lib/utils';
 
 interface MenuItemModalProps {
   item: MenuItem | null;
-  restaurant: Restaurant;
+  restaurant: RestaurantPublic;
   onClose: () => void;
 }
 
