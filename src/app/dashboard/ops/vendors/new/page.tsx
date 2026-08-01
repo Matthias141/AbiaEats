@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { requireRole, createAdminClient_OPS_VENDOR_INVITE_ONLY } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
+import { getAppUrl } from '@/lib/get-app-url';
 
 async function inviteVendor(formData: FormData) {
   'use server';
@@ -25,6 +26,7 @@ async function inviteVendor(formData: FormData) {
   const adminAuth = await createAdminClient_OPS_VENDOR_INVITE_ONLY();
   const { data, error } = await adminAuth.auth.admin.inviteUserByEmail(email, {
     data: { full_name: fullName, phone: phone || undefined },
+    redirectTo: `${getAppUrl()}/auth/callback`,
   });
 
   if (error || !data.user) {

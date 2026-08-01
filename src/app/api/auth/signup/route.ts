@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase/server';
 import { signupSchema } from '@/lib/validations';
 import { signupRateLimit, applyRateLimit } from '@/lib/rate-limit';
 import { isPasswordBreached } from '@/lib/hibp';
+import { getAppUrl } from '@/lib/get-app-url';
 
 export async function POST(request: Request) {
   // ── Rate limiting ──────────────────────────────────────────────────────────
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
       // Without this, the confirmation email links back to whatever "Site
       // URL" is configured in the Supabase dashboard regardless of which
       // environment (prod, preview, localhost) the signup came from.
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      emailRedirectTo: `${getAppUrl()}/auth/callback`,
       data: {
         full_name: parsed.data.full_name,
         phone: parsed.data.phone,
