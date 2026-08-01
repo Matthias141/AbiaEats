@@ -46,8 +46,10 @@ export default function CheckoutPage() {
   const [orderTotal, setOrderTotal] = useState(0);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  // Idempotency guard — prevents duplicate orders from double-tap or network retry
+  // Idempotency guard — prevents duplicate orders from double-tap or network retry.
+  // The ref blocks rapid re-entry; the key is sent to the DB which enforces uniqueness.
   const submittingRef = useRef(false);
+  const idempotencyKeyRef = useRef(crypto.randomUUID());
 
   // Validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -139,6 +141,7 @@ export default function CheckoutPage() {
         delivery_landmark: landmark.trim() || undefined,
         customer_phone: phone.replace(/\s|-/g, ''),
         customer_name: customerName.trim(),
+        idempotency_key: idempotencyKeyRef.current,
       });
 
       if (!result.success) {

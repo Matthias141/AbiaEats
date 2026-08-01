@@ -40,6 +40,7 @@ interface CreateOrderInput {
   customer_phone: string;
   customer_name: string;
   notes?: string;
+  idempotency_key: string;
 }
 
 type CreateOrderResult = {
@@ -94,6 +95,7 @@ export async function createOrderAction(
     p_customer_phone: parsed.data.customer_phone,
     p_customer_name: parsed.data.customer_name,
     p_notes: parsed.data.notes ?? null,
+    p_idempotency_key: input.idempotency_key,
   });
 
   const order = Array.isArray(data) ? data[0] : data;

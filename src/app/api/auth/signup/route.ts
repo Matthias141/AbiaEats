@@ -10,6 +10,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { signupSchema } from '@/lib/validations';
 import { signupRateLimit, applyRateLimit } from '@/lib/rate-limit';
+import { isPasswordBreached } from '@/lib/hibp';
 
 export async function POST(request: Request) {
   // ── Rate limiting ──────────────────────────────────────────────────────────
@@ -28,6 +29,21 @@ export async function POST(request: Request) {
       { error: parsed.error.issues[0].message },
       { status: 400 }
     );
+  }
+
+  // ── HaveIBeenPwned check ───────────────────────────────────────────────────
+  try {
+    const { breached, count } = await isPasswordBreached(parsed.data.password);
+    if (breached) {
+      return NextResponse.json(
+        {
+          error: `This password has appeared in ${count.toLocaleString()} data breaches. Please choose a different password.`,
+        },
+        { status: 400 }
+      );
+    }
+  } catch {
+    // HIBP unreachable — fail open, don't block signup
   }
 
   // ── Create account ─────────────────────────────────────────────────────────
