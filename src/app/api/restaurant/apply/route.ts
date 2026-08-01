@@ -36,7 +36,10 @@ export async function POST(request: Request) {
     .select('id')
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[restaurant-apply] DB error:', error.code, error.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+  }
 
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';
   await supabase.rpc('log_audit', {

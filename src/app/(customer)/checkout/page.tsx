@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -46,6 +46,11 @@ export default function CheckoutPage() {
   const [orderNumber, setOrderNumber] = useState('');
   const [orderTotal, setOrderTotal] = useState(0);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Idempotency guard — prevents duplicate orders from double-tap or network retry.
+  // The ref blocks rapid re-entry; the key is sent to the DB which enforces uniqueness.
+  const submittingRef = useRef(false);
+  const idempotencyKeyRef = useRef(crypto.randomUUID());
 
   // Validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -116,7 +121,9 @@ export default function CheckoutPage() {
   async function handlePlaceOrder() {
     if (!validate()) return;
     if (!restaurantId || !user) return;
+    if (submittingRef.current) return;
 
+    submittingRef.current = true;
     setIsSubmitting(true);
 
     try {
@@ -135,6 +142,7 @@ export default function CheckoutPage() {
         delivery_landmark: landmark.trim() || undefined,
         customer_phone: phone.replace(/\s|-/g, ''),
         customer_name: customerName.trim(),
+        idempotency_key: idempotencyKeyRef.current,
       });
 
       if (!result.success) {
@@ -159,6 +167,7 @@ export default function CheckoutPage() {
       const message = err instanceof Error ? err.message : 'Something went wrong. Please try again.';
       setErrors({ submit: message });
     } finally {
+      submittingRef.current = false;
       setIsSubmitting(false);
     }
   }

@@ -52,7 +52,10 @@ export async function POST(request: Request) {
     .from(BUCKET)
     .createSignedUploadUrl(storagePath);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[restaurant-upload] Storage error:', error.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+  }
 
   // Public URL the client can store after upload completes
   const { data: publicData } = supabase.storage.from(BUCKET).getPublicUrl(storagePath);

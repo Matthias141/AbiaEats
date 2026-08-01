@@ -9,6 +9,8 @@ on:
 permissions:
   contents: read
   security-events: write
+  issues: write
+  pull-requests: write
 
 jobs:
   security-scans:
@@ -35,6 +37,21 @@ jobs:
         env:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
 
+      - name: Check staging URL is reachable
+        if: github.event_name == 'pull_request'
+        id: staging-check
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://abia-eats-staging.vercel.app || echo "000")
+          if [ "$STATUS" = "200" ]; then
+            echo "reachable=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "reachable=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Staging URL returned HTTP $STATUS — skipping OWASP ZAP scan"
+          fi
+
+      - name: OWASP ZAP baseline scan (PR only, staging must be live)
+        if: github.event_name == 'pull_request' && steps.staging-check.outputs.reachable == 'true'
+        uses: zaproxy/action-baseline@v0.10.0
   zap-scan:
     name: OWASP ZAP baseline scan (PR only)
     if: github.event_name == 'pull_request'
@@ -53,7 +70,7 @@ jobs:
         # IMPORTANT: do not continue on error so failures are visible
         with:
           target: 'https://abia-eats-staging.vercel.app'
-          # consider customizing rules and thresholds here
+          allow_issue_writing: false
 
   build-and-lint:
     name: Build, lint, and typecheck

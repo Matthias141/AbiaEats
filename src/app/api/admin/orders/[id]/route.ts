@@ -64,7 +64,10 @@ export async function PATCH(request: Request, { params }: Params) {
   }
 
   const { error } = await supabase.from('orders').update(updatePayload).eq('id', id);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[admin-orders-update] DB error:', error.code, error.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+  }
 
   // Audit log
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';

@@ -3,12 +3,30 @@ import { notFound } from 'next/navigation';
 import { RestaurantDetail } from '@/components/customer/restaurant-detail';
 import { getMockRestaurant, getMockMenuItems } from '@/lib/mock-data';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export default async function RestaurantPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+
+  // Reject non-UUID ids immediately — avoids wasting a DB connection on junk input
+  if (!UUID_RE.test(id)) {
+    // Still allow mock-data lookup for local dev (mock IDs may not be UUIDs)
+    if (process.env.NODE_ENV === 'production') {
+      notFound();
+    }
+    const mockRestaurant = getMockRestaurant(id);
+    if (!mockRestaurant) notFound();
+    return (
+      <RestaurantDetail
+        restaurant={mockRestaurant}
+        menuItems={getMockMenuItems(id)}
+      />
+    );
+  }
 
   // Try Supabase first
   try {
@@ -37,20 +55,21 @@ export default async function RestaurantPage({
       );
     }
   } catch {
-    // Supabase not configured — fall through to mock data
+    // Supabase not configured — fall through to mock data in dev only
   }
 
-  // Fall back to mock data
-  const mockRestaurant = getMockRestaurant(id);
-  if (!mockRestaurant) {
-    notFound();
+  // Mock data fallback — development only to avoid masking Supabase outages
+  if (process.env.NODE_ENV !== 'production') {
+    const mockRestaurant = getMockRestaurant(id);
+    if (mockRestaurant) {
+      return (
+        <RestaurantDetail
+          restaurant={mockRestaurant}
+          menuItems={getMockMenuItems(id)}
+        />
+      );
+    }
   }
 
-  const mockMenuItems = getMockMenuItems(id);
-  return (
-    <RestaurantDetail
-      restaurant={mockRestaurant}
-      menuItems={mockMenuItems}
-    />
-  );
+  notFound();
 }

@@ -40,6 +40,7 @@ interface CreateOrderInput {
   customer_phone: string;
   customer_name: string;
   notes?: string;
+  idempotency_key: string;
 }
 
 type CreateOrderResult = {
@@ -94,14 +95,21 @@ export async function createOrderAction(
     p_customer_phone: parsed.data.customer_phone,
     p_customer_name: parsed.data.customer_name,
     p_notes: parsed.data.notes ?? null,
+    p_idempotency_key: input.idempotency_key,
   });
 
   const order = Array.isArray(data) ? data[0] : data;
 
   if (error || !order) {
+    console.error('[create-order] RPC error:', error?.code, error?.message);
+    // RPC exceptions are our own user-friendly messages (e.g. "Menu item no longer exists").
+    // Generic Supabase errors get a safe fallback.
+    const isCustomException = error?.code === 'P0001';
     return {
       success: false,
-      error: error?.message ?? 'Failed to place order. Please try again.',
+      error: isCustomException
+        ? (error.message ?? 'Failed to place order.')
+        : 'Failed to place order. Please try again.',
     };
   }
 

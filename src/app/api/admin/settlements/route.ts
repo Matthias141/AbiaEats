@@ -72,7 +72,8 @@ export async function POST(request: Request) {
     .lte('delivered_at', `${period_end}T23:59:59.999Z`);
 
   if (ordersError) {
-    return NextResponse.json({ error: ordersError.message }, { status: 500 });
+    console.error('[admin-settlements-orders-query] DB error:', ordersError.code, ordersError.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
   }
 
   if (!orders || orders.length === 0) {
@@ -117,7 +118,8 @@ export async function POST(request: Request) {
     .single();
 
   if (insertError || !settlement) {
-    return NextResponse.json({ error: insertError?.message ?? 'Insert failed' }, { status: 500 });
+    console.error('[admin-settlements-insert] DB error:', insertError?.code, insertError?.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
   }
 
   // ── Audit trail ───────────────────────────────────────────────────────────
@@ -172,7 +174,10 @@ export async function GET(request: Request) {
 
   const { data, error, count } = await query;
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[admin-settlements-list] DB error:', error.code, error.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+  }
 
   return NextResponse.json({
     settlements: data,

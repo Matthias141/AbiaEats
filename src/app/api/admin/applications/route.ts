@@ -17,6 +17,9 @@ export async function GET(request: Request) {
     .eq('status', status)
     .order('created_at', { ascending: false });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[admin-applications] DB error:', error.code, error.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+  }
   return NextResponse.json({ applications: data });
 }
