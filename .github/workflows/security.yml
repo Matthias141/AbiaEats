@@ -35,7 +35,7 @@ jobs:
 
       - name: OWASP ZAP baseline scan (PR only)
         if: github.event_name == 'pull_request'
-        uses: zaproxy/action-baseline@v0.10.0
+        uses: zaproxy/action-baseline@v0.15.0
         # IMPORTANT: do not continue on error so failures are visible
         with:
           target: 'https://abia-eats-staging.vercel.app'
