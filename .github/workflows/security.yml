@@ -6,16 +6,14 @@ on:
   pull_request:
     branches: [main]
 
-jobs:
-  security-gates:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-      actions: read
-      pull-requests: write
-      issues: write
+permissions:
+  contents: read
+  security-events: write
 
+jobs:
+  security-scans:
+    name: Security Scans
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,9 +28,29 @@ jobs:
       - name: Semgrep SAST
         uses: semgrep/semgrep-action@v1
         with:
-          config: "p/typescript p/nextjs p/secrets p/owasp-top-ten"
+          config: "p/typescript,p/nextjs,p/secrets,p/owasp-top-ten"
         env:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+      - name: OWASP ZAP baseline scan (PR only)
+        if: github.event_name == 'pull_request'
+        uses: zaproxy/action-baseline@v0.10.0
+        # IMPORTANT: do not continue on error so failures are visible
+        with:
+          target: 'https://abia-eats-staging.vercel.app'
+          # consider customizing rules and thresholds here
+
+  build-and-lint:
+    name: Build, lint, and typecheck
+    runs-on: ubuntu-latest
+    needs: security-scans
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -43,8 +61,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: npm audit
-        run: npm audit --audit-level=critical
+      - name: npm audit (fail on critical)
+        run: |
+          npm audit --json > audit.json || true
+          cat audit.json
+          # exit non-zero if any critical advisories found
+          node -e "
+            const data = require('./audit.json');
+            const crit = (data && data.metadata && data.metadata.vulnerabilities && data.metadata.vulnerabilities.critical) || 0;
+            if (crit > 0) { console.error('Critical vulnerabilities found'); process.exit(1); }
+          "
 
       - name: TypeScript check
         run: npx tsc --noEmit
@@ -53,18 +79,13 @@ jobs:
         run: npm run lint
 
       - name: Build
-        run: npm run build
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsYWNlaG9sZGVyIiwicm9sZSI6ImFub24iLCJp' }}
-          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'https://abia-eats.vercel.app' }}
-          NEXT_PUBLIC_APP_NAME: AbiaEats
-          NEXT_PUBLIC_OPAY_ACCOUNT_NAME: AbiaEats
-          NEXT_PUBLIC_OPAY_ACCOUNT_NUMBER: '0000000000'
-
-      - name: OWASP ZAP baseline scan
-        uses: zaproxy/action-baseline@v0.10.0
-        if: github.event_name == 'pull_request'
-        continue-on-error: true
-        with:
-          target: 'https://abia-eats-staging.vercel.app'
+          # Use repository secrets only; DO NOT provide fallback secret values here
+          # NOTE: NEXT_PUBLIC_* variables are client-exposed; ensure these are safe to expose
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_APP_NAME: 'AbiaEats'
+          NEXT_PUBLIC_OPAY_ACCOUNT_NAME: 'AbiaEats'
+          NEXT_PUBLIC_OPAY_ACCOUNT_NUMBER: ${{ secrets.NEXT_PUBLIC_OPAY_ACCOUNT_NUMBER }}
+        run: npm run build
