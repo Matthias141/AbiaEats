@@ -1,19 +1,14 @@
 import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
-import type { OrderStatus } from '@/types/database';
-
-const ORDER_STATUSES: OrderStatus[] = [
-  'awaiting_payment', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled',
-];
+import { orderStatusEnum } from '@/lib/validations';
 
 export async function GET(request: Request) {
   const guard = await requireRole('admin');
   if (guard.response) return guard.response;
 
   const { searchParams } = new URL(request.url);
-  const requestedStatus = searchParams.get('status');
-  const status = ORDER_STATUSES.includes(requestedStatus as OrderStatus) ? (requestedStatus as OrderStatus) : null;
+  const status = orderStatusEnum.safeParse(searchParams.get('status')).data ?? null;
   const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
   const limit = 20;
   const offset = (page - 1) * limit;

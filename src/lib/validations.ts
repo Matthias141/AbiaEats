@@ -123,6 +123,16 @@ export const markSettlementPaidSchema = z.object({
 });
 
 // ============================================================================
+// Query-parameter allowlists (shared across list routes)
+// ============================================================================
+
+export const orderStatusEnum = z.enum([
+  'awaiting_payment', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled',
+]);
+export const settlementStatusEnum = z.enum(['pending', 'paid']);
+export const applicationStatusEnum = z.enum(['pending', 'approved', 'rejected']);
+
+// ============================================================================
 // Rating Schema
 // ============================================================================
 

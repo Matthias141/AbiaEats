@@ -28,10 +28,7 @@
 import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
-import { createSettlementSchema } from '@/lib/validations';
-import type { SettlementStatus } from '@/types/database';
-
-const SETTLEMENT_STATUSES: SettlementStatus[] = ['pending', 'paid'];
+import { createSettlementSchema, settlementStatusEnum } from '@/lib/validations';
 
 // ── POST /api/admin/settlements — Generate settlement ─────────────────────────
 export async function POST(request: Request) {
@@ -153,10 +150,7 @@ export async function GET(request: Request) {
   if (guard.response) return guard.response;
 
   const { searchParams } = new URL(request.url);
-  const requestedStatus = searchParams.get('status');   // 'pending' | 'paid'
-  const status = SETTLEMENT_STATUSES.includes(requestedStatus as SettlementStatus)
-    ? (requestedStatus as SettlementStatus)
-    : null;
+  const status = settlementStatusEnum.safeParse(searchParams.get('status')).data ?? null;
   const restaurant_id = searchParams.get('restaurant_id');
   const page = Math.max(1, parseInt(searchParams.get('page') ?? '1'));
   const limit = Math.min(50, parseInt(searchParams.get('limit') ?? '20'));

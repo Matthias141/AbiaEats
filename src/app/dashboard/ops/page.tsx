@@ -12,6 +12,12 @@ export default async function OpsDashboardPage() {
       .not('status', 'in', '(delivered,cancelled)'),
   ]);
 
+  if (restaurants.error || vendors.error || activeOrders.error) {
+    throw new Error(
+      restaurants.error?.message || vendors.error?.message || activeOrders.error?.message || 'Failed to load dashboard stats'
+    );
+  }
+
   const stats = [
     { label: 'Total Restaurants', value: restaurants.count ?? 0 },
     { label: 'Total Vendors', value: vendors.count ?? 0 },
@@ -19,11 +25,11 @@ export default async function OpsDashboardPage() {
   ];
 
   return (
-    <div>
+    <div className="overflow-x-hidden">
       <h1 className="text-2xl font-bold text-gray-900 mb-8">AbiaEats Ops Dashboard</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 overflow-x-hidden">
         {stats.map(({ label, value }) => (
-          <div key={label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+          <div key={label} className="overflow-x-hidden bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
             <p className="text-2xl font-bold text-gray-900">{value}</p>
             <p className="text-sm text-gray-500 mt-0.5">{label}</p>
           </div>

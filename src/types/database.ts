@@ -246,6 +246,8 @@ export type ProfileInsert = Omit<Profile, 'created_at' | 'updated_at'>;
 export type RestaurantInsert = Omit<Restaurant, 'id' | 'slug' | 'total_orders' | 'total_revenue' | 'average_rating' | 'rating_count' | 'created_at' | 'updated_at'>;
 export type MenuItemInsert = Omit<MenuItem, 'id' | 'created_at' | 'updated_at'>;
 export type OrderInsert = Omit<Order, 'id' | 'order_number' | 'commission_amount' | 'total' | 'confirmed_at' | 'preparing_at' | 'out_for_delivery_at' | 'delivered_at' | 'cancelled_at' | 'created_at' | 'updated_at'>;
+export type OrderUpdate = Partial<Omit<Order, 'id' | 'created_at'>>;
+export type OrderTimestampField = 'confirmed_at' | 'preparing_at' | 'out_for_delivery_at' | 'delivered_at' | 'cancelled_at';
 export type OrderItemInsert = Omit<OrderItem, 'id' | 'created_at'>;
 
 // ============================================================================

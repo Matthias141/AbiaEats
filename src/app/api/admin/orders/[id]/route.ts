@@ -3,11 +3,7 @@ import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
 import { updateOrderStatusSchema } from '@/lib/validations';
 import { canTransition } from '@/lib/utils';
-import type { OrderStatus } from '@/types/database';
-import type { Database } from '@/types/supabase';
-
-type OrderUpdate = Database['public']['Tables']['orders']['Update'];
-type OrderTimestampField = 'confirmed_at' | 'preparing_at' | 'out_for_delivery_at' | 'delivered_at' | 'cancelled_at';
+import type { OrderStatus, OrderUpdate, OrderTimestampField } from '@/types/database';
 
 interface Params { params: Promise<{ id: string }> }
 
