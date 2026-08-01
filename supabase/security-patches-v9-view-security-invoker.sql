@@ -27,10 +27,21 @@
 -- theoretical lint finding.
 --
 -- Also found (not in the Advisor's 5, but same root cause):
--- `restaurants_with_banking` (schema-patch-v5-vault.sql) is granted SELECT
--- to ALL authenticated users with a comment claiming "RLS enforces admin
--- check" — but the view has no admin filter at all. Every logged-in
--- customer could read every restaurant's decrypted bank account details.
+-- `restaurants_with_banking` (schema-patch-v5-vault.sql) would have been
+-- granted SELECT to ALL authenticated users with a comment claiming "RLS
+-- enforces admin check" — but the view has no admin filter at all. This
+-- patch creates a corrected, properly-scoped version directly.
+--
+-- NOTE ON ENCRYPTION: schema-patch-v5-vault.sql (column-level encryption
+-- via pgsodium) is NOT a prerequisite for this patch and does not need to
+-- be run. Hosted Supabase projects restrict the raw pgsodium crypto
+-- primitives (crypto_aead_det_encrypt/_decrypt) from the postgres role by
+-- default (permission denied for function _crypto_aead_det_noncegen),
+-- so per-row vault encryption isn't usable here without a support-granted
+-- role change. This patch instead secures restaurants_with_banking against
+-- the existing plaintext bank_name/bank_account_number/bank_account_name
+-- columns. Bank data is unencrypted at rest either way right now — this
+-- patch fixes WHO can read it, which is the actual Advisor/security gap.
 --
 -- FIX:
 -- 1. security_invoker = true on all views — makes them run as the
@@ -80,37 +91,15 @@ GRANT SELECT ON public.detect_low_subtotal_orders TO service_role;
 GRANT SELECT ON public.detect_rapid_multi_restaurant_orders TO service_role;
 
 -- -----------------------------------------------------------------------------
--- Fix 4: restaurants_with_banking — CRITICAL. Previously granted to ALL
--- authenticated users (every customer) with no row-level admin filter.
--- Add an explicit is_admin() check and restrict grants.
+-- Fix 4: restaurants_with_banking — a properly-scoped view over the
+-- existing plaintext bank_name/bank_account_number/bank_account_name
+-- columns. Only the restaurant's own owner or an admin can read a row.
+-- No pgsodium/vault dependency — see note above on why that path is
+-- deferred for this project.
 -- -----------------------------------------------------------------------------
 CREATE OR REPLACE VIEW public.restaurants_with_banking AS
 SELECT
-  r.*,
-  CASE WHEN r.bank_name_enc IS NOT NULL THEN
-    convert_from(pgsodium.crypto_aead_det_decrypt(
-      decode(r.bank_name_enc, 'base64'),
-      r.id::text::bytea,
-      (SELECT id FROM vault.secrets WHERE name = 'bank_account_key'),
-      NULL
-    ), 'UTF8')
-  ELSE NULL END AS bank_name,
-  CASE WHEN r.bank_account_number_enc IS NOT NULL THEN
-    convert_from(pgsodium.crypto_aead_det_decrypt(
-      decode(r.bank_account_number_enc, 'base64'),
-      r.id::text::bytea,
-      (SELECT id FROM vault.secrets WHERE name = 'bank_account_key'),
-      NULL
-    ), 'UTF8')
-  ELSE NULL END AS bank_account_number,
-  CASE WHEN r.bank_account_name_enc IS NOT NULL THEN
-    convert_from(pgsodium.crypto_aead_det_decrypt(
-      decode(r.bank_account_name_enc, 'base64'),
-      r.id::text::bytea,
-      (SELECT id FROM vault.secrets WHERE name = 'bank_account_key'),
-      NULL
-    ), 'UTF8')
-  ELSE NULL END AS bank_account_name
+  r.*
 FROM public.restaurants r
 WHERE is_admin() OR r.owner_id = auth.uid();
 
