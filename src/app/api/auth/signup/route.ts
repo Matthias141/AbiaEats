@@ -52,6 +52,10 @@ export async function POST(request: Request) {
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
+      // Without this, the confirmation email links back to whatever "Site
+      // URL" is configured in the Supabase dashboard regardless of which
+      // environment (prod, preview, localhost) the signup came from.
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
       data: {
         full_name: parsed.data.full_name,
         phone: parsed.data.phone,
