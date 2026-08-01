@@ -30,22 +30,27 @@ export default function SetPasswordPage() {
 
     setIsLoading(true);
 
-    const res = await fetch('/api/auth/set-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
-    });
+    try {
+      const res = await fetch('/api/auth/set-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
 
-    const data = await res.json().catch(() => ({}));
+      const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
-      setError(data.error || 'Something went wrong. Please try again.');
+      if (!res.ok) {
+        setError(data.error || 'Something went wrong. Please try again.');
+        return;
+      }
+
+      router.push(data.redirectTo || '/home');
+      router.refresh();
+    } catch {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    router.push(data.redirectTo || '/home');
-    router.refresh();
   };
 
   return (
@@ -63,19 +68,23 @@ export default function SetPasswordPage() {
           </div>
 
           {error && (
-            <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 text-center">
+            <div
+              role="alert"
+              className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600 text-center"
+            >
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5 ml-1">
+              <label htmlFor="new-password" className="block text-xs font-medium text-gray-500 mb-1.5 ml-1">
                 New password
               </label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
+                  id="new-password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="At least 12 characters"
                   value={password}
@@ -85,8 +94,9 @@ export default function SetPasswordPage() {
                 />
                 <button
                   type="button"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center justify-center w-11 h-11 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -94,12 +104,13 @@ export default function SetPasswordPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5 ml-1">
+              <label htmlFor="confirm-password" className="block text-xs font-medium text-gray-500 mb-1.5 ml-1">
                 Confirm password
               </label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
+                  id="confirm-password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Re-enter your password"
                   value={confirmPassword}

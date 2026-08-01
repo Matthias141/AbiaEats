@@ -15,17 +15,11 @@ async function addRestaurant(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim();
   const address = String(formData.get('address') ?? '').trim();
   const phone = String(formData.get('phone') ?? '').trim();
-  const zone = String(formData.get('zone') ?? '').trim();
+  const city = String(formData.get('city') ?? '').trim();
 
-  if (!name || !address || !phone || !zone) {
+  if (!name || !address || !phone || (city !== 'aba' && city !== 'umuahia')) {
     throw new Error('All fields are required');
   }
-
-  // The restaurants table has no "zone" column — only a two-value city_enum
-  // ('aba' | 'umuahia'). The zone select below offers finer-grained Aba
-  // sub-areas for the ops operator's own reference, but only the city is
-  // persisted; add a `zone` column via migration if per-zone data is needed.
-  const city = zone.startsWith('aba') ? 'aba' : 'umuahia';
 
   const slug = `${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}-${Date.now()}`;
 
@@ -96,28 +90,27 @@ export default function NewRestaurantPage() {
         </div>
 
         <div>
-          <label htmlFor="zone" className="block text-sm font-medium text-gray-700 mb-1">
-            Zone
+          <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+            City
           </label>
           <select
-            id="zone"
-            name="zone"
+            id="city"
+            name="city"
             required
             defaultValue=""
             className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-orange"
           >
             <option value="" disabled>
-              Select a zone
+              Select a city
             </option>
-            <option value="aba-central">Aba Central</option>
-            <option value="aba-north">Aba North</option>
-            <option value="aba-south">Aba South</option>
+            <option value="aba">Aba</option>
+            <option value="umuahia">Umuahia</option>
           </select>
         </div>
 
         <button
           type="submit"
-          className="w-full bg-brand-orange text-white font-medium rounded-xl py-2.5 text-sm hover:opacity-90 transition-opacity"
+          className="w-full min-h-[44px] bg-brand-orange text-white font-medium rounded-xl text-sm hover:opacity-90 transition-opacity"
         >
           Add Restaurant
         </button>

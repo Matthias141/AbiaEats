@@ -2,9 +2,31 @@ import { notFound, redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 interface Params {
   params: Promise<{ id: string }>;
+}
+
+async function logRestaurantAudit(
+  supabase: SupabaseClient,
+  action: string,
+  actorId: string,
+  restaurantId: string,
+  metadata: Record<string, unknown>
+) {
+  const ip = (await headers()).get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';
+  const { error } = await supabase.rpc('log_audit', {
+    p_action: action,
+    p_actor_id: actorId,
+    p_target_type: 'restaurants',
+    p_target_id: restaurantId,
+    p_ip_address: ip,
+    p_metadata: metadata,
+  });
+  if (error) {
+    console.error(`[audit] Failed to record ${action} for restaurant ${restaurantId}:`, error.message);
+  }
 }
 
 async function updateRestaurant(id: string, formData: FormData) {
@@ -30,15 +52,7 @@ async function updateRestaurant(id: string, formData: FormData) {
 
   if (error) throw new Error(error.message);
 
-  const ip = (await headers()).get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';
-  await supabase.rpc('log_audit', {
-    p_action: 'restaurant_updated',
-    p_actor_id: guard.user.id,
-    p_target_type: 'restaurants',
-    p_target_id: id,
-    p_ip_address: ip,
-    p_metadata: { name, address, phone, city },
-  });
+  await logRestaurantAudit(supabase, 'restaurant_updated', guard.user.id, id, { name, address, phone, city });
 
   redirect('/dashboard/ops/restaurants');
 }
@@ -55,15 +69,13 @@ async function toggleActive(id: string, nextActive: boolean) {
   const { error } = await supabase.from('restaurants').update({ is_active: nextActive }).eq('id', id);
   if (error) throw new Error(error.message);
 
-  const ip = (await headers()).get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';
-  await supabase.rpc('log_audit', {
-    p_action: nextActive ? 'restaurant_activated' : 'restaurant_deactivated',
-    p_actor_id: guard.user.id,
-    p_target_type: 'restaurants',
-    p_target_id: id,
-    p_ip_address: ip,
-    p_metadata: {},
-  });
+  await logRestaurantAudit(
+    supabase,
+    nextActive ? 'restaurant_activated' : 'restaurant_deactivated',
+    guard.user.id,
+    id,
+    {}
+  );
 
   redirect('/dashboard/ops/restaurants');
 }
@@ -148,7 +160,7 @@ export default async function EditRestaurantPage({ params }: Params) {
 
         <button
           type="submit"
-          className="w-full bg-brand-orange text-white font-medium rounded-xl py-2.5 text-sm hover:opacity-90 transition-opacity"
+          className="w-full min-h-[44px] bg-brand-orange text-white font-medium rounded-xl text-sm hover:opacity-90 transition-opacity"
         >
           Save Changes
         </button>
@@ -164,7 +176,7 @@ export default async function EditRestaurantPage({ params }: Params) {
         <form action={restaurant.is_active ? deactivate : activate}>
           <button
             type="submit"
-            className={`text-sm font-medium px-4 py-2 rounded-xl transition-colors ${
+            className={`inline-flex items-center justify-center min-h-[44px] text-sm font-medium px-4 rounded-xl transition-colors ${
               restaurant.is_active
                 ? 'bg-red-50 text-red-600 hover:bg-red-100'
                 : 'bg-green-50 text-green-600 hover:bg-green-100'

@@ -32,7 +32,7 @@ export default async function OpsLayout({ children }: { children: React.ReactNod
             <Link
               key={href}
               href={href}
-              className="text-sm font-medium text-gray-600 hover:text-brand-orange transition-colors"
+              className="inline-flex items-center min-h-[44px] px-2 text-sm font-medium text-gray-600 hover:text-brand-orange transition-colors"
             >
               {label}
             </Link>

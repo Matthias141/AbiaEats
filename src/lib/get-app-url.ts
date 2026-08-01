@@ -8,7 +8,9 @@
  * Preview without any manual configuration.
  */
 export function getAppUrl(): string {
-  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
+  // Strip trailing slashes — callers append a path (e.g. `${getAppUrl()}/auth/callback`),
+  // and a doubled slash fails Supabase's exact-match redirect allowlist.
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL.replace(/\/+$/, '');
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
   return 'http://localhost:3000';
 }

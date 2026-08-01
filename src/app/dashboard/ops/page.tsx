@@ -1,8 +1,21 @@
-export default function OpsDashboardPage() {
+import { createClient } from '@/lib/supabase/server';
+
+export default async function OpsDashboardPage() {
+  const supabase = await createClient();
+
+  const [restaurants, vendors, activeOrders] = await Promise.all([
+    supabase.from('restaurants').select('id', { count: 'exact', head: true }),
+    supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'restaurant_owner'),
+    supabase
+      .from('orders')
+      .select('id', { count: 'exact', head: true })
+      .not('status', 'in', '(delivered,cancelled)'),
+  ]);
+
   const stats = [
-    { label: 'Total Restaurants', value: 0 },
-    { label: 'Total Vendors', value: 0 },
-    { label: 'Active Orders', value: 0 },
+    { label: 'Total Restaurants', value: restaurants.count ?? 0 },
+    { label: 'Total Vendors', value: vendors.count ?? 0 },
+    { label: 'Active Orders', value: activeOrders.count ?? 0 },
   ];
 
   return (

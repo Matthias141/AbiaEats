@@ -5,16 +5,21 @@
  */
 
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { requireAuth } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
 import { setPasswordSchema } from '@/lib/validations';
 import { setPasswordRateLimit, applyRateLimit } from '@/lib/rate-limit';
 import { isPasswordBreached } from '@/lib/hibp';
 
+// Riders don't have a dedicated dashboard yet (CLAUDE.md §2: they use the
+// restaurant dashboard at launch, but /restaurant itself is gated to
+// restaurant_owner/admin) — send them to /home rather than a route the
+// middleware will immediately bounce them out of.
 const REDIRECT_BY_ROLE: Record<string, string> = {
   admin: '/dashboard/ops',
   restaurant_owner: '/restaurant',
-  rider: '/restaurant',
+  rider: '/home',
   customer: '/home',
 };
 
@@ -33,7 +38,11 @@ export async function POST(request: Request) {
   const parsed = setPasswordSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.issues[0].message },
+      {
+        error: parsed.error.issues[0].message,
+        details: z.flattenError(parsed.error).fieldErrors,
+        code: 'VALIDATION_ERROR',
+      },
       { status: 400 }
     );
   }
@@ -44,6 +53,8 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error: `This password has appeared in ${count.toLocaleString()} data breaches. Please choose a different password.`,
+          details: {},
+          code: 'PASSWORD_BREACHED',
         },
         { status: 400 }
       );
@@ -58,7 +69,11 @@ export async function POST(request: Request) {
   if (error) {
     console.error('[set-password] Supabase error:', error.message, error.status);
     return NextResponse.json(
-      { error: 'Unable to set password. Please request a new invite link and try again.' },
+      {
+        error: 'Unable to set password. Please request a new invite link and try again.',
+        details: {},
+        code: 'PASSWORD_UPDATE_FAILED',
+      },
       { status: 500 }
     );
   }

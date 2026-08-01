@@ -15,7 +15,7 @@ async function toggleVendorActive(id: string, nextActive: boolean) {
   if (error) throw new Error(error.message);
 
   const ip = (await headers()).get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';
-  await supabase.rpc('log_audit', {
+  const { error: auditError } = await supabase.rpc('log_audit', {
     p_action: nextActive ? 'vendor_activated' : 'vendor_deactivated',
     p_actor_id: guard.user.id,
     p_target_type: 'profiles',
@@ -23,11 +23,17 @@ async function toggleVendorActive(id: string, nextActive: boolean) {
     p_ip_address: ip,
     p_metadata: {},
   });
+  if (auditError) {
+    console.error(`[audit] Failed to record vendor status change for ${id}:`, auditError.message);
+  }
 
   redirect('/dashboard/ops/vendors');
 }
 
 export default async function OpsVendorsPage() {
+  const guard = await requireRole('admin');
+  if (guard.response) redirect('/');
+
   const supabase = await createClient();
 
   const [{ data: vendors }, { data: restaurants }] = await Promise.all([
@@ -52,7 +58,7 @@ export default async function OpsVendorsPage() {
         <h1 className="text-2xl font-bold text-gray-900">Vendors</h1>
         <Link
           href="/dashboard/ops/vendors/new"
-          className="text-sm font-medium bg-brand-orange text-white px-4 py-2 rounded-xl hover:opacity-90 transition-opacity"
+          className="inline-flex items-center justify-center min-h-[44px] text-sm font-medium bg-brand-orange text-white px-4 rounded-xl hover:opacity-90 transition-opacity"
         >
           + Invite Vendor
         </Link>
@@ -95,7 +101,7 @@ export default async function OpsVendorsPage() {
                     <form action={vendor.is_active ? deactivate : activate}>
                       <button
                         type="submit"
-                        className={`text-sm font-medium ${
+                        className={`inline-flex items-center justify-center min-h-[44px] px-2 text-sm font-medium ${
                           vendor.is_active ? 'text-red-600 hover:underline' : 'text-green-600 hover:underline'
                         }`}
                       >
@@ -109,7 +115,14 @@ export default async function OpsVendorsPage() {
             {(vendors ?? []).length === 0 && (
               <tr>
                 <td colSpan={5} className="px-6 py-10 text-center text-gray-400">
-                  No vendors yet.
+                  <div className="text-2xl mb-2">🧑‍🍳</div>
+                  <p className="mb-3">No vendors yet.</p>
+                  <Link
+                    href="/dashboard/ops/vendors/new"
+                    className="inline-flex items-center justify-center min-h-[44px] text-sm font-medium text-brand-orange hover:underline"
+                  >
+                    + Invite your first vendor
+                  </Link>
                 </td>
               </tr>
             )}

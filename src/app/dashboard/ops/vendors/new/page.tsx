@@ -142,7 +142,7 @@ export default async function NewVendorPage() {
 
         <button
           type="submit"
-          className="w-full bg-brand-orange text-white font-medium rounded-xl py-2.5 text-sm hover:opacity-90 transition-opacity"
+          className="w-full min-h-[44px] bg-brand-orange text-white font-medium rounded-xl text-sm hover:opacity-90 transition-opacity"
         >
           Send Invite
         </button>
