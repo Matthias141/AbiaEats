@@ -140,7 +140,7 @@ export default async function RestaurantOrdersPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-5 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 mb-8 overflow-x-hidden">
         {[
           { label: 'Total orders', value: orders.length },
           { label: 'Active now', value: activeCount },

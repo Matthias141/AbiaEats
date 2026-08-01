@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
-import { Plus, Pencil, Trash2, ImagePlus, X, ToggleLeft, ToggleRight, Star } from 'lucide-react';
+import { Plus, Pencil, Trash2, ImagePlus, X, ToggleLeft, ToggleRight, Star, UtensilsCrossed } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import type { MenuItem } from '@/types/database';
 
@@ -185,7 +185,9 @@ export default function RestaurantMenuPage() {
                           className="object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl">🍽️</div>
+                        <div className="w-full h-full flex items-center justify-center">
+                          <UtensilsCrossed className="w-6 h-6 text-gray-300" strokeWidth={1.5} aria-hidden="true" />
+                        </div>
                       )}
                     </div>
 

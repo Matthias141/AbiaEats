@@ -15,6 +15,7 @@ import {
   Loader2,
   Copy,
   Info,
+  Landmark,
 } from 'lucide-react';
 import { useCart } from '@/contexts/cart-context';
 import { useAuth } from '@/hooks/use-auth';
@@ -531,9 +532,7 @@ export default function CheckoutPage() {
 
           <div className="liquid-glass rounded-xl p-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
-              <span className="text-lg" role="img" aria-label="Bank">
-                🏦
-              </span>
+              <Landmark className="w-5 h-5 text-success" aria-hidden="true" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-gray-900 font-medium text-sm">OPay Transfer</p>

@@ -39,7 +39,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-5 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 mb-8 overflow-x-hidden">
         {stats.map(({ label, value, icon: Icon, color, bg }) => (
           <div key={label} className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
             <div className={`w-10 h-10 ${bg} rounded-xl flex items-center justify-center mb-4`}>
