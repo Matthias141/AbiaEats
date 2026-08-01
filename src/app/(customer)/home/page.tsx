@@ -281,7 +281,7 @@ export default function CustomerHomePage() {
                 Order now and save on delivery.
               </p>
             </div>
-            <PartyPopper className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 text-white opacity-30" strokeWidth={1.5} />
+            <PartyPopper className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 text-white opacity-30" strokeWidth={1.5} aria-hidden="true" />
 
           </div>
         </section>

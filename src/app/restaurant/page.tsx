@@ -45,7 +45,7 @@ export default async function RestaurantPortalHome() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 mb-8 overflow-x-hidden">
           {[
             { label: 'Orders Today', value: ordersToday.count ?? 0 },
             { label: 'Total Delivered', value: totalOrders.count ?? 0 },

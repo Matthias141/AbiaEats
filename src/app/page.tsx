@@ -161,18 +161,18 @@ export default function LandingPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-3">
                 <div className="aspect-square rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center">
-                  <HeroRiceIcon className="w-14 h-14 text-brand-orange/70" strokeWidth={1.5} />
+                  <HeroRiceIcon className="w-14 h-14 text-brand-orange/70" strokeWidth={1.5} aria-hidden="true" />
                 </div>
                 <div className="aspect-[4/3] rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center">
-                  <HeroGrillsIcon className="w-12 h-12 text-brand-orange/70" strokeWidth={1.5} />
+                  <HeroGrillsIcon className="w-12 h-12 text-brand-orange/70" strokeWidth={1.5} aria-hidden="true" />
                 </div>
               </div>
               <div className="space-y-3 pt-8">
                 <div className="aspect-[4/3] rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center">
-                  <HeroLocalIcon className="w-12 h-12 text-brand-orange/70" strokeWidth={1.5} />
+                  <HeroLocalIcon className="w-12 h-12 text-brand-orange/70" strokeWidth={1.5} aria-hidden="true" />
                 </div>
                 <div className="aspect-square rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center">
-                  <HeroPepperSoupIcon className="w-14 h-14 text-brand-orange/70" strokeWidth={1.5} />
+                  <HeroPepperSoupIcon className="w-14 h-14 text-brand-orange/70" strokeWidth={1.5} aria-hidden="true" />
                 </div>
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function LandingPage() {
                   href={`/restaurants?tag=${cat.slug}`}
                   className="flex flex-col items-center gap-2 p-4 rounded-2xl liquid-glass liquid-lift transition-all active:scale-[0.97] group"
                 >
-                  <Icon className="w-7 h-7 text-brand-orange group-hover:scale-110 transition-transform" strokeWidth={1.75} />
+                  <Icon className="w-7 h-7 text-brand-orange group-hover:scale-110 transition-transform" strokeWidth={1.75} aria-hidden="true" />
                   <span className="text-xs sm:text-sm font-medium text-gray-600 group-hover:text-gray-900 text-center">
                     {cat.name}
                   </span>
@@ -229,7 +229,7 @@ export default function LandingPage() {
                 className="group rounded-2xl liquid-glass liquid-lift overflow-hidden transition-all"
               >
                 <div className="aspect-video bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
-                  <Icon className="w-14 h-14 text-brand-orange/50" strokeWidth={1.5} />
+                  <Icon className="w-14 h-14 text-brand-orange/50" strokeWidth={1.5} aria-hidden="true" />
                 </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-2">

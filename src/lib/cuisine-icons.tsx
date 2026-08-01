@@ -16,7 +16,7 @@ import {
  * cover both the discovery filter `value`s (e.g. "rice-dishes") and the
  * free-text tags restaurants store (e.g. "rice dishes", "jollof").
  */
-const CUISINE_ICON_MAP: Record<string, LucideIcon> = {
+const cuisineIconMap: Record<string, LucideIcon> = {
   all: UtensilsCrossed,
   'fast-food': Pizza,
   'fast food': Pizza,
@@ -48,7 +48,7 @@ export function getCuisineIcon(tags?: string[] | string | null): LucideIcon {
   const list = Array.isArray(tags) ? tags : [tags];
   for (const tag of list) {
     const key = tag?.toLowerCase().trim();
-    if (key && CUISINE_ICON_MAP[key]) return CUISINE_ICON_MAP[key];
+    if (key && cuisineIconMap[key]) return cuisineIconMap[key];
   }
   return UtensilsCrossed;
 }

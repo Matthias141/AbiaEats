@@ -2,13 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DASHBOARD_NAV_ICONS, type DashboardNavIconKey } from '@/lib/dashboard-nav-icons';
 
 interface NavItem {
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: DashboardNavIconKey;
 }
 
 interface DashboardMobileNavProps {
@@ -30,8 +30,9 @@ export function DashboardMobileNav({ navItems, className }: DashboardMobileNavPr
       )}
     >
       <div className="flex items-center justify-around px-2 h-16">
-        {navItems.map(({ href, label, icon: Icon }) => {
+        {navItems.map(({ href, label, icon }) => {
           const isActive = pathname === href || (href !== navItems[0].href && pathname.startsWith(href));
+          const Icon = DASHBOARD_NAV_ICONS[icon];
 
           return (
             <Link
@@ -44,7 +45,7 @@ export function DashboardMobileNav({ navItems, className }: DashboardMobileNavPr
                   : 'text-gray-400 hover:text-gray-600 hover:bg-white/35'
               )}
             >
-              <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
+              <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} aria-hidden="true" />
               <span className="text-[10px] font-medium">{label}</span>
             </Link>
           );

@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
-import { UtensilsCrossed, ShoppingBag, Store, LayoutDashboard, LogOut } from 'lucide-react';
+import { UtensilsCrossed, LogOut } from 'lucide-react';
 import { DashboardMobileNav } from '@/components/ui/dashboard-mobile-nav';
+import { DASHBOARD_NAV_ICONS, type DashboardNavIconKey } from '@/lib/dashboard-nav-icons';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -17,16 +18,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   if (profile?.role !== 'admin') redirect('/home');
 
-  const navItems = [
-    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/admin/orders', label: 'Orders', icon: ShoppingBag },
-    { href: '/admin/applications', label: 'Applications', icon: Store },
+  const navItems: { href: string; label: string; icon: DashboardNavIconKey }[] = [
+    { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
+    { href: '/admin/orders', label: 'Orders', icon: 'orders' },
+    { href: '/admin/applications', label: 'Applications', icon: 'applications' },
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar (desktop) */}
-      <aside className="hidden lg:flex w-60 bg-white border-r border-gray-200 flex-col fixed h-full z-40">
+      <aside className="hidden lg:flex w-60 overflow-x-hidden bg-white border-r border-gray-200 flex-col fixed h-full z-40">
         <div className="p-5 border-b border-gray-100">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg gradient-orange flex items-center justify-center">
@@ -38,16 +39,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
 
         <nav className="flex-1 p-3 space-y-0.5">
-          {navItems.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-            >
-              <Icon className="w-4 h-4" />
-              {label}
-            </Link>
-          ))}
+          {navItems.map(({ href, label, icon }) => {
+            const Icon = DASHBOARD_NAV_ICONS[icon];
+            return (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              >
+                <Icon className="w-4 h-4" aria-hidden="true" />
+                {label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="p-3 border-t border-gray-100">
@@ -64,7 +68,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 min-h-screen p-4 pb-24 sm:p-6 lg:ml-60 lg:p-8 lg:pb-8">
+      <main className="flex-1 min-w-0 min-h-screen overflow-x-hidden p-4 pb-24 sm:p-6 lg:ml-60 lg:p-8 lg:pb-8">
         {children}
       </main>
 
