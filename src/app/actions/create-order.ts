@@ -99,9 +99,15 @@ export async function createOrderAction(
   const order = Array.isArray(data) ? data[0] : data;
 
   if (error || !order) {
+    console.error('[create-order] RPC error:', error?.code, error?.message);
+    // RPC exceptions are our own user-friendly messages (e.g. "Menu item no longer exists").
+    // Generic Supabase errors get a safe fallback.
+    const isCustomException = error?.code === 'P0001';
     return {
       success: false,
-      error: error?.message ?? 'Failed to place order. Please try again.',
+      error: isCustomException
+        ? (error.message ?? 'Failed to place order.')
+        : 'Failed to place order. Please try again.',
     };
   }
 

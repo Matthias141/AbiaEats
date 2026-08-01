@@ -56,7 +56,10 @@ export async function GET(request: Request) {
 
   const { data, error, count } = await query;
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[restaurant-settlements] DB error:', error.code, error.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+  }
 
   // ── Compute summary stats ─────────────────────────────────────────────────
   const { data: summary } = await supabase

@@ -24,7 +24,10 @@ export async function GET() {
     .eq('restaurant_id', restaurant.id)
     .order('sort_order', { ascending: true });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[restaurant-menu-list] DB error:', error.code, error.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+  }
   return NextResponse.json({ items: data });
 }
 
@@ -55,6 +58,9 @@ export async function POST(request: Request) {
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[restaurant-menu-create] DB error:', error.code, error.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+  }
   return NextResponse.json(data, { status: 201 });
 }

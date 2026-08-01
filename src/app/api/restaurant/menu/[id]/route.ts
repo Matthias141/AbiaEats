@@ -35,7 +35,10 @@ export async function PATCH(request: Request, { params }: Params) {
     .select()
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[restaurant-menu-item-update] DB error:', error.code, error.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+  }
   return NextResponse.json(data);
 }
 
@@ -58,6 +61,9 @@ export async function DELETE(_req: Request, { params }: Params) {
   }
 
   const { error } = await supabase.from('menu_items').delete().eq('id', id);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[restaurant-menu-item-delete] DB error:', error.code, error.message);
+    return NextResponse.json({ error: 'An unexpected error occurred. Please try again.' }, { status: 500 });
+  }
   return NextResponse.json({ ok: true });
 }

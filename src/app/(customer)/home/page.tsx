@@ -184,13 +184,17 @@ export default function CustomerHomePage() {
 
         if (!error && data && data.length > 0) {
           setRestaurants(data as Restaurant[]);
-        } else {
-          // Use mock data when Supabase returns nothing
+        } else if (process.env.NODE_ENV !== 'production') {
           setRestaurants(MOCK_RESTAURANTS);
+        } else {
+          setRestaurants([]);
         }
       } catch {
-        // Supabase not configured — use mock data
-        setRestaurants(MOCK_RESTAURANTS);
+        if (process.env.NODE_ENV !== 'production') {
+          setRestaurants(MOCK_RESTAURANTS);
+        } else {
+          setRestaurants([]);
+        }
       }
       setLoading(false);
     }

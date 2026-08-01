@@ -35,7 +35,10 @@ export async function POST(request: Request) {
     })
     .eq('id', parsed.data.order_id);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error('[confirm-payment] DB error:', error.code, error.message);
+    return NextResponse.json({ error: 'Failed to confirm payment. Please try again.' }, { status: 500 });
+  }
 
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';
   await supabase.rpc('log_audit', {
