@@ -104,7 +104,7 @@ export default function AdminApplicationsPage() {
           <p className="text-gray-500 text-sm">No {statusFilter} applications</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 overflow-x-hidden">
           {apps.map(app => (
             <div key={app.id} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
               <div className="flex items-start justify-between mb-3">

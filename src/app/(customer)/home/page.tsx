@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, MapPin, Star, Clock, ChevronRight, ChevronDown, Bell, Check, X } from 'lucide-react';
+import { Search, MapPin, Star, Clock, ChevronRight, ChevronDown, Bell, Check, X, PartyPopper, UtensilsCrossed } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import {
   CITY_OPTIONS,
@@ -14,23 +14,17 @@ import {
 } from '@/lib/discovery';
 import { formatPrice } from '@/lib/utils';
 import { MOCK_RESTAURANTS } from '@/lib/mock-data';
+import { CuisineIcon, getCuisineIcon } from '@/lib/cuisine-icons';
 import type { Restaurant } from '@/types/database';
 
 // ============================================================================
 // Cuisine category data
 // ============================================================================
 
-const CUISINE_CATEGORIES = [
-  { ...CUISINE_FILTERS[0], icon: '🍽️' },
-  { ...CUISINE_FILTERS[1], icon: '🍔' },
-  { ...CUISINE_FILTERS[2], icon: '🍚' },
-  { ...CUISINE_FILTERS[3], icon: '🍲' },
-  { ...CUISINE_FILTERS[4], icon: '🍖' },
-  { ...CUISINE_FILTERS[5], icon: '🌯' },
-  { ...CUISINE_FILTERS[6], icon: '🥤' },
-  { ...CUISINE_FILTERS[7], icon: '🥘' },
-  { ...CUISINE_FILTERS[8], icon: '🍞' },
-];
+const CUISINE_CATEGORIES = CUISINE_FILTERS.map((filter) => ({
+  ...filter,
+  icon: getCuisineIcon(filter.value),
+}));
 
 const CITY_STORAGE_KEY = 'abiaeats_city';
 
@@ -80,15 +74,7 @@ function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
-            <span className="text-5xl" role="img" aria-label="Restaurant">
-              {restaurant.cuisine_tags.includes('grills') ? '🍖' :
-               restaurant.cuisine_tags.includes('shawarma') ? '🌯' :
-               restaurant.cuisine_tags.includes('bakery') ? '🍞' :
-               restaurant.cuisine_tags.includes('drinks') ? '🥤' :
-               restaurant.cuisine_tags.includes('pepper soup') ? '🍲' :
-               restaurant.cuisine_tags.includes('fast food') ? '🍔' :
-               '🍽️'}
-            </span>
+            <CuisineIcon tags={restaurant.cuisine_tags} className="w-14 h-14 text-brand-orange/60" />
           </div>
         )}
 
@@ -259,20 +245,18 @@ export default function CustomerHomePage() {
             Cuisine Categories (horizontal scroll)
             ================================================================ */}
         <section className="px-4 pb-4 mb-2 pt-4">
-          <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4">
+          <div className="flex gap-3 overflow-x-auto scroll-smooth snap-x snap-proximity no-scrollbar -mx-4 px-4">
             {CUISINE_CATEGORIES.map((cat) => (
               <button
                 key={cat.value}
                 onClick={() => setActiveCategory(cat.value)}
-                className={`flex flex-col items-center gap-1.5 min-w-[68px] py-2.5 px-2 rounded-2xl transition-all tap-target shrink-0 ${
+                className={`flex flex-col items-center gap-1.5 min-w-[68px] py-2.5 px-2 rounded-2xl transition-all tap-target shrink-0 snap-start ${
                   activeCategory === cat.value
                     ? 'liquid-glass-strong text-white shadow-md shadow-brand-orange/25'
                     : 'liquid-chip text-gray-600 hover:bg-white/80'
                 }`}
               >
-                <span className="text-2xl" role="img" aria-label={cat.label}>
-                  {cat.icon}
-                </span>
+                <cat.icon className="w-6 h-6" strokeWidth={activeCategory === cat.value ? 2.25 : 1.75} aria-hidden="true" />
                 <span className="text-[11px] font-medium whitespace-nowrap">
                   {cat.label}
                 </span>
@@ -297,9 +281,8 @@ export default function CustomerHomePage() {
                 Order now and save on delivery.
               </p>
             </div>
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-5xl opacity-30">
-              🎉
-            </div>
+            <PartyPopper className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 text-white opacity-30" strokeWidth={1.5} aria-hidden="true" />
+
           </div>
         </section>
 
@@ -332,9 +315,7 @@ export default function CustomerHomePage() {
           {/* Empty state */}
           {!loading && filteredRestaurants.length === 0 && (
             <div className="text-center py-16 liquid-glass rounded-2xl">
-              <span className="text-5xl block mb-4" role="img" aria-label="No restaurants">
-                🍽️
-              </span>
+              <UtensilsCrossed className="w-12 h-12 text-gray-300 mx-auto mb-4" strokeWidth={1.5} aria-hidden="true" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 {searchQuery || activeCategory !== 'all'
                   ? 'No restaurants found'

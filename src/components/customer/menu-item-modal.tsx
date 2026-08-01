@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { X, Minus, Plus, Clock, ShoppingBag } from 'lucide-react';
+import { X, Minus, Plus, Clock, ShoppingBag, UtensilsCrossed } from 'lucide-react';
 import type { MenuItem, Restaurant } from '@/types/database';
 import { useCart } from '@/contexts/cart-context';
 import { formatPrice } from '@/lib/utils';
@@ -98,7 +98,7 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
-                <span className="text-7xl">🍽️</span>
+                <UtensilsCrossed className="w-16 h-16 text-brand-orange/50" strokeWidth={1.5} aria-hidden="true" />
               </div>
             )}
             {item.is_popular && (
