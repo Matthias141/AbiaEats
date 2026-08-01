@@ -20,7 +20,11 @@ const validInput = {
 
 function buildSupabaseMock({
   authed = true,
-  rpcError = null as { message: string } | null,
+  // 'P0001' is Postgres's default SQLSTATE for a bare RAISE EXCEPTION —
+  // this is what create_order_secure's own exceptions look like once
+  // PostgREST relays them, and it's the code createOrderAction checks
+  // before trusting a DB error message is safe to show the user.
+  rpcError = null as { message: string; code?: string } | null,
   total = 5500,
 } = {}) {
   const user = authed
@@ -72,7 +76,7 @@ describe('security: create-order boundary', () => {
     'Cart contains items from multiple restaurants',
     'This restaurant is currently closed',
   ])('surfaces database-side rejection: %s', async (message) => {
-    const mock = buildSupabaseMock({ rpcError: { message } });
+    const mock = buildSupabaseMock({ rpcError: { message, code: 'P0001' } });
     mockedCreateClient.mockResolvedValue(mock as never);
 
     const result = await createOrderAction(validInput);

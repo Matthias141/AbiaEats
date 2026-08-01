@@ -24,7 +24,11 @@ function buildSupabaseMock({
     email: string;
   } | null,
   rpcData = [{ order_id: UUID.order, order_number: 'ABIA-20260513-0001', total: 5500 }],
-  rpcError = null as { message: string } | null,
+  // 'P0001' is Postgres's default SQLSTATE for a bare RAISE EXCEPTION —
+  // this is what create_order_secure's own exceptions look like once
+  // PostgREST relays them, and it's the code createOrderAction checks
+  // before trusting a DB error message is safe to show the user.
+  rpcError = null as { message: string; code?: string } | null,
 } = {}) {
   return {
     auth: {
@@ -86,7 +90,7 @@ describe('createOrderAction', () => {
 
   it('returns database validation errors from create_order_secure', async () => {
     const mock = buildSupabaseMock({
-      rpcError: { message: 'Cart contains items from multiple restaurants' },
+      rpcError: { message: 'Cart contains items from multiple restaurants', code: 'P0001' },
     });
     mockedCreateClient.mockResolvedValue(mock as never);
 
