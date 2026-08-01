@@ -18,6 +18,9 @@
 import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
+import type { SettlementStatus } from '@/types/database';
+
+const SETTLEMENT_STATUSES: SettlementStatus[] = ['pending', 'paid'];
 
 export async function GET(request: Request) {
   const guard = await requireRole('restaurant_owner');
@@ -37,7 +40,10 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const status = searchParams.get('status'); // 'pending' | 'paid'
+  const requestedStatus = searchParams.get('status'); // 'pending' | 'paid'
+  const status = SETTLEMENT_STATUSES.includes(requestedStatus as SettlementStatus)
+    ? (requestedStatus as SettlementStatus)
+    : null;
   const page = Math.max(1, parseInt(searchParams.get('page') ?? '1'));
   const limit = Math.min(20, parseInt(searchParams.get('limit') ?? '10'));
   const offset = (page - 1) * limit;

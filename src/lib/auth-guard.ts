@@ -22,6 +22,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import type { UserRole } from '@/types/database';
+import type { Database } from '@/types/supabase';
 import type { User } from '@supabase/supabase-js';
 
 export async function requireAuth(): Promise<
@@ -86,7 +87,7 @@ export async function createAdminClient_WEBHOOKS_AND_CRONS_ONLY() {
     );
   }
   const { createClient: sb } = await import('@supabase/supabase-js');
-  return sb(
+  return sb<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }
@@ -110,7 +111,7 @@ export async function createAdminClient_OPS_VENDOR_INVITE_ONLY() {
     );
   }
   const { createClient: sb } = await import('@supabase/supabase-js');
-  return sb(
+  return sb<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }

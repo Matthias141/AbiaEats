@@ -4,7 +4,7 @@ import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Star, Clock, MapPin, Plus, ShoppingBag, Share2, ClipboardList } from 'lucide-react';
-import type { Restaurant, MenuItem } from '@/types/database';
+import type { Restaurant, RestaurantPublic, MenuItem } from '@/types/database';
 import { useCart } from '@/contexts/cart-context';
 import { formatPrice } from '@/lib/utils';
 import { CuisineIcon } from '@/lib/cuisine-icons';
@@ -12,7 +12,7 @@ import { MenuItemModal } from '@/components/customer/menu-item-modal';
 import { RestaurantSwitchModal } from '@/components/customer/restaurant-switch-modal';
 
 interface RestaurantDetailProps {
-  restaurant: Restaurant;
+  restaurant: Restaurant | RestaurantPublic;
   menuItems: MenuItem[];
 }
 

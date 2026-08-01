@@ -4,13 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, Star, Clock, MapPin, UtensilsCrossed } from 'lucide-react';
-import type { Restaurant } from '@/types/database';
+import type { Restaurant, RestaurantPublic } from '@/types/database';
 import { CITY_OPTIONS, CUISINE_FILTERS, filterRestaurants, formatCityName } from '@/lib/discovery';
 import { formatPrice } from '@/lib/utils';
 import { CuisineIcon } from '@/lib/cuisine-icons';
 
 interface RestaurantListProps {
-  restaurants: Restaurant[];
+  restaurants: (Restaurant | RestaurantPublic)[];
   activeTag?: string;
   searchQuery?: string;
   activeCity?: string;

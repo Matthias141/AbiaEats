@@ -7,7 +7,11 @@ export async function GET(request: Request) {
   if (guard.response) return guard.response;
 
   const { searchParams } = new URL(request.url);
-  const status = searchParams.get('status') || 'pending';
+  const requestedStatus = searchParams.get('status');
+  const VALID_STATUSES = ['pending', 'approved', 'rejected'] as const;
+  const status = VALID_STATUSES.includes(requestedStatus as typeof VALID_STATUSES[number])
+    ? (requestedStatus as typeof VALID_STATUSES[number])
+    : 'pending';
 
   const supabase = await createClient();
 

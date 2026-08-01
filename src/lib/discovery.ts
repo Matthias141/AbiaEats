@@ -1,4 +1,4 @@
-import type { Restaurant } from '@/types/database';
+import type { RestaurantPublic } from '@/types/database';
 
 export const CITY_OPTIONS = [
   { label: 'Aba', value: 'aba' },
@@ -75,14 +75,14 @@ export function matchesCuisineTag(tags: string[], filterValue?: string | null): 
   return tags.some((tag) => targetTags.has(normalizeToken(tag)));
 }
 
-export function filterRestaurants(
-  restaurants: Restaurant[],
+export function filterRestaurants<T extends RestaurantPublic>(
+  restaurants: T[],
   options: {
     search?: string;
     cuisine?: string | null;
     city?: string | null;
   }
-): Restaurant[] {
+): T[] {
   const search = normalizeToken(options.search ?? '');
   const city = normalizeCityValue(options.city);
 

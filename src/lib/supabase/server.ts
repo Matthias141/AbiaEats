@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import type { Database } from '@/types/supabase';
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -7,7 +8,7 @@ export async function createClient() {
   // Fallback placeholders keep the server client constructible when env vars are
   // not yet set (local dev, CI preview builds). Real Supabase calls will return
   // auth errors — that is the correct behaviour when no project is wired up.
-  return createServerClient(
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL     || 'https://placeholder.supabase.co',
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key',
     {
