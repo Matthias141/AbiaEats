@@ -3,10 +3,11 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Star, Clock, MapPin, Plus, ShoppingBag, Share2 } from 'lucide-react';
+import { ArrowLeft, Star, Clock, MapPin, Plus, ShoppingBag, Share2, ClipboardList } from 'lucide-react';
 import type { Restaurant, MenuItem } from '@/types/database';
 import { useCart } from '@/contexts/cart-context';
 import { formatPrice } from '@/lib/utils';
+import { CuisineIcon } from '@/lib/cuisine-icons';
 import { MenuItemModal } from '@/components/customer/menu-item-modal';
 import { RestaurantSwitchModal } from '@/components/customer/restaurant-switch-modal';
 
@@ -210,13 +211,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50 flex items-center justify-center">
-              <span className="text-7xl opacity-40">
-                {restaurant.cuisine_tags.includes('grills') ? '🍖' :
-                 restaurant.cuisine_tags.includes('shawarma') ? '🌯' :
-                 restaurant.cuisine_tags.includes('bakery') ? '🍞' :
-                 restaurant.cuisine_tags.includes('drinks') ? '🥤' :
-                 '🍽️'}
-              </span>
+              <CuisineIcon tags={restaurant.cuisine_tags} className="w-20 h-20 text-brand-orange/40" />
             </div>
           )}
           {/* Gradient overlay */}
@@ -392,7 +387,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
-                            <span className="text-4xl opacity-40">🍽️</span>
+                            <CuisineIcon tags={restaurant.cuisine_tags} className="w-10 h-10 text-brand-orange/40" />
                           </div>
                         )}
 
@@ -440,7 +435,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
           ))
         ) : (
           <div className="text-center py-20">
-            <div className="text-6xl mb-4 opacity-60">📋</div>
+            <ClipboardList className="w-14 h-14 text-gray-300 mx-auto mb-4" strokeWidth={1.5} aria-hidden="true" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Menu coming soon
             </h3>

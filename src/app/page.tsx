@@ -9,14 +9,15 @@ import {
   Bike,
   CreditCard,
 } from 'lucide-react';
+import { getCuisineIcon } from '@/lib/cuisine-icons';
 
 const FEATURED_CATEGORIES = [
-  { name: 'Jollof Rice', emoji: '🍚', slug: 'rice-dishes' },
-  { name: 'Pepper Soup', emoji: '🍲', slug: 'pepper-soup' },
-  { name: 'Grills & BBQ', emoji: '🍖', slug: 'grills' },
-  { name: 'Shawarma', emoji: '🌯', slug: 'shawarma' },
-  { name: 'Drinks', emoji: '🥤', slug: 'drinks' },
-  { name: 'Local Dishes', emoji: '🥘', slug: 'local' },
+  { name: 'Jollof Rice', tag: 'rice-dishes', slug: 'rice-dishes' },
+  { name: 'Pepper Soup', tag: 'pepper-soup', slug: 'pepper-soup' },
+  { name: 'Grills & BBQ', tag: 'grills', slug: 'grills' },
+  { name: 'Shawarma', tag: 'shawarma', slug: 'shawarma' },
+  { name: 'Drinks', tag: 'drinks', slug: 'drinks' },
+  { name: 'Local Dishes', tag: 'local', slug: 'local' },
 ];
 
 const HOW_IT_WORKS = [
@@ -48,7 +49,7 @@ const SAMPLE_RESTAURANTS = [
     deliveryTime: '25-35',
     deliveryFee: 500,
     tags: ['Local', 'Rice', 'Soup'],
-    emoji: '🥘',
+    cuisineTag: 'local',
   },
   {
     name: 'Aba Grills & Shawarma',
@@ -57,7 +58,7 @@ const SAMPLE_RESTAURANTS = [
     deliveryTime: '20-30',
     deliveryFee: 400,
     tags: ['Grills', 'Shawarma', 'Drinks'],
-    emoji: '🍖',
+    cuisineTag: 'grills',
   },
   {
     name: 'Nkwobi Palace',
@@ -66,9 +67,14 @@ const SAMPLE_RESTAURANTS = [
     deliveryTime: '30-45',
     deliveryFee: 600,
     tags: ['Nkwobi', 'Pepper Soup', 'Local'],
-    emoji: '🍲',
+    cuisineTag: 'pepper soup',
   },
 ];
+
+const HeroRiceIcon = getCuisineIcon('rice-dishes');
+const HeroGrillsIcon = getCuisineIcon('grills');
+const HeroLocalIcon = getCuisineIcon('local');
+const HeroPepperSoupIcon = getCuisineIcon('pepper soup');
 
 export default function LandingPage() {
   return (
@@ -154,19 +160,19 @@ export default function LandingPage() {
           <div className="mt-16 sm:mt-0 sm:absolute sm:right-0 sm:top-0 sm:w-[45%] lg:w-[40%]">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-3">
-                <div className="aspect-square rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center text-6xl">
-                  🍛
+                <div className="aspect-square rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center">
+                  <HeroRiceIcon className="w-14 h-14 text-brand-orange/70" strokeWidth={1.5} />
                 </div>
-                <div className="aspect-[4/3] rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center text-5xl">
-                  🍖
+                <div className="aspect-[4/3] rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center">
+                  <HeroGrillsIcon className="w-12 h-12 text-brand-orange/70" strokeWidth={1.5} />
                 </div>
               </div>
               <div className="space-y-3 pt-8">
-                <div className="aspect-[4/3] rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center text-5xl">
-                  🥘
+                <div className="aspect-[4/3] rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center">
+                  <HeroLocalIcon className="w-12 h-12 text-brand-orange/70" strokeWidth={1.5} />
                 </div>
-                <div className="aspect-square rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center text-6xl">
-                  🍲
+                <div className="aspect-square rounded-2xl liquid-glass-soft overflow-hidden flex items-center justify-center">
+                  <HeroPepperSoupIcon className="w-14 h-14 text-brand-orange/70" strokeWidth={1.5} />
                 </div>
               </div>
             </div>
@@ -181,20 +187,21 @@ export default function LandingPage() {
             What are you craving?
           </h2>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-            {FEATURED_CATEGORIES.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/restaurants?tag=${cat.slug}`}
-                className="flex flex-col items-center gap-2 p-4 rounded-2xl liquid-glass liquid-lift transition-all active:scale-[0.97] group"
-              >
-                <span className="text-3xl group-hover:scale-110 transition-transform">
-                  {cat.emoji}
-                </span>
-                <span className="text-xs sm:text-sm font-medium text-gray-600 group-hover:text-gray-900 text-center">
-                  {cat.name}
-                </span>
-              </Link>
-            ))}
+            {FEATURED_CATEGORIES.map((cat) => {
+              const Icon = getCuisineIcon(cat.tag);
+              return (
+                <Link
+                  key={cat.slug}
+                  href={`/restaurants?tag=${cat.slug}`}
+                  className="flex flex-col items-center gap-2 p-4 rounded-2xl liquid-glass liquid-lift transition-all active:scale-[0.97] group"
+                >
+                  <Icon className="w-7 h-7 text-brand-orange group-hover:scale-110 transition-transform" strokeWidth={1.75} />
+                  <span className="text-xs sm:text-sm font-medium text-gray-600 group-hover:text-gray-900 text-center">
+                    {cat.name}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -214,13 +221,15 @@ export default function LandingPage() {
             </Link>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {SAMPLE_RESTAURANTS.map((restaurant) => (
+            {SAMPLE_RESTAURANTS.map((restaurant) => {
+              const Icon = getCuisineIcon(restaurant.cuisineTag);
+              return (
               <div
                 key={restaurant.name}
                 className="group rounded-2xl liquid-glass liquid-lift overflow-hidden transition-all"
               >
                 <div className="aspect-video bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
-                  <span className="text-5xl opacity-50">{restaurant.emoji}</span>
+                  <Icon className="w-14 h-14 text-brand-orange/50" strokeWidth={1.5} />
                 </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-2">
@@ -256,7 +265,8 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

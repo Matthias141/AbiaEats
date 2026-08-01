@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { UtensilsCrossed, LayoutDashboard, UtensilsCrossed as MenuIcon, ShoppingBag } from 'lucide-react';
+import { DashboardMobileNav } from '@/components/ui/dashboard-mobile-nav';
 
 export default async function RestaurantLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -31,7 +32,8 @@ export default async function RestaurantLayout({ children }: { children: React.R
 
   return (
     <div className="min-h-screen liquid-surface flex">
-      <aside className="w-60 liquid-glass-nav border-y-0 border-l-0 flex flex-col fixed h-full z-40">
+      {/* Sidebar (desktop) */}
+      <aside className="hidden lg:flex w-60 liquid-glass-nav border-y-0 border-l-0 flex-col fixed h-full z-40">
         <div className="p-5 border-b border-white/60">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg gradient-orange flex items-center justify-center">
@@ -62,9 +64,11 @@ export default async function RestaurantLayout({ children }: { children: React.R
         </div>
       </aside>
 
-      <main className="ml-60 flex-1 p-8 min-h-screen">
+      <main className="flex-1 min-h-screen p-4 pb-24 sm:p-6 lg:ml-60 lg:p-8 lg:pb-8">
         {children}
       </main>
+
+      <DashboardMobileNav navItems={navItems} />
     </div>
   );
 }

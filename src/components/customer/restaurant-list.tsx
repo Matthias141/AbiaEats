@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, Star, Clock, MapPin } from 'lucide-react';
+import { Search, Star, Clock, MapPin, UtensilsCrossed } from 'lucide-react';
 import type { Restaurant } from '@/types/database';
 import { CITY_OPTIONS, CUISINE_FILTERS, filterRestaurants, formatCityName } from '@/lib/discovery';
 import { formatPrice } from '@/lib/utils';
+import { CuisineIcon } from '@/lib/cuisine-icons';
 
 interface RestaurantListProps {
   restaurants: Restaurant[];
@@ -46,7 +47,7 @@ export function RestaurantList({
       </div>
 
       {/* City Filters */}
-      <div className="flex gap-2 overflow-x-auto pb-3 mb-3 no-scrollbar">
+      <div className="flex gap-2 overflow-x-auto scroll-smooth pb-3 mb-3 no-scrollbar">
         <button
           onClick={() => setSelectedCity('')}
           className={`tap-target whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-[0.97] ${
@@ -73,7 +74,7 @@ export function RestaurantList({
       </div>
 
       {/* Tag Filters */}
-      <div className="flex gap-2 overflow-x-auto pb-4 mb-6 no-scrollbar">
+      <div className="flex gap-2 overflow-x-auto scroll-smooth pb-4 mb-6 no-scrollbar">
         {CUISINE_FILTERS.map((tag) => (
           <button
             key={tag.value}
@@ -117,13 +118,7 @@ export function RestaurantList({
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
-                    <span className="text-4xl">
-                      {restaurant.cuisine_tags.includes('grills') ? '🍖' :
-                       restaurant.cuisine_tags.includes('shawarma') ? '🌯' :
-                       restaurant.cuisine_tags.includes('bakery') ? '🍞' :
-                       restaurant.cuisine_tags.includes('drinks') ? '🥤' :
-                       '🍽️'}
-                    </span>
+                    <CuisineIcon tags={restaurant.cuisine_tags} className="w-12 h-12 text-brand-orange/60" />
                   </div>
                 )}
                 {/* Open/Closed badge */}
@@ -191,7 +186,7 @@ export function RestaurantList({
       ) : (
         /* Empty state */
         <div className="text-center py-16">
-          <div className="text-5xl mb-4">🍽️</div>
+          <UtensilsCrossed className="w-12 h-12 text-gray-300 mx-auto mb-4" strokeWidth={1.5} aria-hidden="true" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No restaurants found</h3>
           <p className="text-sm text-gray-500 max-w-xs mx-auto">
             {search

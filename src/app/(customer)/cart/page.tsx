@@ -4,7 +4,7 @@ import { useCart } from '@/contexts/cart-context';
 import { formatPrice } from '@/lib/utils';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, UtensilsCrossed } from 'lucide-react';
 
 // ============================================================================
 // Cart Page — Light Theme
@@ -112,9 +112,7 @@ export default function CartPage() {
                         loading="lazy"
                       />
                     ) : (
-                      <span className="text-2xl" role="img" aria-label="Food">
-                        🍽️
-                      </span>
+                      <UtensilsCrossed className="w-6 h-6 text-brand-orange/50" strokeWidth={1.5} aria-hidden="true" />
                     )}
                   </div>
 
