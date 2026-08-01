@@ -16,6 +16,9 @@ jobs:
   security-scans:
     name: Security Scans
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,6 +52,22 @@ jobs:
       - name: OWASP ZAP baseline scan (PR only, staging must be live)
         if: github.event_name == 'pull_request' && steps.staging-check.outputs.reachable == 'true'
         uses: zaproxy/action-baseline@v0.10.0
+  zap-scan:
+    name: OWASP ZAP baseline scan (PR only)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: OWASP ZAP baseline scan
+        uses: zaproxy/action-baseline@v0.15.0
+        # IMPORTANT: do not continue on error so failures are visible
         with:
           target: 'https://abia-eats-staging.vercel.app'
           allow_issue_writing: false
@@ -56,7 +75,7 @@ jobs:
   build-and-lint:
     name: Build, lint, and typecheck
     runs-on: ubuntu-latest
-    needs: security-scans
+    needs: [security-scans, zap-scan]
     permissions:
       contents: read
     steps:

@@ -831,18 +831,3 @@ export function getMockMenuItems(restaurantId: string): MenuItem[] {
   return MOCK_MENU_ITEMS[restaurantId] || [];
 }
 
-// ============================================================================
-// Category icon mapping for UI
-// ============================================================================
-
-export const CATEGORY_ICONS: Record<string, string> = {
-  'all': '🍽️',
-  'fast food': '🍔',
-  'rice dishes': '🍚',
-  'pepper soup': '🍲',
-  'grills': '🍖',
-  'shawarma': '🌯',
-  'drinks': '🥤',
-  'local': '🥘',
-  'bakery': '🍞',
-};
