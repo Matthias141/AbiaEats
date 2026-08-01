@@ -19,6 +19,50 @@ async function inviteVendor(formData: FormData) {
     throw new Error('Email and name are required');
   }
 
+  const supabase = await createClient();
+
+  // Duplicate-invite check: an email with a pending, non-expired invite
+  // cannot be re-invited — no resend, no silent no-op, and the existing row
+  // is never deleted.
+  const { data: existingInvite } = await supabase
+    .from('vendor_invites')
+    .select('id, expires_at')
+    .eq('status', 'pending')
+    .eq('email', email)
+    .maybeSingle();
+
+  if (existingInvite) {
+    if (new Date(existingInvite.expires_at) > new Date()) {
+      throw new Error('An invite for this email is already pending');
+    }
+    // Expired — free up the unique (email, pending) slot before inserting.
+    await supabase.from('vendor_invites').update({ status: 'expired' }).eq('id', existingInvite.id);
+  }
+
+  // The invite row is written FIRST. Only a successful DB write is allowed
+  // to trigger the Supabase Auth call that actually sends the invite email —
+  // email delivery is a side effect of a saved invite, never the reverse.
+  const { data: invite, error: insertError } = await supabase
+    .from('vendor_invites')
+    .insert({
+      email,
+      full_name: fullName,
+      phone: phone || null,
+      restaurant_id: restaurantId || null,
+      invited_by: guard.user.id,
+    })
+    .select('id')
+    .single();
+
+  if (insertError || !invite) {
+    // 23505 = unique violation — a concurrent request won the race for this
+    // email between the check above and this insert.
+    if (insertError?.code === '23505') {
+      throw new Error('An invite for this email is already pending');
+    }
+    throw new Error(insertError?.message ?? 'Failed to save invite');
+  }
+
   // Creates the auth.users row and sends the Supabase invite email. The
   // on_auth_user_created trigger fires off this insert and creates a
   // profiles row with role='customer' — flipped to 'restaurant_owner' below
@@ -32,10 +76,12 @@ async function inviteVendor(formData: FormData) {
   });
 
   if (error || !data.user) {
-    throw new Error(error?.message ?? 'Failed to invite vendor');
+    // The invite row is intentionally left intact (status stays 'pending') —
+    // the DB write already succeeded; only the email failed. There is
+    // nothing to roll back, and the admin can retry from the dashboard.
+    throw new Error('Invite saved but email failed — resend from the dashboard.');
   }
 
-  const supabase = await createClient();
   const { error: roleError } = await supabase
     .from('profiles')
     .update({ role: 'restaurant_owner', phone: phone || null })
@@ -58,7 +104,7 @@ async function inviteVendor(formData: FormData) {
     p_target_type: 'profiles',
     p_target_id: data.user.id,
     p_ip_address: ip,
-    p_metadata: { email, restaurant_id: restaurantId || null },
+    p_metadata: { email, restaurant_id: restaurantId || null, invite_id: invite.id },
   });
 
   redirect('/dashboard/ops/vendors');

@@ -414,6 +414,51 @@ export type Database = {
           },
         ];
       };
+      vendor_invites: {
+        Row: {
+          id: string;
+          email: string;
+          full_name: string;
+          phone: string | null;
+          restaurant_id: string | null;
+          invited_by: string;
+          status: 'pending' | 'accepted' | 'expired';
+          expires_at: string;
+          accepted_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          full_name: string;
+          phone?: string | null;
+          restaurant_id?: string | null;
+          invited_by: string;
+          status?: 'pending' | 'accepted' | 'expired';
+          expires_at?: string;
+          accepted_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['vendor_invites']['Insert']>;
+        Relationships: [
+          {
+            foreignKeyName: 'vendor_invites_restaurant_id_fkey';
+            columns: ['restaurant_id'];
+            isOneToOne: false;
+            referencedRelation: 'restaurants';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'vendor_invites_invited_by_fkey';
+            columns: ['invited_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       restaurants_public: {
