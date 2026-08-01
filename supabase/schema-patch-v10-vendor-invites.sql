@@ -32,7 +32,11 @@ CREATE TABLE IF NOT EXISTS public.vendor_invites (
   phone         text,
   restaurant_id uuid REFERENCES public.restaurants(id) ON DELETE SET NULL,
   invited_by    uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-  status        text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'expired')),
+  -- failed_post_auth: the Supabase Auth user was created successfully, but
+  -- the follow-up profiles.role flip or restaurant reassignment then failed.
+  -- No automatic rollback or retry — this state exists purely so the ops
+  -- panel can flag it for manual fixing (see vendors/page.tsx).
+  status        text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'expired', 'failed_post_auth')),
   expires_at    timestamptz NOT NULL DEFAULT (now() + interval '7 days'),
   accepted_at   timestamptz,
   created_at    timestamptz NOT NULL DEFAULT now(),

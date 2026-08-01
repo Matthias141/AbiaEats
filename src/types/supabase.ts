@@ -422,7 +422,7 @@ export type Database = {
           phone: string | null;
           restaurant_id: string | null;
           invited_by: string;
-          status: 'pending' | 'accepted' | 'expired';
+          status: 'pending' | 'accepted' | 'expired' | 'failed_post_auth';
           expires_at: string;
           accepted_at: string | null;
           created_at: string;
@@ -435,7 +435,7 @@ export type Database = {
           phone?: string | null;
           restaurant_id?: string | null;
           invited_by: string;
-          status?: 'pending' | 'accepted' | 'expired';
+          status?: 'pending' | 'accepted' | 'expired' | 'failed_post_auth';
           expires_at?: string;
           accepted_at?: string | null;
           created_at?: string;

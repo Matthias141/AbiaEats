@@ -36,13 +36,22 @@ export default async function OpsVendorsPage() {
 
   const supabase = await createClient();
 
-  const [{ data: vendors }, { data: restaurants }] = await Promise.all([
+  const [{ data: vendors }, { data: restaurants }, { data: needsManualFix }] = await Promise.all([
     supabase
       .from('profiles')
       .select('id, full_name, email, phone, is_active')
       .eq('role', 'restaurant_owner')
       .order('created_at', { ascending: false }),
     supabase.from('restaurants').select('id, name, owner_id'),
+    // Invites where the Supabase Auth account was created but the follow-up
+    // role/restaurant writes failed — no automatic rollback or retry, this
+    // is purely surfaced for the operator to fix manually (see
+    // dashboard/ops/vendors/new/page.tsx).
+    supabase
+      .from('vendor_invites')
+      .select('id, email, full_name, created_at')
+      .eq('status', 'failed_post_auth')
+      .order('created_at', { ascending: false }),
   ]);
 
   const restaurantsByOwner = new Map<string, string[]>();
@@ -63,6 +72,30 @@ export default async function OpsVendorsPage() {
           + Invite Vendor
         </Link>
       </div>
+
+      {(needsManualFix ?? []).length > 0 && (
+        <div className="mb-6 bg-red-50 border border-red-100 rounded-2xl p-4">
+          <p className="text-sm font-medium text-red-700 mb-3">
+            ⚠️ {needsManualFix!.length} invite{needsManualFix!.length > 1 ? 's' : ''} need{needsManualFix!.length > 1 ? '' : 's'} a manual fix
+          </p>
+          <div className="space-y-2">
+            {needsManualFix!.map((item) => (
+              <div key={item.id} className="flex items-center justify-between text-sm">
+                <div>
+                  <span className="font-medium text-gray-900">{item.full_name}</span>{' '}
+                  <span className="text-gray-500">({item.email})</span>
+                </div>
+                <span className="inline-flex items-center min-h-[28px] px-2.5 text-xs font-medium bg-red-100 text-red-700 rounded-full">
+                  Needs manual fix
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-red-600 mt-3">
+            The account was created but role/restaurant setup failed. Fix directly in Supabase.
+          </p>
+        </div>
+      )}
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
         <table className="w-full text-sm">

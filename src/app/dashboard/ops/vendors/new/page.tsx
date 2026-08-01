@@ -68,33 +68,55 @@ async function inviteVendor(formData: FormData) {
   // profiles row with role='customer' — flipped to 'restaurant_owner' below
   // once we have the new user's id.
   const adminAuth = await createAdminClient_OPS_VENDOR_INVITE_ONLY();
-  const { data, error } = await adminAuth.auth.admin.inviteUserByEmail(email, {
+  const inviteArgs = {
     data: { full_name: fullName, phone: phone || undefined },
     // Invited vendors have no password yet — route them through the
     // set-password step instead of straight into the app.
     redirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent('/auth/set-password')}`,
-  });
+  };
+
+  let { data, error } = await adminAuth.auth.admin.inviteUserByEmail(email, inviteArgs);
+  if (error || !data.user) {
+    // One automatic retry, no delay, same request — before giving up.
+    ({ data, error } = await adminAuth.auth.admin.inviteUserByEmail(email, inviteArgs));
+  }
 
   if (error || !data.user) {
-    // The invite row is intentionally left intact (status stays 'pending') —
-    // the DB write already succeeded; only the email failed. There is
-    // nothing to roll back, and the admin can retry from the dashboard.
-    throw new Error('Invite saved but email failed — resend from the dashboard.');
+    // Both attempts failed. The invite row is left intact (status stays
+    // 'pending') — the DB write already succeeded, only email delivery
+    // failed. There is no resend UI, so the message only references
+    // actions that actually exist.
+    throw new Error(
+      'Invite saved but email failed to send. Contact them directly or wait for the invite to expire, then re-invite.'
+    );
   }
+
+  // From here the Supabase Auth user exists and the invite email is sent.
+  // If either follow-up write fails, there is no rollback and no retry —
+  // the invite row is flagged so the ops panel can surface it for a manual
+  // fix, per the locked decision on this failure path.
+  const markNeedsManualFix = () =>
+    supabase.from('vendor_invites').update({ status: 'failed_post_auth' }).eq('id', invite.id);
 
   const { error: roleError } = await supabase
     .from('profiles')
     .update({ role: 'restaurant_owner', phone: phone || null })
     .eq('id', data.user.id);
 
-  if (roleError) throw new Error(roleError.message);
+  if (roleError) {
+    await markNeedsManualFix();
+    throw new Error('Vendor account was created but role setup failed. Flagged for manual fix in the vendors list.');
+  }
 
   if (restaurantId) {
     const { error: ownerError } = await supabase
       .from('restaurants')
       .update({ owner_id: data.user.id })
       .eq('id', restaurantId);
-    if (ownerError) throw new Error(ownerError.message);
+    if (ownerError) {
+      await markNeedsManualFix();
+      throw new Error('Vendor account was created but restaurant assignment failed. Flagged for manual fix in the vendors list.');
+    }
   }
 
   const ip = (await headers()).get('x-forwarded-for')?.split(',')[0].trim() ?? '127.0.0.1';
