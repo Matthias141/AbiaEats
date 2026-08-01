@@ -45,9 +45,18 @@ export async function POST(request: Request) {
   });
 
   if (error) {
-    // Log real error server-side for debugging
-    console.error('[signup] Supabase error:', error.message, error.status, error.code);
-    // Generic message to client — never expose internal details
+    // Log the actual error server-side for debugging — never sent to the client
+    console.error('[signup] Supabase error:', error.message, error.status);
+
+    // Expose safe, non-enumeration errors to help the user
+    if (
+      error.message?.toLowerCase().includes('password') ||
+      error.message?.toLowerCase().includes('weak')
+    ) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Generic message for all other errors — never reveal whether the email exists
     return NextResponse.json(
       { error: 'Unable to create account. Please try again later.' },
       { status: 500 }
