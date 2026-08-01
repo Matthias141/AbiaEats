@@ -41,7 +41,8 @@ export async function GET(request: Request) {
     .order('created_at', { ascending: false });
 
   if (auditError) {
-    return NextResponse.json({ error: auditError.message }, { status: 500 });
+    console.error('[security-monitor] DB error:', auditError.code, auditError.message);
+    return NextResponse.json({ error: 'Failed to run security monitor check.' }, { status: 500 });
   }
 
   const actionCounts: Record<string, number> = {};

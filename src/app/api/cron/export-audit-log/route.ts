@@ -204,7 +204,8 @@ export async function GET(request: Request) {
     .order('created_at', { ascending: true });
 
   if (fetchError) {
-    return NextResponse.json({ error: fetchError.message }, { status: 500 });
+    console.error('[export-audit-log] DB error:', fetchError.code, fetchError.message);
+    return NextResponse.json({ error: 'Failed to export audit log.' }, { status: 500 });
   }
 
   const rowCount = rows?.length ?? 0;

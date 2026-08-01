@@ -76,7 +76,8 @@ export async function POST(
     .eq('id', id);
 
   if (updateError) {
-    return NextResponse.json({ error: updateError.message }, { status: 500 });
+    console.error('[settlements-pay] DB error:', updateError.code, updateError.message);
+    return NextResponse.json({ error: 'Failed to mark settlement as paid.' }, { status: 500 });
   }
 
   // ── Audit trail ───────────────────────────────────────────────────────────
