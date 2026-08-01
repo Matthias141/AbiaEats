@@ -26,7 +26,9 @@ async function inviteVendor(formData: FormData) {
   const adminAuth = await createAdminClient_OPS_VENDOR_INVITE_ONLY();
   const { data, error } = await adminAuth.auth.admin.inviteUserByEmail(email, {
     data: { full_name: fullName, phone: phone || undefined },
-    redirectTo: `${getAppUrl()}/auth/callback`,
+    // Invited vendors have no password yet — route them through the
+    // set-password step instead of straight into the app.
+    redirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent('/auth/set-password')}`,
   });
 
   if (error || !data.user) {

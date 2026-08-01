@@ -61,6 +61,18 @@ export const signupRateLimit = new Ratelimit({
   prefix: 'abiaeats:signup',
 });
 
+// 5 set-password attempts per hour per IP (post-invite / post-recovery)
+export const setPasswordRateLimit = new Ratelimit({
+  redis: {
+    evalsha: (...args) => getRedis().evalsha(...args),
+    set: (...args) => getRedis().set(...args),
+    get: (...args) => getRedis().get(...args),
+  } as Redis,
+  limiter: Ratelimit.slidingWindow(5, '1 h'),
+  analytics: true,
+  prefix: 'abiaeats:set-password',
+});
+
 /**
  * Helper: get the real client IP from a Next.js request.
  * Vercel sets x-forwarded-for. Never trust user-provided headers.
