@@ -28,6 +28,7 @@ export default async function OpsRestaurantsPage() {
               <th className="px-6 py-3 font-medium">Address</th>
               <th className="px-6 py-3 font-medium">Zone</th>
               <th className="px-6 py-3 font-medium">Status</th>
+              <th className="px-6 py-3 font-medium" />
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
@@ -45,11 +46,19 @@ export default async function OpsRestaurantsPage() {
                     {restaurant.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
+                <td className="px-6 py-4 text-right">
+                  <Link
+                    href={`/dashboard/ops/restaurants/${restaurant.id}`}
+                    className="text-sm font-medium text-brand-orange hover:underline"
+                  >
+                    Edit
+                  </Link>
+                </td>
               </tr>
             ))}
             {(restaurants ?? []).length === 0 && (
               <tr>
-                <td colSpan={4} className="px-6 py-10 text-center text-gray-400">
+                <td colSpan={5} className="px-6 py-10 text-center text-gray-400">
                   No restaurants yet.
                 </td>
               </tr>
