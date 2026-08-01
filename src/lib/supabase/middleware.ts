@@ -51,6 +51,14 @@ import { NextResponse, type NextRequest } from 'next/server';
  * build step to enumerate and hash Next's generated inline scripts —
  * out of scope for this fix, which prioritizes restoring site
  * functionality immediately.
+ * CRITICAL: the nonce must be visible to Next's renderer while it generates
+ * the page, which means it has to go on the *request* headers passed into
+ * NextResponse.next({ request: { headers } }) — setting it only on the
+ * outgoing response (as this file previously did) never reaches the
+ * renderer, so none of Next's own inline hydration scripts get stamped with
+ * a matching nonce and the browser blocks all of them under CSP. That
+ * silently breaks hydration (and therefore every onClick, useEffect, and
+ * form submit) on every page while still looking fine in the raw SSR HTML.
  */
 
 export async function updateSession(request: NextRequest) {
@@ -71,6 +79,20 @@ export async function updateSession(request: NextRequest) {
 
   let supabaseResponse = NextResponse.next({ request });
   supabaseResponse.headers.set('Content-Security-Policy', csp);
+  // ── Step 3: Build the response, inject CSP + nonce headers ───────────────
+  // The nonce/CSP must be set on the *request* headers (not just the
+  // response) so Next's renderer sees them for this request and stamps its
+  // own inline hydration scripts with the matching nonce.
+  function nextWithNonceRequest(req: NextRequest) {
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set('x-nonce', nonce);
+    requestHeaders.set('Content-Security-Policy', csp);
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
+  let supabaseResponse = nextWithNonceRequest(request);
+  supabaseResponse.headers.set('Content-Security-Policy', csp);
+  supabaseResponse.headers.set('x-nonce', nonce);
 
   const supabase = createServerClient(
     supabaseUrl,
@@ -85,6 +107,8 @@ export async function updateSession(request: NextRequest) {
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({ request });
+          supabaseResponse = nextWithNonceRequest(request);
+          // Re-apply security headers after response rebuild
           supabaseResponse.headers.set('Content-Security-Policy', csp);
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)

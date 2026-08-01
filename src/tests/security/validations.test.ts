@@ -53,21 +53,26 @@ const UUID = {
 describe('🔴 RED TEAM — Auth Schema Attack Surface', () => {
 
   describe('Login schema — credential attack vectors', () => {
-    const weakPasswords = [
-      'password',
-      '12345678',
-      'qwerty123',
-      'Password1',   // 11 chars — under 12 minimum
-      'abc',
-      '',
-      ' ',
-    ];
+    // BLUE TEAM: loginSchema intentionally only enforces a minimum length
+    // (8 chars), not complexity — OWASP advises against gating login on
+    // password policy, since existing accounts may predate the policy or
+    // have a weaker password than current signup rules require. Complexity
+    // is enforced at signup/password-change time instead — see the
+    // "Signup schema" describe block below for those assertions.
+    const tooShortPasswords = ['abc', '', ' ', '1234567'];
 
-    weakPasswords.forEach(pwd => {
-      it(`rejects weak/short password: "${pwd}"`, () => {
+    tooShortPasswords.forEach(pwd => {
+      it(`rejects password under the 8-character minimum: "${pwd}"`, () => {
         const result = loginSchema.safeParse({ email: 'test@test.com', password: pwd });
         expect(result.success).toBe(false);
       });
+    });
+
+    it('accepts any password meeting the 8-character minimum regardless of complexity', () => {
+      // Deliberately weak by signup standards, but login must not lock out
+      // an existing account whose password predates the complexity policy.
+      const result = loginSchema.safeParse({ email: 'test@test.com', password: 'password' });
+      expect(result.success).toBe(true);
     });
 
     // Email injection / format attacks
