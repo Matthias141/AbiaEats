@@ -502,11 +502,19 @@ describe('🔵 BLUE TEAM — Payment Confirmation Schema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('accepts payment confirmation without reference (manual confirmation)', () => {
+  it('rejects payment confirmation without reference (required — closes duplicate-reference fraud gap)', () => {
     const result = confirmPaymentSchema.safeParse({
       order_id: UUID.order,
     });
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects payment reference shorter than 6 characters', () => {
+    const result = confirmPaymentSchema.safeParse({
+      order_id: UUID.order,
+      payment_reference: 'AB12',
+    });
+    expect(result.success).toBe(false);
   });
 });
 

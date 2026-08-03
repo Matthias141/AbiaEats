@@ -393,11 +393,19 @@ describe('[PURPLE] confirmPaymentSchema — payment reference safety', () => {
     expect(result.success).toBe(true);
   });
 
-  it('accepts missing payment reference (optional field)', () => {
+  it('rejects missing payment reference (required — closes duplicate-reference fraud gap)', () => {
     const result = confirmPaymentSchema.safeParse({
       order_id: '123e4567-e89b-12d3-a456-426614174000',
     });
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects payment reference shorter than 6 characters', () => {
+    const result = confirmPaymentSchema.safeParse({
+      order_id: '123e4567-e89b-12d3-a456-426614174000',
+      payment_reference: 'AB12',
+    });
+    expect(result.success).toBe(false);
   });
 
   it('rejects non-UUID order_id', () => {
