@@ -621,3 +621,26 @@ NEXT_PUBLIC_OPAY_ACCOUNT_NUMBER=xxxx      # OPay account number
 8. **Don't store prices in kobo.** We use whole Naira (₦2,500 not 250000 kobo). This is a deliberate choice for readability in the Nigerian market.
 9. **Don't forget to log audit actions.** Every payment confirmation and settlement payout needs a `log_audit()` call.
 10. **Don't use Pages Router.** This is an App Router (`src/app/`) project. No `pages/` directory.
+
+17. AGENT OPERATIONAL GUARDRAILS
+
+These rules govern HOW you (Claude Code) work in this repo, separate from the product/architecture rules above. Learned from real incidents in this repo's history — not hypothetical.
+
+Non-negotiable
+Never merge a PR autonomously. Always show the diff and wait for explicit human confirmation before applying, committing, or pushing.
+Never set up autonomous PR-watching, webhook subscriptions, or follow-up commits on your own initiative. If CI fails after a push, report what failed and stop — wait for instruction rather than pushing a fix yourself.
+If a task touches money-moving logic (payment confirmation, order totals, settlements, admin payment actions): always implement BOTH a database-level constraint AND an application-level check. Never ship just one layer. (Precedent: orders.payment_reference — partial unique index idx_orders_payment_reference_unique PLUS an API-level duplicate check in the confirm-payment route. Neither alone was sufficient.)
+Database migrations: always show a pre-check query (e.g. checking for existing violations of a new constraint) before showing the migration itself. Never assume production data is already clean.
+If work uncovers an unrelated bug (e.g. a CI/workflow config issue found while fixing an application bug), STOP and flag it separately. Fix it in its own branch/PR off main, never bundled into the original task's PR. (Precedent: the security-scans job's missing pull-requests: read permission was found while fixing an unrelated payment bug — it got its own standalone PR, branched from main, not from the payment-fix branch.)
+Read-only audits (security, dependency, pipeline, DevOps) never modify, commit, push, or trigger any workflow — findings and reports only.
+Branch / PR hygiene
+One logical change per PR. CI-config fixes, dependency bumps, and feature/security fixes go in separate PRs even when related.
+Standalone infrastructure fixes (workflow permissions, CI config, etc.) branch off main, never off an in-progress feature branch — an in-progress branch won't receive fixes merged to main after it diverged, without an explicit merge/rebase back into it.
+Always run local verification (tsc --noEmit, eslint ., vitest run) before committing, and report actual results (pass/fail counts), not a summary claim like "tests pass."
+When updating a test because behavior intentionally changed (not because the test caught a bug): confirm the updated assertion tests the NEW correct behavior — don't just loosen the failing assertion until green.
+Known infrastructure facts (avoid re-discovering)
+Branch protection is NOT currently enforced on this repo (private repo + GitHub Free tier limitation — classic Branch Protection and Rulesets both require a public repo or paid tier to enforce on private repos). A red CI check does not currently block merging. This is a known, tracked gap — don't rediscover it as new.
+security.yml's security-scans job permissions block must include pull-requests: read or Gitleaks 403s when scanning PR commits (fixed — don't reintroduce by overwriting the job-level permissions: block wholesale in a future edit).
+When in doubt
+
+This codebase has had several rounds of security audits. If something looks like a bug but might be a known, deliberate tradeoff (e.g. CSP unsafe-inline in middleware.ts, documented inline with the reasoning), check for existing comments/docs explaining it before "fixing" it. Ask rather than assume.
