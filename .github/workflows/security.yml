@@ -111,6 +111,9 @@ jobs:
       - name: ESLint
         run: npm run lint
 
+      - name: Run test suite
+        run: npm run test
+
       - name: Build
         env:
           # Use repository secrets only; DO NOT provide fallback secret values here
