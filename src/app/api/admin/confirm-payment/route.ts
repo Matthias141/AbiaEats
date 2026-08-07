@@ -24,12 +24,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: `Order is ${order.status}, not awaiting payment` }, { status: 422 });
   }
 
+  // Reject if this exact reference already confirmed a DIFFERENT order.
+  // App-level guard for a fast, clear error — the DB-level partial unique
+  // index (security-patches-v11) is the real backstop; see note below.
+  const { data: duplicate } = await supabase
+    .from('orders')
+    .select('id')
+    .eq('payment_reference', parsed.data.payment_reference)
+    .neq('id', parsed.data.order_id)
+    .maybeSingle();
+
+  if (duplicate) {
+    return NextResponse.json(
+      { error: 'This payment reference has already been used to confirm a different order.' },
+      { status: 409 }
+    );
+  }
+
   const { error } = await supabase
     .from('orders')
     .update({
       status: 'confirmed',
       confirmed_at: new Date().toISOString(),
-      payment_reference: parsed.data.payment_reference ?? null,
+      payment_reference: parsed.data.payment_reference,
       payment_confirmed_by: guard.user.id,
       payment_confirmed_at: new Date().toISOString(),
     })

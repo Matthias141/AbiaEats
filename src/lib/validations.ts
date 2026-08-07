@@ -104,7 +104,7 @@ export const updateOrderStatusSchema = z.object({
 
 export const confirmPaymentSchema = z.object({
   order_id: z.string().uuid(),
-  payment_reference: z.string().optional(),
+  payment_reference: z.string().trim().min(6, 'Payment reference is required (min 6 characters)'),
 });
 
 // ============================================================================
