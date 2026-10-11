@@ -38,9 +38,9 @@ export function BottomNav() {
                 isCart && itemCount > 0 ? `Cart, ${itemCount} items` : label
               }
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 w-16 h-14 rounded-xl transition-all relative",
+                "nav-item flex flex-col items-center justify-center gap-0.5 w-16 h-14 rounded-xl relative",
                 isActive
-                  ? "liquid-chip text-brand-orange-dark shadow-sm"
+                  ? "nav-item-active liquid-chip text-brand-orange-dark"
                   : "text-gray-600 hover:text-gray-900 hover:bg-white/35",
               )}
             >

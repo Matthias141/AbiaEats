@@ -23,11 +23,11 @@ export function RestaurantCard({
             alt=""
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover"
+            className="restaurant-card-image object-cover"
             loading="lazy"
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-[#f3ebe1]">
+          <div className="restaurant-card-image flex h-full items-center justify-center bg-[#f3ebe1]">
             <CuisineIcon
               tags={restaurant.cuisine_tags}
               className="size-14 text-brand-orange-dark"
@@ -35,7 +35,7 @@ export function RestaurantCard({
           </div>
         )}
         <span
-          className={`absolute left-3 top-3 rounded-full px-3 py-1.5 text-xs font-medium ${restaurant.is_open ? "bg-white text-green-800" : "bg-gray-900 text-white"}`}
+          className={`liquid-chip absolute left-3 top-3 rounded-full px-3 py-1.5 text-xs font-medium ${restaurant.is_open ? "text-green-800" : "!border-gray-800 !bg-gray-900 text-white"}`}
         >
           {restaurant.is_open ? "Open now" : "Currently closed"}
         </span>

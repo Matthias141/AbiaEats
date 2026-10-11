@@ -83,7 +83,7 @@ export default function LandingPage() {
             </p>
             <form
               action="/restaurants"
-              className="mt-8 rounded-2xl border border-[#ded7d0] bg-white p-2 shadow-[var(--shadow-sm)]"
+              className="premium-search-panel mt-8 rounded-2xl p-2"
             >
               <div className="flex flex-col gap-2 sm:flex-row">
                 <div className="flex min-h-12 flex-1 items-center gap-3 px-3">
@@ -116,17 +116,17 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="relative">
-            <div className="relative aspect-square overflow-hidden rounded-[2.5rem] bg-[#ffe5d2]">
+            <div className="premium-image-frame relative aspect-square overflow-hidden rounded-[2.5rem] bg-[#ffe5d2]">
               <Image
                 src="/images/jollof-hero.webp"
                 alt="A bowl of Nigerian jollof rice, grilled chicken, and fried plantain"
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 550px"
-                className="object-cover"
+                className="object-cover transition-transform duration-700 hover:scale-[1.025]"
               />
             </div>
-            <div className="absolute -bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-[var(--shadow-md)] sm:left-6 sm:right-auto sm:max-w-[20rem]">
+            <div className="premium-float absolute -bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl p-4 sm:left-6 sm:right-auto sm:max-w-[20rem]">
               <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-orange-100 text-brand-orange-dark">
                 <UtensilsCrossed className="size-5" aria-hidden="true" />
               </span>
@@ -172,7 +172,7 @@ export default function LandingPage() {
                 <Link
                   key={category.tag}
                   href={`/restaurants?tag=${category.tag}`}
-                  className="group flex items-center gap-4 rounded-2xl border border-[#e8e3dd] bg-white p-5"
+                  className="premium-card group flex items-center gap-4 rounded-2xl p-5 active:scale-[0.985]"
                 >
                   <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#fff0e4] text-brand-orange-dark">
                     <Icon
@@ -190,7 +190,7 @@ export default function LandingPage() {
                     </p>
                   </div>
                   <ArrowRight
-                    className="size-4 shrink-0 text-gray-500"
+                    className="size-4 shrink-0 text-gray-500 transition-transform duration-200"
                     aria-hidden="true"
                   />
                 </Link>

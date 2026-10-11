@@ -133,7 +133,7 @@ export default function CustomerHomePage() {
           <Link
             href="/cart"
             aria-label={`View cart, ${itemCount} items`}
-            className="relative flex size-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-800"
+            className="premium-icon-button relative flex size-11 items-center justify-center rounded-full border border-white/80 bg-white/80 text-gray-800 backdrop-blur-xl active:scale-95"
           >
             <ShoppingBag className="size-5" aria-hidden="true" />
             {itemCount > 0 && (
@@ -145,7 +145,7 @@ export default function CustomerHomePage() {
         </div>
       </header>
       <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10">
-        <section className="home-hero relative mb-7 grid overflow-hidden rounded-3xl bg-[#ffe5d2] sm:grid-cols-[1.2fr_1fr]">
+        <section className="home-hero premium-hero relative mb-7 grid overflow-hidden rounded-3xl bg-[#ffe5d2] sm:grid-cols-[1.2fr_1fr]">
           <div className="relative z-10 p-6 sm:p-10">
             <p className="mb-3 text-sm font-medium text-[#7d3515]">
               Good food. Close to home.
@@ -158,7 +158,7 @@ export default function CustomerHomePage() {
             </p>
             <a
               href="#restaurants"
-              className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#311b12] px-5 text-sm font-medium text-white"
+              className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#311b12] px-5 text-sm font-medium text-white shadow-lg shadow-[#311b12]/20 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-[0.97]"
             >
               Find my next meal
               <ArrowRight className="size-4" aria-hidden="true" />
@@ -171,7 +171,7 @@ export default function CustomerHomePage() {
               fill
               priority
               sizes="(max-width: 640px) 100vw, 480px"
-              className="object-cover"
+              className="object-cover transition-transform duration-700 hover:scale-[1.025]"
             />
           </div>
         </section>

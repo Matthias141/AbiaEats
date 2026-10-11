@@ -8,13 +8,22 @@
     --foreground: #1c1917;
     --font-fallback: system-ui, sans-serif;
     --shadow-sm:
-      0 2px 3px -1px rgba(0, 0, 0, 0.1), 0 1px 0 rgba(25, 28, 33, 0.02),
-      0 0 0 1px rgba(25, 28, 33, 0.08);
+      0 1px 2px rgba(49, 27, 18, 0.05),
+      0 5px 14px -6px rgba(49, 27, 18, 0.14),
+      0 0 0 1px rgba(49, 27, 18, 0.06);
     --shadow-md:
-      0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 1px -0.5px rgba(0, 0, 0, 0.06),
-      0 3px 3px -1.5px rgba(0, 0, 0, 0.06), 0 6px 6px -3px rgba(0, 0, 0, 0.06),
-      0 12px 12px -6px rgba(0, 0, 0, 0.06),
-      0 24px 24px -12px rgba(0, 0, 0, 0.06);
+      0 1px 2px rgba(49, 27, 18, 0.04),
+      0 8px 18px -8px rgba(49, 27, 18, 0.16),
+      0 20px 42px -22px rgba(49, 27, 18, 0.22),
+      0 0 0 1px rgba(49, 27, 18, 0.06);
+    --shadow-lg:
+      0 2px 4px rgba(49, 27, 18, 0.05),
+      0 16px 32px -14px rgba(49, 27, 18, 0.22),
+      0 36px 70px -32px rgba(49, 27, 18, 0.28),
+      0 0 0 1px rgba(49, 27, 18, 0.06);
+    --shadow-orange:
+      0 10px 24px -10px rgba(201, 78, 16, 0.5),
+      0 2px 6px rgba(126, 45, 10, 0.16);
   }
   .dark {
     --background: #0c0a09;
@@ -27,7 +36,10 @@
   }
   body {
     font-family: var(--font-outfit), var(--font-fallback);
-    background: var(--background);
+    background:
+      radial-gradient(circle at 8% 2%, rgba(242, 101, 34, 0.08), transparent 26rem),
+      radial-gradient(circle at 92% 12%, rgba(255, 196, 153, 0.12), transparent 24rem),
+      var(--background);
     color: var(--foreground);
     overflow-x: clip;
   }
@@ -77,26 +89,29 @@
   .glass-card,
   .liquid-glass,
   .liquid-glass-soft {
-    border: 1px solid #e8e3dd;
+    border: 1px solid rgba(255, 255, 255, 0.78);
     border-radius: 1rem;
-    background: #fff;
-    box-shadow: var(--shadow-sm);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 250, 246, 0.74));
+    box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    backdrop-filter: blur(20px) saturate(150%);
   }
   .liquid-glass-soft {
-    background: #f8f5f1;
-    box-shadow: none;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(248, 240, 233, 0.64));
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.85);
   }
   .liquid-glass-strong {
-    border: 1px solid transparent;
-    background: #c94e10;
-    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background: linear-gradient(135deg, #f26522, #b4430b);
+    box-shadow: var(--shadow-orange), inset 0 1px 0 rgba(255, 255, 255, 0.24);
   }
   .liquid-glass-nav,
   .eats-topbar {
     border: 1px solid rgba(28, 25, 23, 0.08);
-    background: rgba(255, 255, 255, 0.94);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
+    background: rgba(255, 252, 249, 0.82);
+    box-shadow: 0 8px 30px -22px rgba(49, 27, 18, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    -webkit-backdrop-filter: blur(22px) saturate(165%);
+    backdrop-filter: blur(22px) saturate(165%);
   }
   .eats-topbar {
     position: sticky;
@@ -104,13 +119,16 @@
     z-index: 40;
   }
   .liquid-chip {
-    border: 1px solid #e8e3dd;
-    background: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
   }
   .liquid-input,
   .eats-search {
     border: 1px solid #d6cfc7;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.88);
     border-radius: 1rem;
     color: #1c1917;
   }
@@ -124,7 +142,7 @@
     justify-content: center;
   }
   .gradient-orange {
-    background: #c94e10;
+    background: linear-gradient(135deg, #e85b18 0%, #b4430b 100%);
   }
   .text-gradient-orange {
     color: #c94e10;
@@ -139,11 +157,18 @@
     display: block;
     min-width: 0;
     overflow: hidden;
-    border: 1px solid #e8e3dd;
+    border: 1px solid rgba(255, 255, 255, 0.82);
     border-radius: 1.25rem;
-    background: #fff;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow 180ms ease-out;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    transform: translateZ(0);
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms ease-out,
+      border-color 180ms ease-out;
+  }
+  .restaurant-card-image {
+    transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .eats-filter {
     display: inline-flex;
@@ -159,6 +184,8 @@
     font-weight: 500;
     color: #534940;
     transition:
+      transform 140ms ease-out,
+      box-shadow 180ms ease-out,
       background-color 140ms ease-out,
       color 140ms ease-out;
   }
@@ -166,6 +193,8 @@
     background: #311b12;
     border-color: #311b12;
     color: #fff;
+    box-shadow: var(--shadow-orange), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
   }
   .eats-button {
     display: inline-flex;
@@ -174,7 +203,10 @@
     justify-content: center;
     gap: 0.5rem;
     padding: 0.75rem 1.4rem;
-    background: #c94e10;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #e85b18 0%, #b4430b 100%);
+    box-shadow: var(--shadow-orange), inset 0 1px 0 rgba(255, 255, 255, 0.22);
     border-radius: 999px;
     color: #fff;
     font-size: 0.875rem;
@@ -184,13 +216,16 @@
       background-color 140ms ease-out;
   }
   .eats-button:active {
-    transform: scale(0.97);
+    transform: translateY(1px) scale(0.97);
   }
   .eats-empty {
     padding: 3rem 1.5rem;
     border: 1px solid #e8e3dd;
     border-radius: 1.25rem;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.84);
+    box-shadow: var(--shadow-md);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    backdrop-filter: blur(18px) saturate(145%);
     text-align: center;
   }
   .eats-dialog {
@@ -201,13 +236,17 @@
     padding: 0;
     border: 1px solid #e8e3dd;
     border-radius: 1.5rem;
-    background: #fff;
+    background: rgba(255, 252, 249, 0.9);
     color: #1c1917;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    backdrop-filter: blur(24px) saturate(150%);
     overflow-y: auto;
   }
   .eats-dialog::backdrop {
     background: rgba(28, 25, 23, 0.5);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
   }
   .eats-dialog[open] {
     animation: dialogEnter 180ms cubic-bezier(0.23, 1, 0.32, 1);
@@ -262,16 +301,76 @@
   .skip-link:focus {
     transform: none;
   }
+  .premium-hero {
+    border: 1px solid rgba(255, 255, 255, 0.66);
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  }
+  .premium-image-frame {
+    box-shadow: var(--shadow-lg), inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+  }
+  .premium-float,
+  .premium-search-panel {
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(22px) saturate(155%);
+    backdrop-filter: blur(22px) saturate(155%);
+  }
+  .premium-card {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 249, 244, 0.8));
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    transition:
+      transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 200ms ease-out,
+      border-color 180ms ease-out;
+  }
+  .premium-icon-button {
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition: transform 140ms ease-out, box-shadow 180ms ease-out;
+  }
+  .nav-item {
+    transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1), color 160ms ease-out, background-color 160ms ease-out;
+  }
+  .nav-item svg {
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-item-active svg {
+    transform: translateY(-1px) scale(1.08);
+  }
   @media (hover: hover) and (pointer: fine) {
     .restaurant-card:hover,
     .liquid-lift:hover {
-      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+      border-color: rgba(242, 101, 34, 0.2);
+      box-shadow: var(--shadow-lg);
+    }
+    .restaurant-card:hover .restaurant-card-image {
+      transform: scale(1.045);
     }
     .eats-button:hover {
-      background: #a93f0b;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px -12px rgba(201, 78, 16, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.26);
     }
     .eats-filter:not(.eats-filter-active):hover {
       background: #f6eee6;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+    .premium-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(242, 101, 34, 0.22);
+      box-shadow: var(--shadow-md);
+    }
+    .premium-card:hover svg:last-child {
+      transform: translateX(3px);
+    }
+    .premium-icon-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .nav-item:hover svg {
+      transform: translateY(-2px);
     }
   }
   @media (max-width: 639px) {
@@ -343,6 +442,14 @@
   }
 }
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass-card,
+  .liquid-glass,
+  .liquid-glass-soft,
+  .liquid-chip,
+  .eats-empty,
+  .eats-dialog,
+  .premium-float,
+  .premium-search-panel,
   .liquid-glass-nav,
   .eats-topbar {
     background: #fff;
@@ -355,7 +462,11 @@
   (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
 ) {
   .liquid-glass-nav,
-  .eats-topbar {
+  .eats-topbar,
+  .premium-float,
+  .premium-search-panel,
+  .liquid-glass,
+  .glass-card {
     background: #fff;
   }
 }
