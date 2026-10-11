@@ -4,11 +4,11 @@ Scope: landing, customer home, restaurant discovery, menu entry controls, menu s
 
 ## Design decisions
 
-The existing orange, Playfair Display, and Outfit identity is retained. Content surfaces are solid white on the existing warm background; translucency is reserved for navigation. Primary buttons use #C94E10 for white-text contrast (4.58:1). The darker text token uses #B4430B so small links remain readable against the warm background. Food imagery leads the landing page; browsing does not require an account. Restaurant cards use actual vendor images or cuisine icons, never generated imagery masquerading as a vendor meal.
+The existing orange, Playfair Display, and Outfit identity is retained. A warm background supports translucent navigation, floating panels, dialogs, and selected shared surfaces; content-heavy cards remain legible with high-opacity fills. Layered warm-neutral shadows establish small, medium, and large elevations, while restrained orange glow identifies primary actions. Primary controls use dark orange endpoints that retain readable white text, and the darker text token uses #B4430B so small links remain readable against the warm background. Food imagery leads the landing page; browsing does not require an account. Restaurant cards use actual vendor images or cuisine icons, never generated imagery masquerading as a vendor meal.
 
 | Before                                                     | After                                                               | Reason                                                                  |
 | ---------------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Glass, gradients, and deep shadows on nearly every surface | Solid cards with a shared, restrained elevation scale               | Establish hierarchy and reduce rendering cost on low-end phones         |
+| Unstructured glass and identical shadows on most surfaces | Deliberate glass layers with small, medium, and large depth tokens  | Restore premium depth while keeping hierarchy and readable content       |
 | Repeated restaurant cards                                  | One shared card                                                     | Keep fees, open state, image behavior, and ratings consistent           |
 | Unlabelled search and city overlays                        | Labelled search, pressed filter states, native dialog               | Make controls understandable to keyboard and assistive technology users |
 | Free-delivery and instant-payment claims                   | Accurate fee review and payment-verification copy                   | Match the implemented ordering contract                                 |
@@ -24,7 +24,7 @@ These references guide implementation; they are not permanently installed agent 
 | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | [frontend-design](https://www.ui-skills.com/skills/anthropics/frontend-design)     | Food-led hero, local copy, coherent brand identity                                                      |
 | [apple-design](https://www.ui-skills.com/skills/emilkowalski/apple-design)         | Instant press feedback, restrained navigation material, reduced transparency and motion support         |
-| [beautiful-shadows](https://www.ui-skills.com/skills/mengto/beautiful-shadows)     | Shared neutral small/medium layered shadow tokens                                                       |
+| [beautiful-shadows](https://www.ui-skills.com/skills/mengto/beautiful-shadows)     | Warm-neutral layered shadow tokens, inner highlights, and restrained action glow                        |
 | [accessibility](https://www.ui-skills.com/skills/addyosmani/accessibility)         | Label association, described errors, native dialog, keyboard menu controls, visible focus, zoom enabled |
 | [design-review](https://www.ui-skills.com/skills/superfuture/design-review)        | Prioritize usability and truthful copy before polish; concrete before/after review                      |
 | [emil-design-eng](https://www.ui-skills.com/skills/emilkowalski/emil-design-eng)   | Explicit transition properties, short action-driven motion, no pulsing CTA                              |
@@ -58,4 +58,4 @@ Browser automation is unavailable in this managed environment. Before release, i
 
 ## Review boundary
 
-No commits, pushes, merges or deployments are performed by this change. Repository `CLAUDE.md` section 17 requires explicit confirmation before commit/push. The local diff is ready for review.
+The implementation is published on draft PR #25 for review. Repository `CLAUDE.md` section 17 still requires explicit confirmation before merge; no merge is performed by this change.
