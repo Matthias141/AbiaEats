@@ -6,7 +6,6 @@ import {
   CreditCard,
   MapPin,
   Search,
-  UtensilsCrossed,
 } from "lucide-react";
 import { getCuisineIcon } from "@/lib/cuisine-icons";
 
@@ -34,7 +33,7 @@ export default function LandingPage() {
           <Link
             href="/"
             aria-label="Abia Eats home"
-            className="font-body text-2xl font-semibold tracking-tight text-[#311b12]"
+            className="font-brand text-2xl font-semibold tracking-tight text-[#311b12]"
           >
             abia<span className="text-brand-orange-dark">eats</span>
             <span className="text-brand-orange">.</span>
@@ -70,16 +69,16 @@ export default function LandingPage() {
                 className="size-4 text-brand-orange-dark"
                 aria-hidden="true"
               />
-              Made for Aba & Umuahia
+              Food delivery in Aba & Umuahia
             </p>
-            <h1 className="max-w-xl text-[clamp(2.75rem,6vw,4.8rem)] font-semibold leading-[1.04] tracking-[-.04em] text-[#311b12]">
-              A taste of home.
+            <h1 className="max-w-xl text-[clamp(2.5rem,5.5vw,4.25rem)] font-bold leading-[1.08] tracking-[-.035em] text-[#311b12]">
+              Your favourites.
               <br />
-              Delivered.
+              Delivered in Abia.
             </h1>
             <p className="mt-6 max-w-md text-base leading-relaxed text-[#674739] sm:text-lg">
-              From your go-to jollof spot to the pepper soup you’ve been
-              thinking about. Find your next meal at a local kitchen.
+              Jollof rice, pepper soup, shawarma. Choose a restaurant in
+              your city and order what you’re hungry for.
             </p>
             <form
               action="/restaurants"
@@ -126,19 +125,7 @@ export default function LandingPage() {
                 className="object-cover transition-transform duration-700 hover:scale-[1.025]"
               />
             </div>
-            <div className="premium-float absolute -bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl p-4 sm:left-6 sm:right-auto sm:max-w-[20rem]">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-orange-100 text-brand-orange-dark">
-                <UtensilsCrossed className="size-5" aria-hidden="true" />
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-[#311b12]">
-                  Big on local flavour.
-                </p>
-                <p className="mt-0.5 text-xs text-gray-600">
-                  Discover the kitchens in your city.
-                </p>
-              </div>
-            </div>
+
           </div>
         </section>
         <section
@@ -151,10 +138,10 @@ export default function LandingPage() {
                 id="cravings-heading"
                 className="text-3xl tracking-tight sm:text-4xl"
               >
-                Follow your cravings.
+                What are you hungry for?
               </h2>
               <p className="mt-2 text-sm text-gray-600">
-                A little inspiration for your next order.
+                Browse by food.
               </p>
             </div>
             <Link
@@ -165,16 +152,16 @@ export default function LandingPage() {
               <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {CRAVINGS.map((category) => {
               const Icon = getCuisineIcon(category.tag);
               return (
                 <Link
                   key={category.tag}
                   href={`/restaurants?tag=${category.tag}`}
-                  className="premium-card group flex items-center gap-4 rounded-2xl p-5 active:scale-[0.985]"
+                  className="premium-card group flex flex-col items-start gap-3 rounded-2xl p-4 sm:flex-row sm:items-center active:scale-[0.985]"
                 >
-                  <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#fff0e4] text-brand-orange-dark">
+                  <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#fff0e4]">
                     <Icon
                       className="size-11"
                       aria-hidden="true"
@@ -184,12 +171,12 @@ export default function LandingPage() {
                     <h3 className="font-body text-base font-semibold text-[#311b12]">
                       {category.name}
                     </h3>
-                    <p className="mt-1 text-xs leading-relaxed text-gray-600">
+                    <p className="mt-1 hidden text-xs leading-relaxed text-gray-600 sm:block">
                       {category.note}
                     </p>
                   </div>
                   <ArrowRight
-                    className="size-4 shrink-0 text-gray-500 transition-transform duration-200"
+                    className="hidden size-4 shrink-0 text-gray-500 transition-transform duration-200 sm:block"
                     aria-hidden="true"
                   />
                 </Link>

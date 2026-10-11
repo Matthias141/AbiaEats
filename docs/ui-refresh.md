@@ -4,7 +4,7 @@ Scope: landing, customer home, restaurant discovery, menu entry controls, menu s
 
 ## Design decisions
 
-The existing orange, Playfair Display, and Outfit identity is retained. A warm background supports translucent navigation, floating panels, dialogs, and selected shared surfaces; content-heavy cards remain legible with high-opacity fills. Layered warm-neutral shadows establish small, medium, and large elevations, while restrained orange glow identifies primary actions. Primary controls use dark orange endpoints that retain readable white text, and the darker text token uses #B4430B so small links remain readable against the warm background. Food imagery leads the landing page; browsing does not require an account. Restaurant cards use actual vendor images or cuisine icons, never generated imagery masquerading as a vendor meal.
+Orange remains the brand colour and Outfit is retained for the wordmark. App text and headings now use a native system sans-serif stack; Playfair is removed to reduce the decorative landing-template feel. A warm background supports translucent navigation, floating panels, dialogs, and selected shared surfaces; content-heavy cards remain legible with high-opacity fills. Layered warm-neutral shadows establish small, medium, and large elevations, while restrained orange glow identifies primary actions. Primary controls use dark orange endpoints that retain readable white text, and the darker text token uses #B4430B so small links remain readable against the warm background. Food imagery leads the landing page; browsing does not require an account. Restaurant cards use actual vendor images or cuisine icons, never generated imagery masquerading as a vendor meal.
 
 | Before                                                     | After                                                               | Reason                                                                  |
 | ---------------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------- |
@@ -34,6 +34,10 @@ These references guide implementation; they are not permanently installed agent 
 | [interaction-design](https://www.ui-skills.com/skills/wshobson/interaction-design) | Loading skeletons, error/retry states, active filters and cart feedback                                 |
 
 This is an implementation and source review, not a completed holistic `better-interface` audit. Its six companion `better-*` skills were not loaded; their formal domain reviews are **not reviewed**. No third-party review telemetry was sent.
+
+## Typography and browsing refinement
+
+Native sans-serif headings replace the serif treatment throughout the app. The landing hero uses direct food/delivery copy, without the decorative floating caption. Six illustrated cuisine tiles fit in a two-column grid on mobile instead of six tall rows. Customer home leads with a compact heading, a small food image visible on mobile, search and discovery; the large campaign-style banner and redundant anchor CTA are removed. Glass navigation, layered shadows, tactile controls and custom artwork remain. Shared typography affects dashboards too; full browser/device layout QA remains outstanding.
 
 ## Custom cuisine artwork
 

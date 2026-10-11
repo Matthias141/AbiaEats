@@ -145,33 +145,22 @@ export default function CustomerHomePage() {
         </div>
       </header>
       <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10">
-        <section className="home-hero premium-hero relative mb-7 grid overflow-hidden rounded-3xl bg-[#ffe5d2] sm:grid-cols-[1.2fr_1fr]">
-          <div className="relative z-10 p-6 sm:p-10">
-            <p className="mb-3 text-sm font-medium text-[#7d3515]">
-              Good food. Close to home.
-            </p>
-            <h1 className="max-w-md text-3xl font-semibold leading-[1.12] tracking-tight text-[#311b12] sm:text-5xl">
-              What are you craving today?
+        <section className="mb-6 flex items-center justify-between gap-5" aria-labelledby="home-heading">
+          <div className="min-w-0">
+            <p className="mb-2 text-sm text-gray-600">Restaurants in {formatCityName(city)}</p>
+            <h1 id="home-heading" className="text-3xl font-bold leading-tight tracking-tight text-[#311b12] sm:text-4xl">
+              Find your next meal.
             </h1>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-[#674739] sm:text-base">
-              Your local favourites, from the kitchen to your doorstep.
-            </p>
-            <a
-              href="#restaurants"
-              className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#311b12] px-5 text-sm font-medium text-white shadow-lg shadow-[#311b12]/20 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-[0.97]"
-            >
-              Find my next meal
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </a>
+            <p className="mt-2 text-sm leading-relaxed text-gray-600">Local kitchens. Your usual favourites.</p>
           </div>
-          <div className="relative hidden min-h-[280px] sm:block">
+          <div className="premium-image-frame relative size-24 shrink-0 overflow-hidden rounded-2xl sm:size-32">
             <Image
               src="/images/jollof-hero.webp"
               alt="Jollof rice with grilled chicken and fried plantain"
               fill
               priority
-              sizes="(max-width: 640px) 100vw, 480px"
-              className="object-cover transition-transform duration-700 hover:scale-[1.025]"
+              sizes="(max-width: 640px) 96px, 128px"
+              className="object-cover"
             />
           </div>
         </section>

@@ -35,8 +35,9 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        heading: ["var(--font-playfair)", "serif"],
-        body: ["var(--font-outfit)", "sans-serif"],
+        heading: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+        body: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+        brand: ["var(--font-outfit)", "sans-serif"],
         mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
       backdropBlur: {
