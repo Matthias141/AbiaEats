@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
+import { isRestaurantImageUrl } from '@/lib/menu-images';
 import { createMenuItemSchema } from '@/lib/validations';
 
 // GET /api/restaurant/menu — list menu items for the owner's restaurant
@@ -51,6 +52,10 @@ export async function POST(request: Request) {
     .single();
 
   if (!restaurant) return NextResponse.json({ error: 'Restaurant not found or not yours' }, { status: 403 });
+
+  if (parsed.data.image_url && !isRestaurantImageUrl(parsed.data.image_url, restaurant.id, process.env.NEXT_PUBLIC_SUPABASE_URL ?? '')) {
+    return NextResponse.json({ error: 'Photo must be uploaded to this restaurant' }, { status: 400 });
+  }
 
   const { data, error } = await supabase
     .from('menu_items')
