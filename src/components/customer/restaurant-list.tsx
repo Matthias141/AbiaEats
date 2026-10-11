@@ -86,7 +86,7 @@ export function RestaurantList({
                 onClick={() => setSelectedTag(tag.value)}
                 className={`eats-filter ${selectedTag === tag.value ? "eats-filter-active" : ""}`}
               >
-                <Icon className="size-4" aria-hidden="true" />
+                <Icon className="size-6 shrink-0" aria-hidden="true" />
                 {tag.label === "All" ? "All food" : tag.label}
               </button>
             );

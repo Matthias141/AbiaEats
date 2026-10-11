@@ -176,8 +176,7 @@ export default function LandingPage() {
                 >
                   <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#fff0e4] text-brand-orange-dark">
                     <Icon
-                      className="size-7"
-                      strokeWidth={1.5}
+                      className="size-11"
                       aria-hidden="true"
                     />
                   </span>

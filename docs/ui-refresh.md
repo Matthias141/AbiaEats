@@ -35,6 +35,10 @@ These references guide implementation; they are not permanently installed agent 
 
 This is an implementation and source review, not a completed holistic `better-interface` audit. Its six companion `better-*` skills were not loaded; their formal domain reviews are **not reviewed**. No third-party review telemetry was sent.
 
+## Custom cuisine artwork
+
+Food-category icons use original coloured SVG illustrations in `src/lib/cuisine-icons.tsx`: jollof rice, pepper soup, grilled skewers, shawarma, local dishes, juice, bread, burger, and a serving platter. Highlights, shaded layers, and ground shadows add depth without bitmap assets or platform-dependent emoji. The shared resolver applies them to landing categories, discovery filters, and restaurant image fallbacks. Landing artwork is 44px and filter artwork is 24px; labels supply accessible names and the illustrations are decorative. The nine illustrations were rendered together and visually inspected; this does not establish full page layout QA.
+
 ## Image provenance
 
 `public/images/jollof-hero.webp` is generated brand imagery, not an actual restaurant menu photograph. Generated with the built-in image tool and compressed to WebP for delivery.

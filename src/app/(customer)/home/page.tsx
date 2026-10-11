@@ -204,7 +204,7 @@ export default function CustomerHomePage() {
                   onClick={() => setActiveCategory(category.value)}
                   className={`eats-filter ${activeCategory === category.value ? "eats-filter-active" : ""}`}
                 >
-                  <Icon className="size-4" aria-hidden="true" />
+                  <Icon className="size-6 shrink-0" aria-hidden="true" />
                   {category.label === "All" ? "All food" : category.label}
                 </button>
               );
