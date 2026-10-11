@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, type ReactNode } from 'react';
-import { cn } from '@/lib/utils';
-import { X } from 'lucide-react';
+import { useEffect, useId, useRef, type ReactNode } from "react";
+import { X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,63 +10,76 @@ interface ModalProps {
   title?: string;
   children: ReactNode;
   className?: string;
-  variant?: 'center' | 'bottom-sheet';
+  variant?: "center" | "bottom-sheet";
 }
 
-export function Modal({ isOpen, onClose, title, children, className, variant = 'center' }: ModalProps) {
-  const overlayRef = useRef<HTMLDivElement>(null);
+// Native dialog provides focus containment, inert background, and focus restoration.
+export function Modal({
+  isOpen,
+  onClose,
+  title = "Details",
+  children,
+  className,
+  variant = "center",
+}: ModalProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    const dialog = dialogRef.current;
+    if (!dialog || !isOpen) return;
+    dialog.showModal();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = '';
+      dialog.close();
+      document.body.style.overflow = previousOverflow;
     };
   }, [isOpen]);
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
-  }, [isOpen, onClose]);
-
   if (!isOpen) return null;
-
   return (
-    <div
-      ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
-      onClick={(e) => {
-        if (e.target === overlayRef.current) onClose();
+    <dialog
+      ref={dialogRef}
+      aria-labelledby={titleId}
+      className={cn(
+        "eats-dialog",
+        variant === "bottom-sheet" && "eats-dialog-sheet",
+        className,
+      )}
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+      onClick={(event) => {
+        if (event.target !== event.currentTarget) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        if (
+          event.clientX < rect.left ||
+          event.clientX > rect.right ||
+          event.clientY < rect.top ||
+          event.clientY > rect.bottom
+        )
+          onClose();
       }}
     >
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-      <div
-        className={cn(
-          'relative z-10 w-full bg-white border border-gray-200 overflow-y-auto max-h-[90vh] custom-scrollbar',
-          variant === 'center' && 'max-w-lg mx-4 rounded-2xl animate-scale-in',
-          variant === 'bottom-sheet' && 'max-w-lg sm:mx-auto rounded-t-2xl sm:rounded-2xl animate-slide-up',
-          className
-        )}
-      >
-        {title && (
-          <div className="flex items-center justify-between px-5 pt-5 pb-3">
-            <h2 className="font-heading text-lg font-semibold text-gray-900">{title}</h2>
-            <button
-              onClick={onClose}
-              className="tap-target w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
-            >
-              <X className="w-4 h-4 text-gray-500" />
-            </button>
-          </div>
-        )}
-        <div className="px-5 pb-5">{children}</div>
+      <div className="flex items-center justify-between gap-4 px-5 pb-3 pt-5">
+        <h2
+          id={titleId}
+          className="font-body text-lg font-semibold text-gray-900"
+        >
+          {title}
+        </h2>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label={`Close ${title}`}
+          className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-700"
+        >
+          <X className="size-5" aria-hidden="true" />
+        </button>
       </div>
-    </div>
+      <div className="px-5 pb-6">{children}</div>
+    </dialog>
   );
 }

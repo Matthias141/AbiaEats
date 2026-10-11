@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { forwardRef, type InputHTMLAttributes } from 'react';
-import { cn } from '@/lib/utils';
+import { forwardRef, useId, type InputHTMLAttributes } from "react";
+import { cn } from "@/lib/utils";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -11,11 +11,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, error, icon, id, ...props }, ref) => {
+    const generatedId = useId();
+    const inputId = id || generatedId;
+    const errorId = `${inputId}-error`;
     return (
       <div className="w-full">
         {label && (
           <label
-            htmlFor={id}
+            htmlFor={inputId}
             className="block text-sm font-medium text-gray-600 mb-1.5"
           >
             {label}
@@ -28,23 +31,34 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             </div>
           )}
           <input
-            ref={ref}
-            id={id}
-            className={cn(
-              'w-full min-h-[44px] px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 transition-colors focus:outline-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange/50 focus:bg-white',
-              icon && 'pl-10',
-              error && 'border-red-500 focus:border-red-500 focus:ring-red-500/50',
-              className
-            )}
             {...props}
+            ref={ref}
+            id={inputId}
+            aria-invalid={error ? true : props["aria-invalid"]}
+            aria-describedby={
+              [props["aria-describedby"], error ? errorId : null]
+                .filter(Boolean)
+                .join(" ") || undefined
+            }
+            className={cn(
+              "w-full min-h-[44px] px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 transition-colors focus:border-brand-orange focus:ring-2 focus:ring-brand-orange-dark focus:bg-white",
+              icon && "pl-10",
+              error &&
+                "border-red-500 focus:border-red-500 focus:ring-red-500/50",
+              className,
+            )}
           />
         </div>
-        {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
+        {error && (
+          <p id={errorId} role="alert" className="mt-1 text-sm text-red-700">
+            {error}
+          </p>
+        )}
       </div>
     );
-  }
+  },
 );
 
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 export { Input };

@@ -13,7 +13,7 @@ const config: Config = {
         brand: {
           orange: "#F26522",
           "orange-light": "#FF8A50",
-          "orange-dark": "#C94E10",
+          "orange-dark": "#B4430B",
         },
         dark: {
           bg: "#0C0A09",

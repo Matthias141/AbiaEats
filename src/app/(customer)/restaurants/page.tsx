@@ -1,13 +1,13 @@
-import { createClient } from '@/lib/supabase/server';
-import { RestaurantList } from '@/components/customer/restaurant-list';
-import { MOCK_RESTAURANTS } from '@/lib/mock-data';
-import { formatCityName, normalizeCityValue } from '@/lib/discovery';
-import Link from 'next/link';
-import { ArrowLeft, MapPin } from 'lucide-react';
+import { createClient } from "@/lib/supabase/server";
+import { RestaurantList } from "@/components/customer/restaurant-list";
+import { MOCK_RESTAURANTS } from "@/lib/mock-data";
+import { formatCityName, normalizeCityValue } from "@/lib/discovery";
+import Link from "next/link";
+import { ArrowLeft, MapPin } from "lucide-react";
 
 export const metadata = {
-  title: 'Restaurants',
-  description: 'Browse restaurants in Aba and Umuahia',
+  title: "Restaurants",
+  description: "Browse restaurants in Aba and Umuahia",
 };
 
 export default async function RestaurantsPage({
@@ -22,15 +22,13 @@ export default async function RestaurantsPage({
   try {
     const supabase = await createClient();
 
-    let query = supabase
-      .from('restaurants_public')
-      .select('*')
-      .eq('is_active', true)
-      .order('total_orders', { ascending: false });
+    const query = supabase
+      .from("restaurants_public")
+      .select("*")
+      .eq("is_active", true)
+      .order("total_orders", { ascending: false });
 
-    if (city) {
-      query = query.eq('city', city);
-    }
+    // Load both cities so client-side city switching can show all results.
 
     const { data } = await query;
     restaurants = data && data.length > 0 ? data : MOCK_RESTAURANTS;
@@ -40,7 +38,10 @@ export default async function RestaurantsPage({
   }
 
   return (
-    <div className="min-h-screen liquid-surface overflow-x-hidden">
+    <main
+      id="main-content"
+      className="min-h-screen liquid-surface overflow-x-hidden pb-24"
+    >
       {/* Header */}
       <div className="sticky top-0 z-40 liquid-glass-nav border-x-0 border-t-0">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -48,15 +49,20 @@ export default async function RestaurantsPage({
             <div className="flex items-center gap-3">
               <Link
                 href="/home"
+                aria-label="Back to home"
                 className="tap-target w-10 h-10 rounded-xl liquid-chip flex items-center justify-center hover:bg-white/80 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4 text-gray-700" />
               </Link>
               <div>
-                <h1 className="text-lg font-semibold text-gray-900">Restaurants</h1>
-                <div className="flex items-center gap-1 text-xs text-gray-400">
+                <h1 className="text-lg font-semibold text-gray-900">
+                  Restaurants
+                </h1>
+                <div className="flex items-center gap-1 text-xs text-gray-600">
                   <MapPin className="w-3 h-3" />
-                  <span>{city ? `${formatCityName(city)}, Abia` : 'Aba & Umuahia'}</span>
+                  <span>
+                    {city ? `${formatCityName(city)}, Abia` : "Aba & Umuahia"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -78,6 +84,6 @@ export default async function RestaurantsPage({
           activeCity={city ?? undefined}
         />
       </div>
-    </div>
+    </main>
   );
 }

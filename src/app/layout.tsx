@@ -48,7 +48,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
   themeColor: "#FFFFFF",
 };
 
@@ -60,9 +59,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${outfit.variable} ${playfair.variable} ${jetBrainsMono.variable} font-body antialiased bg-white text-gray-900 overflow-x-hidden`}
+        className={`${outfit.variable} ${playfair.variable} ${jetBrainsMono.variable} font-body antialiased bg-light-bg text-gray-900 overflow-x-hidden`}
       >
-        <CartProvider>{children}</CartProvider>
+        <a href="#app-content" className="skip-link">
+          Skip to main content
+        </a>
+        <CartProvider>
+          <div id="app-content" tabIndex={-1}>
+            {children}
+          </div>
+        </CartProvider>
       </body>
     </html>
   );

@@ -1,403 +1,365 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useMemo } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Search, MapPin, Star, Clock, ChevronRight, ChevronDown, Bell, Check, X, PartyPopper, UtensilsCrossed } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Check,
+  ChevronDown,
+  MapPin,
+  Search,
+  ShoppingBag,
+  UtensilsCrossed,
+} from "lucide-react";
+import {
+  RestaurantCard,
+  RestaurantCardSkeleton,
+} from "@/components/customer/restaurant-card";
+import { Modal } from "@/components/ui/modal";
+import { createClient } from "@/lib/supabase/client";
 import {
   CITY_OPTIONS,
   CUISINE_FILTERS,
   filterRestaurants,
   formatCityName,
   normalizeCityValue,
-} from '@/lib/discovery';
-import { formatPrice } from '@/lib/utils';
-import { MOCK_RESTAURANTS } from '@/lib/mock-data';
-import { CuisineIcon, getCuisineIcon } from '@/lib/cuisine-icons';
-import type { Restaurant } from '@/types/database';
+} from "@/lib/discovery";
+import { getCuisineIcon } from "@/lib/cuisine-icons";
+import { MOCK_RESTAURANTS } from "@/lib/mock-data";
+import { useCart } from "@/contexts/cart-context";
+import type { RestaurantPublic } from "@/types/database";
 
-// ============================================================================
-// Cuisine category data
-// ============================================================================
-
-const CUISINE_CATEGORIES = CUISINE_FILTERS.map((filter) => ({
-  ...filter,
-  icon: getCuisineIcon(filter.value),
-}));
-
-const CITY_STORAGE_KEY = 'abiaeats_city';
-
-// ============================================================================
-// Loading skeleton component
-// ============================================================================
-
-function RestaurantCardSkeleton() {
-  return (
-    <div className="liquid-glass rounded-2xl overflow-hidden animate-pulse">
-      <div className="h-40 bg-white/50" />
-      <div className="p-4 space-y-3">
-        <div className="h-5 bg-white/70 rounded-lg w-3/4" />
-        <div className="flex gap-2">
-          <div className="h-4 bg-white/70 rounded-lg w-16" />
-          <div className="h-4 bg-white/70 rounded-lg w-16" />
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="h-4 bg-white/70 rounded-lg w-20" />
-          <div className="h-4 bg-white/70 rounded-lg w-24" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// Restaurant card component - Clean modern style
-// ============================================================================
-
-function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
-  return (
-    <Link
-      href={`/restaurants/${restaurant.id}`}
-      className="liquid-glass liquid-lift block rounded-2xl overflow-hidden active:scale-[0.98] transition-all"
-    >
-      {/* Cover image */}
-      <div className="h-40 bg-gray-50 relative flex items-center justify-center">
-        {restaurant.cover_image_url || restaurant.image_url ? (
-          <Image
-            src={restaurant.cover_image_url || restaurant.image_url || ''}
-            alt={restaurant.name}
-            fill
-            sizes="(max-width: 640px) 100vw, 512px"
-            className="object-cover"
-            loading="lazy"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center">
-            <CuisineIcon tags={restaurant.cuisine_tags} className="w-14 h-14 text-brand-orange/60" />
-          </div>
-        )}
-
-        {/* Rating badge */}
-        {restaurant.rating_count > 0 && (
-          <div className="absolute top-3 right-3 flex items-center gap-1 liquid-chip px-2.5 py-1 rounded-full">
-            <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            <span className="text-xs font-semibold text-gray-800">
-              {restaurant.average_rating.toFixed(1)}
-            </span>
-          </div>
-        )}
-
-        {/* Closed overlay */}
-        {!restaurant.is_open && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <span className="bg-white/90 text-gray-800 text-sm font-semibold px-4 py-1.5 rounded-full">
-              Closed
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Card content */}
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-900 text-base mb-1 truncate">
-          {restaurant.name}
-        </h3>
-
-        {/* Cuisine tags as subtle text */}
-        {restaurant.cuisine_tags && restaurant.cuisine_tags.length > 0 && (
-          <p className="text-sm text-gray-500 mb-2.5 truncate">
-            {restaurant.cuisine_tags.slice(0, 3).join(' · ')}
-          </p>
-        )}
-
-        {/* Delivery info */}
-        <div className="flex items-center gap-4 text-sm text-gray-500">
-          <span className="flex items-center gap-1">
-            <Clock className="w-3.5 h-3.5" />
-            {restaurant.min_delivery_time}-{restaurant.max_delivery_time} min
-          </span>
-          <span className="text-gray-300">|</span>
-          <span>
-            {restaurant.delivery_fee === 0 ? (
-              <span className="text-green-600 font-medium">Free delivery</span>
-            ) : (
-              formatPrice(restaurant.delivery_fee)
-            )}
-          </span>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-// ============================================================================
-// Main customer home page
-// ============================================================================
+const CITY_STORAGE_KEY = "abiaeats_city";
 
 export default function CustomerHomePage() {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [restaurants, setRestaurants] = useState<RestaurantPublic[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [city, setCity] = useState('aba');
+  const [error, setError] = useState(false);
+  const [demo, setDemo] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [city, setCity] = useState("aba");
   const [showCityPicker, setShowCityPicker] = useState(false);
+  const { itemCount } = useCart();
 
-  // Load city from localStorage on mount
   useEffect(() => {
     try {
-      const savedCity = localStorage.getItem(CITY_STORAGE_KEY);
-      const normalizedCity = normalizeCityValue(savedCity);
-      if (normalizedCity) {
-        setCity(normalizedCity);
-      }
+      const saved = normalizeCityValue(localStorage.getItem(CITY_STORAGE_KEY));
+      if (saved) setCity(saved);
     } catch {
-      // localStorage not available, use default
+      /* City selection also works without browser storage. */
     }
   }, []);
 
-  // Fetch restaurants from Supabase, fall back to mock data
-  useEffect(() => {
-    async function fetchRestaurants() {
-      setLoading(true);
-      try {
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from('restaurants_public')
-          .select('*')
-          .eq('is_active', true)
-          .order('total_orders', { ascending: false });
-
-        if (!error && data && data.length > 0) {
-          setRestaurants(data as Restaurant[]);
-        } else if (process.env.NODE_ENV !== 'production') {
-          setRestaurants(MOCK_RESTAURANTS);
-        } else {
-          setRestaurants([]);
-        }
-      } catch {
-        if (process.env.NODE_ENV !== 'production') {
-          setRestaurants(MOCK_RESTAURANTS);
-        } else {
-          setRestaurants([]);
-        }
+  const fetchRestaurants = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    setDemo(false);
+    try {
+      const supabase = createClient();
+      const { data, error: queryError } = await supabase
+        .from("restaurants_public")
+        .select("*")
+        .eq("is_active", true)
+        .order("total_orders", { ascending: false });
+      if (queryError) throw queryError;
+      setRestaurants(data || []);
+    } catch {
+      if (process.env.NODE_ENV !== "production") {
+        setRestaurants(MOCK_RESTAURANTS);
+        setDemo(true);
+      } else {
+        setRestaurants([]);
+        setError(true);
       }
+    } finally {
       setLoading(false);
     }
-
-    fetchRestaurants();
   }, []);
 
-  // Handle city change
-  const handleCityChange = (newCity: string) => {
-    setCity(newCity);
+  useEffect(() => {
+    void fetchRestaurants();
+  }, [fetchRestaurants]);
+
+  const handleCityChange = (nextCity: string) => {
+    setCity(nextCity);
     try {
-      localStorage.setItem(CITY_STORAGE_KEY, newCity);
+      localStorage.setItem(CITY_STORAGE_KEY, nextCity);
     } catch {
-      // localStorage not available
+      /* Storage is optional. */
     }
     setShowCityPicker(false);
   };
-
-  // Filter restaurants by search query and selected category
-  const filteredRestaurants = useMemo(() => {
-    return filterRestaurants(restaurants, {
-      search: searchQuery,
-      cuisine: activeCategory,
-      city,
-    });
-  }, [restaurants, searchQuery, activeCategory, city]);
+  const filtered = useMemo(
+    () =>
+      filterRestaurants(restaurants, {
+        search: searchQuery,
+        cuisine: activeCategory,
+        city,
+      }),
+    [restaurants, searchQuery, activeCategory, city],
+  );
+  const hasFilters = Boolean(searchQuery || activeCategory !== "all");
 
   return (
-    <div className="min-h-screen liquid-surface overflow-x-hidden">
-      <div className="max-w-lg mx-auto pb-24">
-        {/* ================================================================
-            Header
-            ================================================================ */}
-        <header className="liquid-glass-nav px-4 pt-6 pb-4 rounded-b-[2rem] border-t-0 border-x-0">
-          <div className="flex items-center justify-between mb-5">
-            <button
-              onClick={() => setShowCityPicker(true)}
-              className="text-left tap-target rounded-2xl px-2 -ml-2 transition-colors hover:bg-white/35"
+    <main id="main-content" className="min-h-screen bg-light-bg pb-28">
+      <header className="eats-topbar">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
+          <Link
+            href="/"
+            className="hidden font-body text-2xl font-semibold tracking-tight sm:block"
+          >
+            abia<span className="text-brand-orange-dark">eats</span>
+            <span className="text-brand-orange">.</span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => setShowCityPicker(true)}
+            aria-haspopup="dialog"
+            className="flex min-h-11 items-center gap-3 rounded-xl text-left"
+          >
+            <span className="flex size-11 items-center justify-center rounded-full bg-orange-100 text-brand-orange-dark">
+              <MapPin className="size-5" aria-hidden="true" />
+            </span>
+            <span>
+              <span className="block text-xs text-gray-600">Find food in</span>
+              <span className="flex items-center gap-2 text-sm font-semibold">
+                {formatCityName(city)}, Abia
+                <ChevronDown className="size-4" aria-hidden="true" />
+              </span>
+            </span>
+          </button>
+          <Link
+            href="/cart"
+            aria-label={`View cart, ${itemCount} items`}
+            className="relative flex size-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-800"
+          >
+            <ShoppingBag className="size-5" aria-hidden="true" />
+            {itemCount > 0 && (
+              <span className="absolute -right-1 -top-1 rounded-full bg-brand-orange-dark px-1.5 text-xs text-white">
+                {itemCount}
+              </span>
+            )}
+          </Link>
+        </div>
+      </header>
+      <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10">
+        <section className="home-hero relative mb-7 grid overflow-hidden rounded-3xl bg-[#ffe5d2] sm:grid-cols-[1.2fr_1fr]">
+          <div className="relative z-10 p-6 sm:p-10">
+            <p className="mb-3 text-sm font-medium text-[#7d3515]">
+              Good food. Close to home.
+            </p>
+            <h1 className="max-w-md text-3xl font-semibold leading-[1.12] tracking-tight text-[#311b12] sm:text-5xl">
+              What are you craving today?
+            </h1>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-[#674739] sm:text-base">
+              Your local favourites, from the kitchen to your doorstep.
+            </p>
+            <a
+              href="#restaurants"
+              className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#311b12] px-5 text-sm font-medium text-white"
             >
-              <p className="text-sm text-gray-400 mb-0.5">Delivering to</p>
-              <div className="flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-brand-orange" />
-                <span className="font-semibold text-gray-900">{formatCityName(city)}, Abia State</span>
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              </div>
-            </button>
-            <button className="w-10 h-10 rounded-full liquid-chip flex items-center justify-center min-h-[44px] min-w-[44px]">
-              <Bell className="w-5 h-5 text-gray-600" />
-            </button>
+              Find my next meal
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </a>
           </div>
-
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search restaurants, cuisines..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full liquid-input rounded-2xl py-3.5 pl-12 pr-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-brand-orange/20 transition-all min-h-[44px]"
+          <div className="relative hidden min-h-[280px] sm:block">
+            <Image
+              src="/images/jollof-hero.webp"
+              alt="Jollof rice with grilled chicken and fried plantain"
+              fill
+              priority
+              sizes="(max-width: 640px) 100vw, 480px"
+              className="object-cover"
             />
           </div>
-        </header>
-
-        {/* ================================================================
-            Cuisine Categories (horizontal scroll)
-            ================================================================ */}
-        <section className="px-4 pb-4 mb-2 pt-4">
-          <div className="flex gap-3 overflow-x-auto scroll-smooth snap-x snap-proximity no-scrollbar -mx-4 px-4">
-            {CUISINE_CATEGORIES.map((cat) => (
-              <button
-                key={cat.value}
-                onClick={() => setActiveCategory(cat.value)}
-                className={`flex flex-col items-center gap-1.5 min-w-[68px] py-2.5 px-2 rounded-2xl transition-all tap-target shrink-0 snap-start ${
-                  activeCategory === cat.value
-                    ? 'liquid-glass-strong text-white shadow-md shadow-brand-orange/25'
-                    : 'liquid-chip text-gray-600 hover:bg-white/80'
-                }`}
-              >
-                <cat.icon className="w-6 h-6" strokeWidth={activeCategory === cat.value ? 2.25 : 1.75} aria-hidden="true" />
-                <span className="text-[11px] font-medium whitespace-nowrap">
-                  {cat.label}
-                </span>
-              </button>
-            ))}
+        </section>
+        <div role="search" className="relative mb-6">
+          <label htmlFor="home-search" className="sr-only">
+            Search restaurants and cuisines
+          </label>
+          <Search
+            className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-gray-500"
+            aria-hidden="true"
+          />
+          <input
+            id="home-search"
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Find a restaurant or cuisine…"
+            className="eats-search w-full py-4 pl-12 pr-4 text-base"
+          />
+        </div>
+        <section aria-label="Filter by cuisine" className="mb-8">
+          <div className="flex flex-wrap gap-2">
+            {CUISINE_FILTERS.map((category) => {
+              const Icon = getCuisineIcon(category.value);
+              return (
+                <button
+                  type="button"
+                  key={category.value}
+                  aria-pressed={activeCategory === category.value}
+                  onClick={() => setActiveCategory(category.value)}
+                  className={`eats-filter ${activeCategory === category.value ? "eats-filter-active" : ""}`}
+                >
+                  <Icon className="size-4" aria-hidden="true" />
+                  {category.label === "All" ? "All food" : category.label}
+                </button>
+              );
+            })}
           </div>
         </section>
-
-        {/* ================================================================
-            Promo Banner
-            ================================================================ */}
-        <section className="px-4 mb-4">
-          <div className="liquid-glass-strong rounded-2xl p-5 relative overflow-hidden">
-            <div className="relative z-10">
-              <p className="text-white/80 text-xs font-semibold uppercase tracking-wider mb-1">
-                Limited Offer
-              </p>
-              <h2 className="text-lg font-bold text-white mb-1">
-                Free delivery on your first order!
+        <section
+          id="restaurants"
+          aria-labelledby="restaurants-heading"
+          aria-busy={loading}
+          className="scroll-mt-24"
+        >
+          <div className="mb-5 flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <h2
+                id="restaurants-heading"
+                className="text-2xl tracking-tight sm:text-3xl"
+              >
+                {hasFilters
+                  ? "Find your favourite"
+                  : `Discover ${formatCityName(city)}`}
               </h2>
-              <p className="text-white/70 text-sm">
-                Order now and save on delivery.
+              <p role="status" className="mt-1 text-sm text-gray-600">
+                {loading
+                  ? "Finding local restaurants…"
+                  : `${filtered.length} restaurant${filtered.length === 1 ? "" : "s"} to explore`}
               </p>
             </div>
-            <PartyPopper className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 text-white opacity-30" strokeWidth={1.5} aria-hidden="true" />
-
-          </div>
-        </section>
-
-        {/* ================================================================
-            Restaurant List
-            ================================================================ */}
-        <section className="px-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Popular Near You
-            </h2>
             <Link
               href={`/restaurants?city=${city}`}
-              className="flex items-center gap-0.5 text-brand-orange text-sm font-medium tap-target"
+              className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-brand-orange-dark"
             >
-              See all
-              <ChevronRight className="w-4 h-4" />
+              Explore all
+              <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </div>
-
-          {/* Loading state */}
-          {loading && (
-            <div className="grid gap-4">
+          {demo && (
+            <p className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+              Sample restaurants for development. Live availability and prices
+              may differ.
+            </p>
+          )}
+          {loading ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               <RestaurantCardSkeleton />
               <RestaurantCardSkeleton />
               <RestaurantCardSkeleton />
             </div>
-          )}
-
-          {/* Empty state */}
-          {!loading && filteredRestaurants.length === 0 && (
-            <div className="text-center py-16 liquid-glass rounded-2xl">
-              <UtensilsCrossed className="w-12 h-12 text-gray-300 mx-auto mb-4" strokeWidth={1.5} aria-hidden="true" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {searchQuery || activeCategory !== 'all'
-                  ? 'No restaurants found'
-                  : 'No restaurants available'}
-              </h3>
-              <p className="text-gray-500 text-sm max-w-[260px] mx-auto">
-                {searchQuery || activeCategory !== 'all'
-                  ? 'Try a different search term or browse all categories.'
-                  : 'Restaurants are being added soon. Check back shortly!'}
+          ) : error ? (
+            <div role="alert" className="eats-empty">
+              <UtensilsCrossed
+                className="mx-auto mb-4 size-10 text-brand-orange-dark"
+                aria-hidden="true"
+              />
+              <h3 className="text-xl">We couldn’t load restaurants</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Check your connection and try again.
               </p>
-              {(searchQuery || activeCategory !== 'all') && (
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setActiveCategory('all');
-                  }}
-                  className="mt-4 px-5 py-2.5 gradient-orange text-white text-sm font-medium rounded-xl active:scale-95 transition-transform min-h-[44px]"
-                >
-                  Clear filters
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => void fetchRestaurants()}
+                className="eats-button mt-5"
+              >
+                Try again
+              </button>
             </div>
-          )}
-
-          {/* Restaurant grid */}
-          {!loading && filteredRestaurants.length > 0 && (
-            <div className="grid gap-4">
-              {filteredRestaurants.map((restaurant) => (
+          ) : filtered.length ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((restaurant) => (
                 <RestaurantCard key={restaurant.id} restaurant={restaurant} />
               ))}
             </div>
-          )}
-        </section>
-      </div>
-
-      {/* City Picker Modal */}
-      {showCityPicker && (
-        <div className="fixed inset-0 z-[100] flex items-end justify-center">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/35 backdrop-blur-sm"
-            onClick={() => setShowCityPicker(false)}
-          />
-          {/* Sheet */}
-          <div className="relative w-full max-w-lg liquid-glass rounded-t-3xl p-6 pb-8 animate-slide-up-sheet">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-bold text-gray-900">Select your city</h2>
+          ) : (
+            <div className="eats-empty">
+              <UtensilsCrossed
+                className="mx-auto mb-4 size-10 text-brand-orange-dark"
+                aria-hidden="true"
+              />
+              <h3 className="text-xl">
+                {hasFilters
+                  ? "No matches yet"
+                  : `No restaurants in ${formatCityName(city)} yet`}
+              </h3>
+              <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-gray-600">
+                {hasFilters
+                  ? "Try another cuisine or a shorter search."
+                  : "Try the other city, or check back as local kitchens join."}
+              </p>
               <button
-                onClick={() => setShowCityPicker(false)}
-                className="w-8 h-8 rounded-full liquid-chip flex items-center justify-center"
+                type="button"
+                onClick={() => {
+                  if (hasFilters) {
+                    setSearchQuery("");
+                    setActiveCategory("all");
+                  } else setShowCityPicker(true);
+                }}
+                className="eats-button mt-5"
               >
-                <X className="w-4 h-4 text-gray-500" />
+                {hasFilters ? "Clear filters" : "Change city"}
               </button>
             </div>
-            <div className="space-y-2">
-              {CITY_OPTIONS.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => handleCityChange(option.value)}
-                  className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all active:scale-[0.98] min-h-[44px] ${
-                    city === option.value
-                      ? 'border-brand-orange bg-orange-50'
-                      : 'border-white/60 bg-white/50 hover:border-white'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <MapPin className={`w-5 h-5 ${city === option.value ? 'text-brand-orange' : 'text-gray-400'}`} />
-                    <span className={`font-medium ${city === option.value ? 'text-gray-900' : 'text-gray-600'}`}>
-                      {option.label}, Abia State
-                    </span>
-                  </div>
-                  {city === option.value && <Check className="w-5 h-5 text-brand-orange" />}
-                </button>
-              ))}
-            </div>
+          )}
+        </section>
+        <aside className="mt-8 flex items-start gap-3 rounded-2xl border border-gray-200 bg-white p-5">
+          <Check
+            className="mt-0.5 size-5 shrink-0 text-green-800"
+            aria-hidden="true"
+          />
+          <div>
+            <p className="text-sm font-medium">
+              A clear total before you order
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-gray-600">
+              Review your food and delivery fees at checkout. Your restaurant
+              starts preparing after payment is verified.
+            </p>
           </div>
+        </aside>
+      </div>
+      <Modal
+        isOpen={showCityPicker}
+        onClose={() => setShowCityPicker(false)}
+        title="Choose your city"
+        variant="bottom-sheet"
+      >
+        <p className="mb-5 text-sm text-gray-600">
+          Find restaurants serving your area. Add your full delivery address at
+          checkout.
+        </p>
+        <div className="flex flex-col gap-3">
+          {CITY_OPTIONS.map((option) => (
+            <button
+              type="button"
+              key={option.value}
+              aria-pressed={city === option.value}
+              onClick={() => handleCityChange(option.value)}
+              className={`flex min-h-14 items-center justify-between rounded-xl border px-4 py-3 ${city === option.value ? "border-brand-orange-dark bg-orange-50" : "border-gray-200 bg-white"}`}
+            >
+              <span className="flex items-center gap-3">
+                <MapPin
+                  className="size-5 text-brand-orange-dark"
+                  aria-hidden="true"
+                />
+                {option.label}, Abia State
+              </span>
+              {city === option.value && (
+                <Check
+                  className="size-5 text-brand-orange-dark"
+                  aria-hidden="true"
+                />
+              )}
+            </button>
+          ))}
         </div>
-      )}
-    </div>
+      </Modal>
+    </main>
   );
 }

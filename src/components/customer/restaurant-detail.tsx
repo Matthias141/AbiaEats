@@ -1,22 +1,34 @@
-'use client';
+"use client";
 
-import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowLeft, Star, Clock, MapPin, Plus, ShoppingBag, Share2, ClipboardList } from 'lucide-react';
-import type { RestaurantPublic, MenuItem } from '@/types/database';
-import { useCart } from '@/contexts/cart-context';
-import { formatPrice } from '@/lib/utils';
-import { CuisineIcon } from '@/lib/cuisine-icons';
-import { MenuItemModal } from '@/components/customer/menu-item-modal';
-import { RestaurantSwitchModal } from '@/components/customer/restaurant-switch-modal';
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  ArrowLeft,
+  Star,
+  Clock,
+  MapPin,
+  Plus,
+  ShoppingBag,
+  Share2,
+  ClipboardList,
+} from "lucide-react";
+import type { RestaurantPublic, MenuItem } from "@/types/database";
+import { useCart } from "@/contexts/cart-context";
+import { formatPrice } from "@/lib/utils";
+import { CuisineIcon } from "@/lib/cuisine-icons";
+import { MenuItemModal } from "@/components/customer/menu-item-modal";
+import { RestaurantSwitchModal } from "@/components/customer/restaurant-switch-modal";
 
 interface RestaurantDetailProps {
   restaurant: RestaurantPublic;
   menuItems: MenuItem[];
 }
 
-export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProps) {
+export function RestaurantDetail({
+  restaurant,
+  menuItems,
+}: RestaurantDetailProps) {
   const {
     addItem,
     getItemQuantity,
@@ -27,7 +39,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
   } = useCart();
 
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>('');
+  const [activeCategory, setActiveCategory] = useState<string>("");
   const [showSwitchModal, setShowSwitchModal] = useState(false);
   const [pendingItem, setPendingItem] = useState<MenuItem | null>(null);
 
@@ -50,7 +62,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
     return cats;
   }, [menuItems]);
 
-  const categoryNames = useMemo(() => Array.from(categories.keys()), [categories]);
+  const categoryNames = useMemo(
+    () => Array.from(categories.keys()),
+    [categories],
+  );
 
   // Set initial active category
   useEffect(() => {
@@ -67,7 +82,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
         const container = tabsRef.current;
         const scrollLeft =
           btn.offsetLeft - container.offsetWidth / 2 + btn.offsetWidth / 2;
-        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+        container.scrollTo({ left: scrollLeft, behavior: "smooth" });
       }
     }
   }, [activeCategory]);
@@ -85,7 +100,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
             }
           });
         },
-        { rootMargin: '-120px 0px -60% 0px', threshold: 0 }
+        { rootMargin: "-120px 0px -60% 0px", threshold: 0 },
       );
       observer.observe(el);
       observers.push(observer);
@@ -104,7 +119,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
     if (el) {
       const yOffset = -120;
       const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
     // Re-enable observer after scroll animation settles
     setTimeout(() => {
@@ -130,10 +145,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
           image_url: item.image_url,
         },
         restaurant.name,
-        restaurant.delivery_fee
+        restaurant.delivery_fee,
       );
     },
-    [restaurant, needsRestaurantSwitch, addItem]
+    [restaurant, needsRestaurantSwitch, addItem],
   );
 
   const handleItemClick = useCallback(
@@ -145,7 +160,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
       }
       setSelectedItem(item);
     },
-    [restaurant.id, needsRestaurantSwitch]
+    [restaurant.id, needsRestaurantSwitch],
   );
 
   const handleSwitchConfirm = useCallback(() => {
@@ -161,7 +176,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
           image_url: pendingItem.image_url,
         },
         restaurant.name,
-        restaurant.delivery_fee
+        restaurant.delivery_fee,
       );
       setPendingItem(null);
     }
@@ -195,14 +210,18 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
   const cartTotal = subtotal + deliveryFee;
 
   return (
-    <div className="min-h-screen liquid-surface overflow-x-hidden pb-24">
+    <div
+      id="main-content"
+      tabIndex={-1}
+      className="min-h-screen liquid-surface overflow-x-hidden pb-24"
+    >
       {/* Hero Section */}
       <div className="relative">
         {/* Cover Image */}
         <div className="aspect-[16/9] relative overflow-hidden bg-gray-100">
           {restaurant.cover_image_url || restaurant.image_url ? (
             <Image
-              src={restaurant.cover_image_url || restaurant.image_url || ''}
+              src={restaurant.cover_image_url || restaurant.image_url || ""}
               alt={restaurant.name}
               fill
               sizes="100vw"
@@ -211,7 +230,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50 flex items-center justify-center">
-              <CuisineIcon tags={restaurant.cuisine_tags} className="w-20 h-20 text-brand-orange/40" />
+              <CuisineIcon
+                tags={restaurant.cuisine_tags}
+                className="w-20 h-20 text-brand-orange/40"
+              />
             </div>
           )}
           {/* Gradient overlay */}
@@ -222,13 +244,15 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20">
           <Link
             href="/restaurants"
-            className="w-10 h-10 rounded-xl liquid-chip flex items-center justify-center active:scale-[0.97] transition-transform"
+            aria-label="Back to restaurants"
+            className="size-11 rounded-xl liquid-chip flex items-center justify-center active:scale-[0.97] transition-transform"
           >
             <ArrowLeft className="w-5 h-5 text-gray-700" />
           </Link>
           <button
             onClick={handleShare}
-            className="w-10 h-10 rounded-xl liquid-chip flex items-center justify-center active:scale-[0.97] transition-transform"
+            aria-label="Share restaurant"
+            className="size-11 rounded-xl liquid-chip flex items-center justify-center active:scale-[0.97] transition-transform"
           >
             <Share2 className="w-5 h-5 text-gray-700" />
           </button>
@@ -239,7 +263,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
           <div className="max-w-2xl mx-auto liquid-glass rounded-2xl p-5">
             <div className="flex items-start gap-4">
               {/* Logo */}
-              <div className="w-14 h-14 rounded-xl liquid-chip overflow-hidden flex-shrink-0 flex items-center justify-center">
+              <div className="relative w-14 h-14 rounded-xl liquid-chip overflow-hidden flex-shrink-0 flex items-center justify-center">
                 {restaurant.image_url ? (
                   <Image
                     src={restaurant.image_url}
@@ -257,7 +281,9 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
-                  <h1 className="text-xl font-bold text-gray-900">{restaurant.name}</h1>
+                  <h1 className="text-xl font-bold text-gray-900">
+                    {restaurant.name}
+                  </h1>
                   {/* Open/Closed badge */}
                   {restaurant.is_open ? (
                     <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600 text-xs font-medium">
@@ -291,7 +317,8 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                   )}
                   <span className="flex items-center gap-1 text-sm text-gray-500">
                     <Clock className="w-3.5 h-3.5" />
-                    {restaurant.min_delivery_time}-{restaurant.max_delivery_time} min
+                    {restaurant.min_delivery_time}-
+                    {restaurant.max_delivery_time} min
                   </span>
                   <span className="flex items-center gap-1 text-sm text-gray-500">
                     <MapPin className="w-3.5 h-3.5" />
@@ -331,14 +358,15 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                 ref={(el) => {
                   if (el) tabButtonRefs.current.set(category, el);
                 }}
+                aria-pressed={activeCategory === category}
                 onClick={() => scrollToCategory(category)}
                 className={`
                   flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors
                   border-b-2 min-h-[44px]
                   ${
                     activeCategory === category
-                      ? 'text-brand-orange border-brand-orange'
-                      : 'text-gray-400 border-transparent hover:text-gray-600'
+                      ? "text-brand-orange border-brand-orange"
+                      : "text-gray-400 border-transparent hover:text-gray-600"
                   }
                 `}
               >
@@ -369,11 +397,16 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                 {items.map((item) => {
                   const qty = getItemQuantity(item.id);
                   return (
-                    <div
+                    <article
                       key={item.id}
-                      onClick={() => handleItemClick(item)}
-                      className="liquid-glass liquid-lift rounded-2xl overflow-hidden cursor-pointer transition-all active:scale-[0.97]"
+                      className="relative liquid-glass liquid-lift rounded-2xl overflow-hidden"
                     >
+                      <button
+                        type="button"
+                        onClick={() => handleItemClick(item)}
+                        aria-label={`View ${item.name} details`}
+                        className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-offset-[-4px]"
+                      />
                       {/* Image area */}
                       <div className="relative aspect-square overflow-hidden bg-gray-50">
                         {item.image_url ? (
@@ -387,7 +420,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
-                            <CuisineIcon tags={restaurant.cuisine_tags} className="w-10 h-10 text-brand-orange/40" />
+                            <CuisineIcon
+                              tags={restaurant.cuisine_tags}
+                              className="w-10 h-10 text-brand-orange/40"
+                            />
                           </div>
                         )}
 
@@ -411,7 +447,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                             e.stopPropagation();
                             handleAddItem(item);
                           }}
-                          className="absolute bottom-2 right-2 w-8 h-8 rounded-full gradient-orange text-white flex items-center justify-center shadow-lg shadow-brand-orange/30 active:scale-[0.90] transition-transform"
+                          className="absolute bottom-2 right-2 z-20 size-11 rounded-full gradient-orange text-white flex items-center justify-center shadow-lg shadow-brand-orange/30 active:scale-[0.90] transition-transform"
                           aria-label={`Add ${item.name} to cart`}
                         >
                           <Plus className="w-4 h-4" strokeWidth={3} />
@@ -427,7 +463,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                           {formatPrice(item.price)}
                         </p>
                       </div>
-                    </div>
+                    </article>
                   );
                 })}
               </div>
@@ -435,15 +471,21 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
           ))
         ) : (
           <div className="text-center py-20">
-            <ClipboardList className="w-14 h-14 text-gray-300 mx-auto mb-4" strokeWidth={1.5} aria-hidden="true" />
+            <ClipboardList
+              className="w-14 h-14 text-gray-300 mx-auto mb-4"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Menu coming soon
             </h3>
             <p className="text-sm text-gray-500 max-w-xs mx-auto">
-              This restaurant hasn&apos;t added menu items yet. Check back later!
+              This restaurant hasn&apos;t added menu items yet. Check back
+              later!
             </p>
             <Link
               href="/restaurants"
+              aria-label="Back to restaurants"
               className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-gray-300 active:scale-[0.97] transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -468,7 +510,9 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                   </div>
                   <span>View Cart</span>
                 </div>
-                <span className="font-mono font-bold">{formatPrice(cartTotal)}</span>
+                <span className="font-mono font-bold">
+                  {formatPrice(cartTotal)}
+                </span>
               </div>
             </Link>
           </div>
