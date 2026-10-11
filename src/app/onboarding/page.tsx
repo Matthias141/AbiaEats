@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronRight, MapPin, ArrowRight, UtensilsCrossed } from 'lucide-react';
+import { FeatureIcon, type FeatureIconName } from '@/components/ui/feature-icon';
 
 /* ============================================================================
    Onboarding Flow — 3 Steps
@@ -13,19 +14,19 @@ import { ChevronRight, MapPin, ArrowRight, UtensilsCrossed } from 'lucide-react'
 
 const SLIDES = [
   {
-    emoji: '\u{1F35B}',
+    icon: 'meal' as FeatureIconName,
     title: 'Delicious Food, Delivered',
     subtitle:
       'Order from the best restaurants in Aba & Umuahia. Fast, reliable, no wahala.',
   },
   {
-    emoji: '\u{1F4B3}',
+    icon: 'payment' as FeatureIconName,
     title: 'Pay With Ease',
     subtitle:
       'Secure payments via OPay transfer. No cash needed \u2014 every order verified.',
   },
   {
-    emoji: '\u{1F680}',
+    icon: 'delivery' as FeatureIconName,
     title: 'Track Your Order',
     subtitle:
       'Real-time updates from kitchen to your doorstep. Know exactly when to expect your food.',
@@ -123,7 +124,9 @@ export default function OnboardingPage() {
               key={slideKey}
               className="flex-1 flex flex-col items-center justify-center text-center animate-slide-in-right"
             >
-              <div className="text-8xl mb-8">{SLIDES[slideIndex].emoji}</div>
+              <div className="mb-8 rounded-[2.25rem] border border-white/80 bg-white/75 p-4 text-brand-orange-dark shadow-[var(--shadow-lg)] backdrop-blur-xl">
+                <FeatureIcon name={SLIDES[slideIndex].icon} className="size-32" />
+              </div>
               <h1 className="text-3xl font-bold mb-4 text-gray-900">
                 {SLIDES[slideIndex].title}
               </h1>

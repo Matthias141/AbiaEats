@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FeatureIcon } from '@/components/ui/feature-icon';
 import { createClient } from '@/lib/supabase/server';
 
 export default async function OpsRestaurantsPage() {
@@ -59,7 +60,7 @@ export default async function OpsRestaurantsPage() {
             {(restaurants ?? []).length === 0 && (
               <tr>
                 <td colSpan={5} className="px-6 py-10 text-center text-gray-400">
-                  <p className="text-3xl mb-2">🍽️</p>
+                  <FeatureIcon name="meal" className="mx-auto mb-3 size-16 text-brand-orange-dark" />
                   <p className="mb-3">No restaurants yet. Add your first restaurant to get started.</p>
                   <Link
                     href="/dashboard/ops/restaurants/new"
