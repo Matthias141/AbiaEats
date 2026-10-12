@@ -21,3 +21,5 @@ Customer routing follow-up: public guest cart, Explore alias, safe checkout retu
 Visual redesign: compact dark photo feature, separate search, circular cuisine controls, lighter restaurant presentation, scoped Outfit typography, floating charcoal dock and non-overlapping menu cart action. Verified 258 tests/14 files, 21 layouts, 19 axe audits, 23 interactions and zero detector findings. Aesthetic approval remains the user’s decision; local screenshots remain unpublished.
 
 Final visual follow-up: menu cart total wraps safely at enlarged text sizes, with a bounding-box browser assertion. Final checks pass: 258 tests in 14 files; 21 layouts, 19 axe audits and 24 interactions. The main redesign deployment at 838db56 succeeded; subsequent commits require their own deployment status check.
+
+Ordering refinement: shorter menu header, cleaner meal cards, explicit missing-photo state, customer charcoal actions, consistent food-sheet/cart/city/switch dialog typography, compact Empty states and restrained card interactions. Local checks: 258 tests/14 files; 21 layouts, 19 axe audits, 25 interactions; detector has no findings. No ordering/API/money logic changed.

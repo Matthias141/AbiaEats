@@ -29,6 +29,7 @@ export function RestaurantSwitchModal({
       onClose={onCancel}
       title="Start a new cart?"
       variant="bottom-sheet"
+      className="customer-dialog"
     >
       <div className="text-center mb-6">
         <ShoppingCart

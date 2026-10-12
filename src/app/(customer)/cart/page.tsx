@@ -18,7 +18,7 @@ export default function CartPage() {
   const removedItem = items.find(item => item.menu_item_id === confirmRemove);
   return <main id="main-content" className="min-h-screen bg-light-bg pb-28">
     <header className="eats-topbar"><div className="mx-auto flex max-w-2xl items-center gap-4 px-4 py-4 sm:px-6">
-      <Button asChild variant="outline" size="icon"><Link href="/restaurants" aria-label="Back to restaurants"><ArrowLeft aria-hidden="true" /></Link></Button>
+      <Button asChild variant="outline" size="icon" className="rounded-full"><Link href="/restaurants" aria-label="Back to restaurants"><ArrowLeft aria-hidden="true" /></Link></Button>
       <h1 className="text-xl font-semibold">Cart</h1><span className="ml-auto text-sm text-muted-foreground tabular-nums">{itemCount} {itemCount === 1 ? "item" : "items"}</span>
     </div></header>
     <div className="mx-auto max-w-2xl px-4 pt-6 sm:px-6">
@@ -31,10 +31,10 @@ export default function CartPage() {
             </div>
             <div className="min-w-0"><h2 className="break-words text-base font-semibold leading-relaxed">{item.name}</h2><p className="mt-1 text-sm text-muted-foreground tabular-nums">{formatPrice(item.price)} each</p></div>
             <div className="col-span-2 flex flex-wrap items-center justify-end gap-3">
-              <Button variant="outline" size="icon" aria-label={`Decrease ${item.name} quantity`} disabled={item.quantity <= 1} onClick={() => updateQuantity(item.menu_item_id, item.quantity - 1)}><Minus aria-hidden="true" /></Button>
+              <Button variant="outline" size="icon" className="rounded-full" aria-label={`Decrease ${item.name} quantity`} disabled={item.quantity <= 1} onClick={() => updateQuantity(item.menu_item_id, item.quantity - 1)}><Minus aria-hidden="true" /></Button>
               <span className="w-6 text-center font-semibold tabular-nums" aria-live="polite">{item.quantity}</span>
-              <Button variant="outline" size="icon" aria-label={`Increase ${item.name} quantity`} disabled={item.quantity >= 20} onClick={() => updateQuantity(item.menu_item_id, item.quantity + 1)}><Plus aria-hidden="true" /></Button>
-              <Button variant="ghost" size="icon" aria-label={`Remove ${item.name}`} onClick={() => setConfirmRemove(item.menu_item_id)}><Trash2 aria-hidden="true" /></Button>
+              <Button variant="outline" size="icon" className="rounded-full" aria-label={`Increase ${item.name} quantity`} disabled={item.quantity >= 20} onClick={() => updateQuantity(item.menu_item_id, item.quantity + 1)}><Plus aria-hidden="true" /></Button>
+              <Button variant="ghost" size="icon" className="rounded-full" aria-label={`Remove ${item.name}`} onClick={() => setConfirmRemove(item.menu_item_id)}><Trash2 aria-hidden="true" /></Button>
             </div>
           </article>)}
         </div>
@@ -42,11 +42,11 @@ export default function CartPage() {
           <h2 id="summary-heading" className="text-lg font-semibold">Order summary</h2>
           <dl className="flex flex-col gap-3"><div className="flex justify-between gap-4"><dt className="text-muted-foreground">Subtotal</dt><dd className="tabular-nums">{formatPrice(subtotal)}</dd></div><div className="flex justify-between gap-4"><dt className="text-muted-foreground">Delivery fee</dt><dd className="tabular-nums">{deliveryFee > 0 ? formatPrice(deliveryFee) : "Free"}</dd></div></dl>
           <Separator /><div className="flex justify-between gap-4 text-lg font-semibold"><span>Total</span><span className="tabular-nums">{formatPrice(total)}</span></div>
-          <Button asChild size="lg"><Link href="/checkout">Continue to checkout</Link></Button>
+          <Button asChild size="lg" className="rounded-full"><Link href="/checkout">Continue to checkout</Link></Button>
         </section>
       </>}
     </div>
-    <Modal isOpen={confirmClear || Boolean(removedItem)} onClose={() => { setConfirmClear(false); setConfirmRemove(null); }} title={removedItem ? `Remove ${removedItem.name}?` : "Clear your cart?"}>
+    <Modal className="customer-dialog" isOpen={confirmClear || Boolean(removedItem)} onClose={() => { setConfirmClear(false); setConfirmRemove(null); }} title={removedItem ? `Remove ${removedItem.name}?` : "Clear your cart?"}>
       <p className="text-muted-foreground">{removedItem ? `This removes ${removedItem.quantity} ${removedItem.quantity === 1 ? "portion" : "portions"} from your cart.` : `This removes all ${itemCount} ${itemCount === 1 ? "item" : "items"} from your cart.`} You can add them again from the restaurant menu.</p>
       <div className="flex flex-col gap-3 sm:flex-row"><Button variant="outline" onClick={() => { setConfirmClear(false); setConfirmRemove(null); }}>Keep cart</Button><Button variant="destructive" onClick={() => { if (removedItem) updateQuantity(removedItem.menu_item_id, 0); else clearCart(); setConfirmClear(false); setConfirmRemove(null); }}>{removedItem ? "Remove item" : "Clear cart"}</Button></div>
     </Modal>

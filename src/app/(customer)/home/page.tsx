@@ -25,6 +25,7 @@ import {
 } from "@/lib/discovery";
 import { RestaurantSearch, CuisineFilters } from "@/components/customer/discovery-controls";
 import { Button } from "@/components/ui/primitives/button";
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/primitives/empty";
 import { MOCK_RESTAURANTS } from "@/lib/mock-data";
 import { useCart } from "@/contexts/cart-context";
 import type { RestaurantPublic } from "@/types/database";
@@ -193,19 +194,18 @@ export default function CustomerHomePage() {
               <RestaurantCardSkeleton />
             </div>
           ) : error ? (
-            <div role="alert" className="eats-empty">
+            <Empty role="alert" className="home-feedback">
+              <EmptyHeader><EmptyMedia variant="icon">
               <UtensilsCrossed
-                className="mx-auto mb-4 size-10 text-brand-orange-dark"
+                className="size-5 text-muted-foreground"
                 aria-hidden="true"
-              />
-              <h3 className="text-xl">We couldn’t load restaurants</h3>
-              <p className="mt-2 text-sm text-gray-600">
-                Check your connection and try again.
-              </p>
-              <Button onClick={() => void fetchRestaurants()} className="mt-5">
+              /></EmptyMedia>
+              <EmptyTitle><h3>We couldn’t load restaurants</h3></EmptyTitle>
+              <EmptyDescription>Check your connection and try again.</EmptyDescription></EmptyHeader>
+              <EmptyContent><Button onClick={() => void fetchRestaurants()} className="rounded-full">
                 Try again
-              </Button>
-            </div>
+              </Button></EmptyContent>
+            </Empty>
           ) : filtered.length ? (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((restaurant) => (
@@ -213,47 +213,46 @@ export default function CustomerHomePage() {
               ))}
             </div>
           ) : (
-            <div className="eats-empty">
-              <UtensilsCrossed
-                className="mx-auto mb-4 size-10 text-brand-orange-dark"
+            <Empty className="home-feedback">
+              <EmptyHeader><EmptyMedia variant="icon"><UtensilsCrossed
+                className="size-5 text-muted-foreground"
                 aria-hidden="true"
-              />
-              <h3 className="text-xl">
+              /></EmptyMedia>
+              <EmptyTitle><h3>
                 {hasFilters
                   ? "No matches yet"
                   : `No restaurants in ${formatCityName(city)} yet`}
-              </h3>
-              <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-gray-600">
+              </h3></EmptyTitle>
+              <EmptyDescription>
                 {hasFilters
                   ? "Try another cuisine or a shorter search."
                   : "Try the other city, or check back as local kitchens join."}
-              </p>
-              <Button
+              </EmptyDescription></EmptyHeader>
+              <EmptyContent><Button
                 onClick={() => {
                   if (hasFilters) {
                     setSearchQuery("");
                     setActiveCategory("all");
                   } else setShowCityPicker(true);
                 }}
-                className="mt-5"
+                className="rounded-full"
               >
                 {hasFilters ? "Clear filters" : "Change city"}
-              </Button>
-            </div>
+              </Button></EmptyContent>
+            </Empty>
           )}
         </section>
-        <aside className="mt-8 flex items-start gap-3 rounded-2xl border border-gray-200 bg-white p-5">
+        <aside className="mt-8 flex items-start gap-3 border-t border-gray-200 pt-5">
           <Check
             className="mt-0.5 size-5 shrink-0 text-green-800"
             aria-hidden="true"
           />
           <div>
             <p className="text-sm font-medium">
-              A clear total before you order
+              Food and delivery. One clear total.
             </p>
             <p className="mt-1 text-sm leading-relaxed text-gray-600">
-              Review your food and delivery fees at checkout. Your restaurant
-              starts preparing after payment is verified.
+              Review both at checkout. Kitchens start preparing after payment is verified.
             </p>
           </div>
         </aside>
@@ -262,6 +261,7 @@ export default function CustomerHomePage() {
         isOpen={showCityPicker}
         onClose={() => setShowCityPicker(false)}
         title="Choose your city"
+        className="customer-dialog"
         variant="bottom-sheet"
       >
         <p className="mb-5 text-sm text-gray-600">

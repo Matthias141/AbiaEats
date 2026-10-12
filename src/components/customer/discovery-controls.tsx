@@ -23,8 +23,8 @@ export function CuisineFilters({ value, onChange, photographic = false }: { valu
     {CUISINE_FILTERS.map(category => {
       const Icon = getCuisineIcon(category.value);
       return <ToggleGroupItem key={category.value} value={category.value} className={photographic ? "group h-auto w-24 shrink-0 flex-col items-stretch gap-0 rounded-none border-0 bg-transparent p-0 text-foreground sm:w-28 data-[state=on]:bg-transparent data-[state=on]:text-foreground data-[state=on]:ring-0" : undefined}>
-        {photographic ? <span className="relative mx-auto block size-20 overflow-hidden rounded-full border-2 border-transparent sm:size-24 group-data-[state=on]:border-primary"><Image src={CUISINE_PHOTOS[category.value]} alt="" fill sizes="(min-width: 640px) 144px, 112px" className="object-cover" /></span> : <Icon className="food-category-artwork" aria-hidden="true" />}
-        <span className={photographic ? "px-1 py-2.5 text-sm font-medium group-data-[state=on]:text-primary" : undefined}>{category.label === "All" ? "All food" : category.label}</span>
+        {photographic ? <span className="relative mx-auto block size-20 overflow-hidden rounded-full border-2 border-transparent sm:size-24 group-data-[state=on]:border-brand-orange-dark"><Image src={CUISINE_PHOTOS[category.value]} alt="" fill sizes="(min-width: 640px) 144px, 112px" className="object-cover" /></span> : <Icon className="food-category-artwork" aria-hidden="true" />}
+        <span className={photographic ? "px-1 py-2.5 text-sm font-medium group-data-[state=on]:text-brand-orange-dark" : undefined}>{category.label === "All" ? "All food" : category.label}</span>
       </ToggleGroupItem>;
     })}
   </ToggleGroup>;

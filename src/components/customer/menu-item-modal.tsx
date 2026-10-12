@@ -66,10 +66,11 @@ export function MenuItemModal({
       onClose={onClose}
       title={item.name}
       variant="bottom-sheet"
+      className="customer-dialog"
     >
       <div>
         {/* Image */}
-        <div className="aspect-[16/10] bg-gray-50 relative overflow-hidden">
+        <div className="aspect-[16/10] rounded-2xl bg-gray-50 relative overflow-hidden">
           {item.image_url ? (
             <Image
               src={item.image_url}
@@ -79,10 +80,10 @@ export function MenuItemModal({
               className="object-cover"
             />
           ) : (
-            <div className="flex h-full items-center justify-center bg-muted"><CuisineIcon tags={restaurant.cuisine_tags} className="size-24" /></div>
+            <div className="flex h-full flex-col items-center justify-center gap-3 bg-muted"><CuisineIcon tags={restaurant.cuisine_tags} className="size-24" /><span className="text-sm text-muted-foreground">Photo coming soon</span></div>
           )}
           {item.is_popular && (
-            <Badge className="absolute top-4 left-4">
+            <Badge variant="secondary" className="absolute top-4 left-4">
               Popular
             </Badge>
           )}
@@ -129,14 +130,14 @@ export function MenuItemModal({
       <div className="sticky bottom-0 border-t border-gray-200 bg-white pt-4 safe-bottom">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {/* Quantity controls */}
-          <div className="flex items-center gap-3 liquid-chip rounded-xl px-3 py-2">
-            <Button variant="outline" size="icon" aria-label="Decrease quantity" disabled={quantity === 1} onClick={() => setQuantity(q => Math.max(1, q - 1))}><Minus aria-hidden="true" /></Button>
+          <div className="flex items-center justify-between gap-3 rounded-full border border-gray-200 bg-gray-50 px-2 py-1.5">
+            <Button variant="ghost" size="icon" className="rounded-full bg-white" aria-label="Decrease quantity" disabled={quantity === 1} onClick={() => setQuantity(q => Math.max(1, q - 1))}><Minus aria-hidden="true" /></Button>
             <span className="w-6 text-center tabular-nums font-semibold" aria-live="polite">{quantity}</span>
-            <Button variant="outline" size="icon" aria-label="Increase quantity" disabled={quantity === 20} onClick={() => setQuantity(q => Math.min(20, q + 1))}><Plus aria-hidden="true" /></Button>
+            <Button variant="ghost" size="icon" className="rounded-full bg-white" aria-label="Increase quantity" disabled={quantity === 20} onClick={() => setQuantity(q => Math.min(20, q + 1))}><Plus aria-hidden="true" /></Button>
           </div>
 
           {/* Add to cart button */}
-          <Button onClick={handleAddToCart} disabled={!restaurant.is_open} className="flex-1">
+          <Button onClick={handleAddToCart} disabled={!restaurant.is_open} className="flex-1 rounded-full">
             <ShoppingBag data-icon="inline-start" aria-hidden="true" />
             <span>{existingQty > 0 ? "Update cart" : "Add to cart"} — <span className="tabular-nums">{formatPrice(item.price * quantity)}</span></span>
           </Button>

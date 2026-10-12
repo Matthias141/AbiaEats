@@ -145,6 +145,13 @@ try {
   check('Food sheet adds selected quantity and retains price',cart.items[0]?.quantity === 2 && cart.items[0]?.price === meals[0].price);
   await page.emulateMedia({reducedMotion:'reduce'}); await page.getByRole('button',{name:`Add ${meals[1].name} to cart`}).hover();
   check('Reduced motion removes press transforms',await page.getByRole('button',{name:`Add ${meals[1].name} to cart`}).evaluate(element=>getComputedStyle(element).transform==='none'));
+  await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+  await page.waitForTimeout(100);
+  const lastMeal=meals.filter(meal=>meal.restaurant_id===uid(1)).at(-1);
+  const lastItemBox=await page.getByRole('button',{name:`View ${lastMeal.name} details`}).boundingBox();
+  const floatingCartBox=await page.locator('.menu-cart-bar').boundingBox();
+  check('Last menu item clears the floating cart action',Boolean(lastItemBox && floatingCartBox && lastItemBox.y+lastItemBox.height<=floatingCartBox.y));
+  await page.evaluate(()=>window.scrollTo(0,0));
   await page.setViewportSize({width:320,height:844}); await page.evaluate(()=>document.documentElement.style.fontSize='200%'); await layout(page,'menu-text-resize-200',320);
   check('Menu cart total fits at 200 percent text size',await page.getByRole('link',{name:/View Cart/}).evaluate(element=>{const box=element.getBoundingClientRect();const price=element.querySelector('.tabular-nums').getBoundingClientRect();return price.left>=box.left && price.right<=box.right && price.bottom<=box.bottom;}));
   await audit(page,'menu-text-resize-200'); await page.evaluate(()=>document.documentElement.style.fontSize='');

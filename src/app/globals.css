@@ -530,7 +530,9 @@
 
 /* Customer app: photographic content, restrained chrome, floating navigation. */
 @layer components {
-  .customer-surface { font-family: var(--font-outfit), sans-serif; }
+  .customer-surface { font-family: var(--font-outfit), sans-serif; --primary: 0 0% 10%; --primary-foreground: 0 0% 100%; }
+  .customer-dialog { font-family: var(--font-outfit), sans-serif; --primary: 0 0% 10%; --primary-foreground: 0 0% 100%; }
+  .customer-dialog h2 { font-weight: 500; }
   .customer-surface .font-body { font-family: inherit; }
   .customer-surface h1, .customer-surface h2, .customer-surface h3 { font-weight: 500; }
   .customer-surface .eats-topbar { border: 0; background: rgba(248,248,246,.9); box-shadow: none; }
@@ -552,14 +554,27 @@
   .customer-dock-item.is-active .customer-dock-icon { background: #f26522; color: #171717; }
   .customer-dock-item > span { font-size: .6875rem; line-height: 1.3; font-weight: 500; }
   .menu-cart-bar { bottom: calc(6.5rem + env(safe-area-inset-bottom)); }
+  .menu-category-bar { border-bottom: 1px solid #e5e5e5; background: rgba(248,248,246,.94); backdrop-filter: blur(16px); }
+  .menu-product { box-shadow: var(--shadow-sm); }
+  .home-feedback { gap: 1rem; border: 1px solid #e5e5e5; border-radius: 1.5rem; background: white; padding: 1.5rem; }
+  .customer-surface .cart-food-row { box-shadow: none; border-color: #e5e5e5; border-radius: 1.5rem; }
+  .customer-surface .restaurant-card { transition: opacity 150ms ease-out; }
   @media (min-width: 640px) { .food-feature { min-height: 16rem; } .food-feature-copy { width: 60%; padding: 2rem; } }
 }
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
   .customer-dock { background: #181818; backdrop-filter: none; }
   .customer-surface .eats-topbar { background: #f8f8f6; backdrop-filter: none; }
+  .menu-category-bar { background: #f8f8f6; backdrop-filter: none; }
 }
 @media (forced-colors: active) {
   .customer-dock { background: Canvas; border-color: CanvasText; }
   .customer-dock-item, .customer-dock-item.is-active { color: CanvasText; }
   .customer-dock-item.is-active .customer-dock-icon { background: Highlight; color: HighlightText; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .customer-surface .restaurant-card:hover .restaurant-photo { box-shadow: var(--shadow-md); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .customer-surface .restaurant-photo { transition: box-shadow 180ms ease-out; }
+  .customer-surface .restaurant-card:active { transform: scale(.985); }
 }

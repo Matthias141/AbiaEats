@@ -18,7 +18,7 @@ export function RestaurantCard({
   return (
     <Link
       href={`/restaurants/${restaurant.id}`}
-      className="restaurant-card group"
+      className="restaurant-card group ui-press"
     >
       <div className="restaurant-photo relative aspect-[16/10] overflow-hidden rounded-[1.4rem] bg-orange-50">
         {restaurant.cover_image_url || restaurant.image_url ? (

@@ -101,3 +101,15 @@ Verification: TypeScript/lint and 258 tests in 14 files pass. Production Chromiu
 Most likely residual UI failure: fixed controls can obscure content on unusually short viewports or very large text. Menu cart/dock separation and text-resize inspection reduce that risk; page padding and scroll recovery remain. The optional inspiration label can still be overlooked, so actual vendor photos remain preferable. The previous deployment failed despite passing GitHub/local builds; a new deployment must be checked before claiming this revision is live.
 
 Final enlarged-text check: menu cart label and amount can wrap onto separate rows at 200% text size. A browser assertion verifies the complete amount stays within its action box. Functional counts remain 258 unit tests; browser interactions now total 24.
+
+## Ordering surface refinement
+
+The customer menu now uses a shorter cover header, cleaner category navigation and lighter 5:4 meal cards. Add controls are round; missing menu photographs use original artwork with an explicit “Awaiting photo” label, laid out separately from the add control. Named menu photos remain vendor-provided. Customer primary actions are charcoal, with orange preserved for brand/selection cues. The theme and Outfit typography are also applied explicitly to customer dialogs, whose portals sit outside the customer layout. Owner/admin surfaces are unaffected.
+
+Food sheets have rounded imagery, a simpler quantity stepper and a single dark pill action. Cart controls and the checkout handoff use consistent radii. Home empty/error states now compose installed shadcn Empty primitives; fee explanation is a small inline note rather than another elevated panel. Restaurant cards have short press feedback and pointer-only hover elevation; reduced motion remains respected.
+
+Menu bottom padding grows when the cart action is visible, ensuring the final item remains above the floating action after scrolling. A dedicated browser assertion verifies that boundary; quantity, confirmation, pricing calculations, stored selections and API logic are unchanged.
+
+Verification: TypeScript, lint, production build and 258 tests in 14 files pass. Browser results pass 21 layouts, 19 axe state audits and 25 interactions with no reported violations or page errors. [Detailed results](ui-evidence/ordering-polish-audit.json). Menu, food sheet, cart, empty states and enlarged text were inspected locally. Adapt detector returned no findings; [output](ui-evidence/ordering-polish-detector.json). Screenshots remain unpublished. Shared customer tokens also reach checkout/profile; this is not a claim of complete visual/backend QA for those flows. Actual devices and screen readers remain unverified.
+
+Residual risks: missing vendor uploads still limit the visual richness of menus; placeholder labels identify that boundary. Very large text and unusually short screens can make fixed actions obstruct content; enlarged-text and last-item assertions reduce that risk, with scrolling/padding preserved. Mouse hover is supplemental; touch and keyboard actions retain their own feedback.

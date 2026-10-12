@@ -215,12 +215,12 @@ export function RestaurantDetail({
     <main
       id="main-content"
       tabIndex={-1}
-      className="min-h-screen liquid-surface overflow-x-hidden pb-24"
+      className={`min-h-screen liquid-surface overflow-x-hidden ${itemCount > 0 ? "pb-56" : "pb-28"}`}
     >
       {/* Hero Section */}
       <div className="relative">
         {/* Cover Image */}
-        <div className="aspect-[16/9] relative overflow-hidden bg-gray-100">
+        <div className="relative h-52 overflow-hidden bg-gray-100 sm:h-72 lg:h-80">
           {restaurant.cover_image_url || restaurant.image_url ? (
             <Image
               src={restaurant.cover_image_url || restaurant.image_url || ""}
@@ -262,7 +262,7 @@ export function RestaurantDetail({
 
         {/* Restaurant info block */}
         <div className="relative z-10 -mt-8 px-4">
-          <div className="max-w-2xl mx-auto liquid-glass rounded-2xl p-5">
+          <div className="max-w-2xl mx-auto rounded-3xl border border-gray-200 bg-white p-5 beautiful-sm">
             <div className="flex flex-wrap items-start gap-4">
               {/* Logo */}
               <div className="relative w-14 h-14 rounded-xl liquid-chip overflow-hidden flex-shrink-0 flex items-center justify-center">
@@ -349,7 +349,7 @@ export function RestaurantDetail({
 
       {/* Category Tabs - Sticky */}
       {categoryNames.length > 0 && (
-        <div className="sticky top-0 z-30 liquid-glass-nav border-x-0 mt-4">
+        <div className="menu-category-bar sticky top-0 z-30 mt-4">
           <div
             ref={tabsRef}
             className="max-w-2xl mx-auto flex overflow-x-auto no-scrollbar px-4 gap-1"
@@ -401,7 +401,7 @@ export function RestaurantDetail({
                   return (
                     <article
                       key={item.id}
-                      className="relative liquid-glass liquid-lift rounded-2xl overflow-hidden"
+                      className="menu-product relative overflow-hidden rounded-3xl bg-white"
                     >
                       <button
                         type="button"
@@ -410,7 +410,7 @@ export function RestaurantDetail({
                         className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-offset-[-4px]"
                       />
                       {/* Image area */}
-                      <div className="relative aspect-square overflow-hidden bg-gray-50">
+                      <div className="relative aspect-[5/4] overflow-hidden bg-gray-50">
                         {item.image_url ? (
                           <Image
                             src={item.image_url}
@@ -421,17 +421,18 @@ export function RestaurantDetail({
                             loading="lazy"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
+                          <div className="grid h-full grid-rows-[minmax(0,1fr)_auto] bg-[#f3f3ef]">
                             <CuisineIcon
                               tags={restaurant.cuisine_tags}
-                              className="w-10 h-10 text-brand-orange/40"
+                              className="m-auto size-16 max-h-full"
                             />
+                            <span className="block py-2 pl-3 pr-16 text-xs leading-snug text-muted-foreground">Awaiting photo</span>
                           </div>
                         )}
 
                         {/* Popular badge */}
                         {item.is_popular && (
-                          <Badge className="absolute top-2 left-2">
+                          <Badge variant="secondary" className="absolute top-2 left-2">
                             Popular
                           </Badge>
                         )}
@@ -444,17 +445,17 @@ export function RestaurantDetail({
                         )}
 
                         {/* Add button overlay */}
-                        <Button size="icon" disabled={!restaurant.is_open} onClick={event => { event.stopPropagation(); handleAddItem(item); }} className="absolute bottom-2 right-2 z-20" aria-label={`Add ${item.name} to cart`}>
+                        <Button size="icon" disabled={!restaurant.is_open} onClick={event => { event.stopPropagation(); handleAddItem(item); }} className="absolute bottom-2 right-2 z-20 rounded-full" aria-label={`Add ${item.name} to cart`}>
                           <Plus aria-hidden="true" />
                         </Button>
                       </div>
 
                       {/* Text content */}
                       <div className="p-3">
-                        <h4 className="break-words text-base font-semibold leading-relaxed text-foreground">
+                        <h4 className="break-words text-[15px] font-medium leading-relaxed text-foreground">
                           {item.name}
                         </h4>
-                        <p className="tabular-nums text-sm font-semibold text-foreground mt-1.5">
+                        <p className="tabular-nums text-sm font-medium text-foreground mt-1.5">
                           {formatPrice(item.price)}
                         </p>
                       </div>
