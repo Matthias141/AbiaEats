@@ -144,26 +144,28 @@ export default function CustomerHomePage() {
         </div>
       </header>
       <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10">
-        <section className="mb-6 flex items-center justify-between gap-5" aria-labelledby="home-heading">
-          <div className="min-w-0">
+        <section className="mb-6 grid grid-cols-[minmax(0,1fr)_6rem] items-center gap-x-5 gap-y-5 sm:grid-cols-[minmax(0,1fr)_8rem] lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-x-8 lg:gap-y-4" aria-labelledby="home-heading">
+          <div className="min-w-0 lg:self-end">
             <p className="mb-2 text-sm text-gray-600">Restaurants in {formatCityName(city)}</p>
             <h1 id="home-heading" className="text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
               Find your next meal.
             </h1>
             <p className="mt-2 text-sm leading-relaxed text-gray-600">Local kitchens. Your usual favourites.</p>
           </div>
-          <div className="relative size-24 shrink-0 overflow-hidden rounded-2xl sm:size-32">
+          <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-orange-50 beautiful-md lg:row-span-2 lg:aspect-[4/3] lg:rounded-3xl">
             <Image
               src="/images/jollof-hero.webp"
               alt="Jollof rice with grilled chicken and fried plantain"
               fill
               priority
-              sizes="(max-width: 640px) 96px, 128px"
+              sizes="(min-width: 1024px) 288px, (min-width: 640px) 128px, 96px"
               className="food-photo object-cover"
             />
           </div>
+          <div role="search" className="col-span-2 min-w-0 lg:col-span-1 lg:self-start">
+            <RestaurantSearch id="home-search" value={searchQuery} onChange={setSearchQuery} />
+          </div>
         </section>
-        <div role="search" className="mb-6"><RestaurantSearch id="home-search" value={searchQuery} onChange={setSearchQuery} /></div>
         <section aria-label="Filter by cuisine" className="mb-8"><CuisineFilters value={activeCategory} onChange={setActiveCategory} /></section>
         <section
           id="restaurants"

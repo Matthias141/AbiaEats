@@ -10,4 +10,6 @@ Completed: 14 official shadcn primitives are installed through CLI 4.21.4 using 
 
 TypeScript and ESLint pass. All 241 tests in 13 files pass. Production build passes with 44 routes. Chromium verification covers 17 layout cases, 18 axe state audits with no reported violations and 18 interaction assertions. Adapt's mechanical detector returned no findings. The consolidated six-domain review, ten-source mapping and practical verification limits are recorded in `ui-review.md` and `ui-evidence/`. No Pro audit, physical-device testing or screen-reader walkthrough is claimed. No third-party review telemetry was sent.
 
-Screenshot disclosure was blocked by automatic approval review; screenshots remain local pending explicit user approval. Code and text evidence can be published independently.
+Screenshot disclosure was blocked by automatic approval review; the user subsequently requested screenshots remain unpublished. Code and text evidence can be published independently.
+
+Home spacing follow-up: grouped heading/search beside a larger desktop food image while retaining compact mobile imagery. Browser verification now covers 21 layouts, 19 axe audits and 18 interactions; TypeScript/lint/241 unit tests pass. See ui-review.md and ui-evidence/home-spacing-audit.json.

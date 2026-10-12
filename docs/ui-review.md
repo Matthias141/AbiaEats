@@ -56,10 +56,16 @@ The browser harness builds/starts Next and its fake backend in one process. It i
 
 ## Rendered evidence
 
-18 screenshots were generated and visually inspected locally. Their upload was stopped when automatic approval review rejected screenshot disclosure to this GitHub repository. Screenshots are not part of this published commit; the JSON results and CLI/build logs are included. Images can be attached after explicit user approval. Screenshots cover landing, discovery, home loading/error/empty states, city and food sheets, menu text resizing, and cart confirmation/recovery.
+18 screenshots were generated and visually inspected locally. Their upload was stopped when automatic approval review rejected screenshot disclosure to this GitHub repository. Screenshots are not part of this published commit; the JSON results and CLI/build logs are included. The user requested that verification screenshots remain unpublished. Screenshots cover landing, discovery, home loading/error/empty states, city and food sheets, menu text resizing, and cart confirmation/recovery.
 
 ## Verdict and limits
 
 Approve the inspected scope for human design review. Automated axe results are not WCAG conformance certification. Viewports are Chromium emulation, not physical device results. Real VoiceOver/NVDA/TalkBack, Safari/Firefox, physical iPhone/Android, every screen at browser zoom, dark/RTL layouts, dashboard flows, real network performance and live Supabase/payment/invitation behavior are **not verified**. The 200% check is root text resizing on the menu, not a claim of full cross-app browser zoom coverage.
 
 The pre-existing server-side mock inventory fallback remains a separate launch risk. This pass does not claim an audit-clean dependency tree or remove existing noncritical advisories. PR #25 remains draft and unmerged.
+
+## Home spacing follow-up
+
+The desktop home heading and 128px photograph left an unbalanced open area. The heading and search now form the left column, alongside a 288×216px food image with rounded corners and neutral layered elevation. The mobile photograph remains 96px, with search below both columns; tablet imagery stays 128px. Image `sizes` matches these widths to avoid downloading desktop-sized imagery on a phone. No listings, data queries or availability behavior changed.
+
+TypeScript, lint and all 241 tests in 13 files pass. The production browser run passes 21 layout cases, 19 axe state audits and 18 interactions with no reported violations/page errors; the four additional layout cases cover home at 320/390/768/1440px. Desktop and mobile renders were inspected locally. [Follow-up results](ui-evidence/home-spacing-audit.json) contain the exact cases. Screenshots are omitted at the user's request. Physical-device and other-browser limitations above still apply.

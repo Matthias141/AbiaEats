@@ -108,7 +108,9 @@ try {
   await page.getByRole('searchbox').fill('no-such-meal'); await audit(page,'discovery-empty');
   check('Empty search recovers with Clear filters', await page.getByRole('button',{name:'Clear filters'}).isVisible());
   await page.getByRole('button',{name:'Clear filters'}).click();
-  await page.goto(`${appUrl}/home`); await page.getByRole('heading',{name:restaurants[0].name}).waitFor({timeout:10000}); await audit(page,'home-mobile');
+  await page.goto(`${appUrl}/home`); await page.getByRole('heading',{name:restaurants[0].name}).waitFor({timeout:10000});
+  for (const width of [320,390,768,1440]) await layout(page,'home',width);
+  await audit(page,'home-desktop'); await page.setViewportSize({width:390,height:844}); await audit(page,'home-mobile');
   const cityTrigger = page.getByRole('button',{name:/Find food in/}); await cityTrigger.focus(); await page.keyboard.press('Enter');
   const dialog = page.getByRole('dialog',{name:'Choose your city'}); await dialog.waitFor(); await audit(page,'city-sheet');
   check('Dialog focuses inside', await dialog.evaluate(element => element.contains(document.activeElement)));
