@@ -19,12 +19,12 @@ export function RestaurantSearch({ id, value, onChange }: { id: string; value: s
 }
 
 export function CuisineFilters({ value, onChange, photographic = false }: { value: string; onChange: (value: string) => void; photographic?: boolean }) {
-  return <ToggleGroup type="single" aria-label="Filter by cuisine" value={value} onValueChange={next => { if (next) onChange(next); }} className={photographic ? "w-full flex-nowrap justify-start gap-3 overflow-x-auto pb-3 pt-1" : "flex-wrap justify-start gap-2"}>
+  return <ToggleGroup type="single" aria-label="Filter by cuisine" value={value} onValueChange={next => { if (next) onChange(next); }} className={photographic ? "cuisine-strip w-full flex-nowrap justify-start gap-2 overflow-x-auto pb-3 pt-1" : "flex-wrap justify-start gap-2"}>
     {CUISINE_FILTERS.map(category => {
       const Icon = getCuisineIcon(category.value);
-      return <ToggleGroupItem key={category.value} value={category.value} className={photographic ? "group h-auto w-24 shrink-0 flex-col items-stretch gap-0 rounded-none border-0 bg-transparent p-0 text-foreground sm:w-28 data-[state=on]:bg-transparent data-[state=on]:text-foreground data-[state=on]:ring-0" : undefined}>
-        {photographic ? <span className="relative mx-auto block size-20 overflow-hidden rounded-full border-2 border-transparent sm:size-24 group-data-[state=on]:border-brand-orange-dark"><Image src={CUISINE_PHOTOS[category.value]} alt="" fill sizes="(min-width: 640px) 144px, 112px" className="object-cover" /></span> : <Icon className="food-category-artwork" aria-hidden="true" />}
-        <span className={photographic ? "px-1 py-2.5 text-sm font-medium group-data-[state=on]:text-brand-orange-dark" : undefined}>{category.label === "All" ? "All food" : category.label}</span>
+      return <ToggleGroupItem key={category.value} value={category.value} className={photographic ? "cuisine-chip group h-auto shrink-0 gap-2 rounded-full border border-gray-200 bg-white py-1.5 pl-1.5 pr-4 text-foreground data-[state=on]:bg-[#181818] data-[state=on]:text-white data-[state=on]:border-[#181818] data-[state=on]:ring-0" : undefined}>
+        {photographic ? <span className="relative block size-10 shrink-0 overflow-hidden rounded-full"><Image src={CUISINE_PHOTOS[category.value]} alt="" fill sizes="40px" className="object-cover" /></span> : <Icon className="food-category-artwork" aria-hidden="true" />}
+        <span className={photographic ? "whitespace-nowrap text-sm font-medium" : undefined}>{category.label === "All" ? "All food" : category.label}</span>
       </ToggleGroupItem>;
     })}
   </ToggleGroup>;

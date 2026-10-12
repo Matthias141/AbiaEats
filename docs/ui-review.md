@@ -113,3 +113,23 @@ Menu bottom padding grows when the cart action is visible, ensuring the final it
 Verification: TypeScript, lint, production build and 258 tests in 14 files pass. Browser results pass 21 layouts, 19 axe state audits and 25 interactions with no reported violations or page errors. [Detailed results](ui-evidence/ordering-polish-audit.json). Menu, food sheet, cart, empty states and enlarged text were inspected locally. Adapt detector returned no findings; [output](ui-evidence/ordering-polish-detector.json). Screenshots remain unpublished. Shared customer tokens also reach checkout/profile; this is not a claim of complete visual/backend QA for those flows. Actual devices and screen readers remain unverified.
 
 Residual risks: missing vendor uploads still limit the visual richness of menus; placeholder labels identify that boundary. Very large text and unusually short screens can make fixed actions obstruct content; enlarged-text and last-item assertions reduce that risk, with scrolling/padding preserved. Mouse hover is supplemental; touch and keyboard actions retain their own feedback.
+
+
+## Browsing density and sheet motion
+
+Direction: retain Abia Eats food photography, Outfit typography and brand orange, while bringing restaurant content earlier in the mobile viewport. Palette: paper #f8f8f6, white #ffffff, charcoal #181818, border #dedede, brand orange #f26522 and focus orange #9a390e. Left-aligned content uses compact filters and independent restaurant imagery; navigation and overlays provide depth. No new photographs, animated marketing sections or animation dependencies were added.
+
+| Before | After | Why |
+| --- | --- | --- |
+| Large circular cuisine controls with labels underneath | 40px photo thumbnails in horizontally scrolling pills, with a dark selected state | Less vertical chrome; more restaurants visible sooner; existing radio semantics retained |
+| Dense banner scrim and repeated city eyebrow | Brighter food photo, shorter copy block and location kept in the header | Food remains recognizable; redundant labels removed |
+| Loose restaurant metadata spacing | Tighter title, cuisine and delivery spacing; softer image corners | Faster scanning without reducing touch targets |
+| Small orange selected navigation icon | Full selected tab background with orange icon | Current destination is easier to identify |
+| Food sheet disappears as soon as selection is cleared | Retained sheet content with 220ms entrance and 140ms exit, preserving Radix focus restoration | Gives opening/closing spatial feedback without delaying shopping actions |
+| Translucent food sheet | Opaque white content surface | Keeps text contrast independent of the underlying photograph |
+
+Motion is scoped to customer dialogs and navigation. Mobile sheets translate a short distance; desktop dialogs use subtle scale/opacity. Reduced motion removes those animations and press transforms; forced colors retain a system-selected state. The last selected food remains in memory only to allow the closing transition. Reopening resets quantity from the cart; canceled edits never become cart changes.
+
+Verification: TypeScript and ESLint pass; 258 tests in 14 files pass. Production build passes. Chromium passes 21 layout cases, 19 settled-state axe audits with no reported violations, and 29 interaction assertions with zero page errors. [Results](ui-evidence/smooth-ui-audit.json). Adapt detector reports no findings; [output](ui-evidence/smooth-ui-detector.json). Mobile and desktop home plus the settled food sheet were visually inspected locally. Verification screenshots remain unpublished.
+
+Most likely failure modes: missing vendor photographs still leave menu artwork, a narrow viewport can require horizontal cuisine scrolling, and fixed navigation can obscure content on unusually short screens. Early signals are repeated missing-photo labels, clipped labels outside the intended scroller, or the last item failing the floating-cart clearance assertion. Layout, enlarged-text and last-item checks reduce these risks. Physical-device frame pacing, Safari/Firefox, actual screen readers and live backend flows remain unverified; automated axe is not accessibility certification. A successful local build does not prove the latest commit is deployed.

@@ -64,6 +64,8 @@ async function run(command, args, logFile) {
   });
 }
 async function audit(page, name, screenshot = true) {
+  // Audit the settled UI; entrance opacity changes temporarily affect contrast.
+  await page.evaluate(async () => { await Promise.all(document.getAnimations().filter(a=>a.effect?.getTiming().iterations !== Infinity).map(a=>a.finished.catch(()=>{}))); });
   await page.addScriptTag({ content: fs.readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8') });
   const axe = await page.evaluate(async () => window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'] } }));
   const geometry = await page.getByRole('dialog').count() ? await page.getByRole('dialog').evaluate(element => { const r=element.getBoundingClientRect(),s=getComputedStyle(element);return {top:r.top,bottom:r.bottom,height:r.height,viewportHeight:innerHeight,cssTop:s.top,cssBottom:s.bottom,transform:s.transform,classes:element.className};}) : undefined;
@@ -123,7 +125,7 @@ try {
   check('Dialog focuses inside', await dialog.evaluate(element => element.contains(document.activeElement)));
   for(let i=0;i<7;i++) await page.keyboard.press('Tab');
   check('Dialog traps focus', await dialog.evaluate(element => element.contains(document.activeElement)));
-  await page.keyboard.press('Escape');
+  await page.keyboard.press('Escape'); await dialog.waitFor({state:'hidden'});
   check('Escape closes and restores trigger focus', !(await dialog.count()) && await cityTrigger.evaluate(element=>element===document.activeElement));
   for (const state of ['loading','empty','error']) {
     homeState = state; await page.goto(`${appUrl}/home`);
@@ -137,13 +139,24 @@ try {
   await audit(page,'menu-desktop'); await page.setViewportSize({width:390,height:844}); await audit(page,'menu-mobile');
   const itemTrigger = page.getByRole('button',{name:`View ${meals[0].name} details`}); await itemTrigger.focus(); await page.keyboard.press('Enter');
   await page.getByRole('dialog',{name:meals[0].name}).waitFor(); await audit(page,'food-sheet');
+  check('Food sheet has a short spatial entrance',await page.getByRole('dialog').evaluate(el=>{const s=getComputedStyle(el);return s.animationName==='customer-sheet-in' && parseFloat(s.animationDuration)<=.25;}));
+  await page.getByRole('dialog').evaluate(async el=>{await Promise.all(el.getAnimations().map(a=>a.finished.catch(()=>{})));});
   check('Food sheet is anchored to mobile bottom', await page.getByRole('dialog').evaluate(element=>Math.abs(element.getBoundingClientRect().bottom-innerHeight)<2));
   check('Quantity starts at one with decrease disabled',await page.getByRole('button',{name:'Decrease quantity',exact:true}).isDisabled());
   await page.getByRole('button',{name:'Increase quantity',exact:true}).click();
-  await page.getByRole('button',{name:/^Add to cart/}).click();
+  await page.keyboard.press('Escape'); await page.getByRole('dialog').waitFor({state:'hidden'});
+  await itemTrigger.click(); await page.getByRole('dialog').waitFor();
+  check('Reopening a canceled food sheet discards unsaved quantity',await page.getByRole('button',{name:'Decrease quantity',exact:true}).isDisabled());
+  await page.getByRole('button',{name:'Increase quantity',exact:true}).click();
+  await page.getByRole('button',{name:/^Add to cart/}).click(); await page.getByRole('dialog').waitFor({state:'hidden'});
   const cart = await page.evaluate(()=>JSON.parse(localStorage.getItem('abiaeats_cart')));
   check('Food sheet adds selected quantity and retains price',cart.items[0]?.quantity === 2 && cart.items[0]?.price === meals[0].price);
-  await page.emulateMedia({reducedMotion:'reduce'}); await page.getByRole('button',{name:`Add ${meals[1].name} to cart`}).hover();
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await itemTrigger.click(); await page.getByRole('dialog').waitFor();
+  check('Reduced motion opens food sheets without movement',await page.getByRole('dialog').evaluate(el=>getComputedStyle(el).animationName==='none'));
+  await page.keyboard.press('Escape'); await page.getByRole('dialog').waitFor({state:'hidden'});
+  check('Food sheet returns focus to its meal after closing',await itemTrigger.evaluate(el=>el===document.activeElement));
+  await page.getByRole('button',{name:`Add ${meals[1].name} to cart`}).hover();
   check('Reduced motion removes press transforms',await page.getByRole('button',{name:`Add ${meals[1].name} to cart`}).evaluate(element=>getComputedStyle(element).transform==='none'));
   await page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
   await page.waitForTimeout(100);
@@ -177,9 +190,9 @@ try {
   await cartPage.setViewportSize({width:390,height:844}); await audit(cartPage,'cart-mobile');
   await cartPage.getByRole('button',{name:'Clear cart',exact:true}).click(); await audit(cartPage,'clear-cart-confirmation');
   check('Clear cart requires confirmation',await cartPage.getByRole('dialog',{name:'Clear your cart?'}).isVisible());
-  await cartPage.getByRole('button',{name:'Keep cart'}).click();
+  await cartPage.getByRole('button',{name:'Keep cart'}).click(); await cartPage.getByRole('dialog').waitFor({state:'hidden'});
   check('Cancel keeps cart contents',await cartPage.getByRole('heading',{name:meals[0].name}).count()===1);
-  await cartPage.getByRole('button',{name:'Clear cart',exact:true}).click(); await cartPage.getByRole('dialog').getByRole('button',{name:'Clear cart',exact:true}).click(); await audit(cartPage,'cart-empty');
+  await cartPage.getByRole('button',{name:'Clear cart',exact:true}).click(); await cartPage.getByRole('dialog').getByRole('button',{name:'Clear cart',exact:true}).click(); await cartPage.getByRole('dialog').waitFor({state:'hidden'}); await audit(cartPage,'cart-empty');
   check('Confirm clears cart and exposes recovery',await cartPage.getByRole('heading',{name:'Your cart is empty'}).isVisible());
   result.passed = result.layouts.every(row=>row.passed) && result.interactions.every(row=>row.passed) && result.audits.every(row=>row.violations.length===0) && result.errors.length===0;
   fs.writeFileSync(path.join(output,'server.log'),serverLog);

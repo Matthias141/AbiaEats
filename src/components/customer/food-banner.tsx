@@ -12,11 +12,11 @@ export function FoodBanner({ headingId, eyebrow, title, description, children, c
   if (compact) return (
     <section aria-labelledby={headingId}>
       <div className="food-feature">
-        <Image src="/images/food-banner.webp" alt="Nigerian jollof rice, grilled chicken, plantain, egusi soup and suya" fill priority sizes="(min-width: 1280px) 1104px, 100vw" className="object-cover object-[70%_65%]" />
+        <Image src="/images/food-banner.webp" alt="Nigerian jollof rice, grilled chicken, plantain, egusi soup and suya" fill priority sizes="(min-width: 1280px) 1104px, 100vw" className="food-feature-photo object-cover object-[70%_65%]" />
         <div className="food-feature-scrim" />
         <div className="food-feature-copy">
           {eyebrow && <p className="mb-3 text-xs font-medium text-muted-foreground sm:text-sm">{eyebrow}</p>}
-          <h1 id={headingId} className="font-brand text-[clamp(1.75rem,4vw,3rem)] font-medium leading-[1.12] tracking-tight text-foreground">{title}</h1>
+          <h1 id={headingId} className="font-brand text-[clamp(1.75rem,4vw,3rem)] font-medium leading-[1.08] tracking-[-0.035em] text-foreground">{title}</h1>
           <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">{description}</p>
         </div>
       </div>

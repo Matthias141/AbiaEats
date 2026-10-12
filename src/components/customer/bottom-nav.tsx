@@ -45,7 +45,7 @@ export function BottomNav() {
               )}
             >
               <div className="customer-dock-icon">
-                <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
+                <Icon className="w-5 h-5" strokeWidth={isActive ? 2.2 : 1.8} aria-hidden="true" />
                 {isCart && itemCount > 0 && (
                   <span className="absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-white text-[10px] font-bold text-gray-900 px-1">
                     {itemCount > 9 ? "9+" : itemCount}

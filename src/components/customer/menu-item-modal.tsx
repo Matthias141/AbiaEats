@@ -17,22 +17,27 @@ interface MenuItemModalProps {
   onClose: () => void;
 }
 
-export function MenuItemModal({
-  item,
-  restaurant,
-  onClose,
-}: MenuItemModalProps) {
+export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps) {
+  // Keep the closing sheet mounted so Radix can finish its exit and restore focus.
+  const [lastItem, setLastItem] = useState<MenuItem | null>(item);
+  useEffect(() => { if (item) setLastItem(item); }, [item]);
+  const displayedItem = item ?? lastItem;
+  if (!displayedItem) return null;
+  return <MenuItemSheet item={displayedItem} restaurant={restaurant} onClose={onClose} isOpen={Boolean(item)} />;
+}
+
+function MenuItemSheet({ item, restaurant, onClose, isOpen }: {
+  item: MenuItem; restaurant: RestaurantPublic; onClose: () => void; isOpen: boolean;
+}) {
   const { addItem, removeItem, getItemQuantity } = useCart();
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    if (item) {
+    if (isOpen) {
       const existing = getItemQuantity(item.id);
       setQuantity(existing > 0 ? existing : 1);
     }
-  }, [item, getItemQuantity]);
-
-  if (!item) return null;
+  }, [item, isOpen, getItemQuantity]);
 
   const existingQty = getItemQuantity(item.id);
 
@@ -62,7 +67,7 @@ export function MenuItemModal({
 
   return (
     <Modal
-      isOpen={Boolean(item)}
+      isOpen={isOpen}
       onClose={onClose}
       title={item.name}
       variant="bottom-sheet"

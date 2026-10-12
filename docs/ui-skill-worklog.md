@@ -23,3 +23,6 @@ Visual redesign: compact dark photo feature, separate search, circular cuisine c
 Final visual follow-up: menu cart total wraps safely at enlarged text sizes, with a bounding-box browser assertion. Final checks pass: 258 tests in 14 files; 21 layouts, 19 axe audits and 24 interactions. The main redesign deployment at 838db56 succeeded; subsequent commits require their own deployment status check.
 
 Ordering refinement: shorter menu header, cleaner meal cards, explicit missing-photo state, customer charcoal actions, consistent food-sheet/cart/city/switch dialog typography, compact Empty states and restrained card interactions. Local checks: 258 tests/14 files; 21 layouts, 19 axe audits, 25 interactions; detector has no findings. No ordering/API/money logic changed.
+
+
+Browsing/motion refinement: frontend-design informed compact photo pills, clearer navigation selection and restrained restaurant metadata. Emil design engineering informed short customer sheet entry/exit, retained content during closing, focus return and canceled-quantity reset. Existing accessibility, shadow and responsive guidance remains applied. Verification: 258 tests/14 files, 21 layouts, 19 axe audits, 29 browser interactions, no page errors or detector findings. Physical-device smoothness and live deployment require separate confirmation. No verification screenshots uploaded.

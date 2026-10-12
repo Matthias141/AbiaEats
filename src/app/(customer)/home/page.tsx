@@ -144,13 +144,13 @@ export default function CustomerHomePage() {
           </Link>
         </div>
       </header>
-      <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10">
+      <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-6 sm:pt-6">
         <div className="mb-6">
-          <FoodBanner headingId="home-heading" eyebrow={`Restaurants in ${formatCityName(city)}`} title={<>Good food.<br />Close to home.</>} description="Your local favourites, ready to discover." compact>
+          <FoodBanner headingId="home-heading" title={<>Good food.<br />Close to home.</>} description="Your local favourites, ready to discover." compact>
             <div role="search"><RestaurantSearch id="home-search" value={searchQuery} onChange={setSearchQuery} /></div>
           </FoodBanner>
         </div>
-        <section aria-label="Filter by cuisine" className="mb-6"><CuisineFilters value={activeCategory} onChange={setActiveCategory} photographic /></section>
+        <section aria-label="Filter by cuisine" className="mb-5"><CuisineFilters value={activeCategory} onChange={setActiveCategory} photographic /></section>
         <section
           id="restaurants"
           aria-labelledby="restaurants-heading"
@@ -161,7 +161,7 @@ export default function CustomerHomePage() {
             <div>
               <h2
                 id="restaurants-heading"
-                className="text-2xl tracking-tight sm:text-3xl"
+                className="text-xl tracking-tight sm:text-2xl"
               >
                 {hasFilters
                   ? "Find your favourite"
