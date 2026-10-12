@@ -3,6 +3,7 @@ import { RestaurantList } from "@/components/customer/restaurant-list";
 import { MOCK_RESTAURANTS } from "@/lib/mock-data";
 import { formatCityName, normalizeCityValue } from "@/lib/discovery";
 import Link from "next/link";
+import type { RestaurantPublic } from "@/types/database";
 import { ArrowLeft, MapPin } from "lucide-react";
 
 export const metadata = {
@@ -18,7 +19,8 @@ export default async function RestaurantsPage({
   const params = await searchParams;
   const city = normalizeCityValue(params.city);
 
-  let restaurants;
+  let restaurants: RestaurantPublic[];
+  let demo = false;
   try {
     const supabase = await createClient();
 
@@ -30,11 +32,15 @@ export default async function RestaurantsPage({
 
     // Load both cities so client-side city switching can show all results.
 
-    const { data } = await query;
-    restaurants = data && data.length > 0 ? data : MOCK_RESTAURANTS;
+    const { data, error } = await query;
+    if (error) throw new Error("Restaurant catalog unavailable");
+    restaurants = data ?? [];
   } catch {
-    // Supabase not configured — use mock data
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("Restaurant catalog unavailable");
+    }
     restaurants = MOCK_RESTAURANTS;
+    demo = true;
   }
 
   return (
@@ -77,6 +83,7 @@ export default async function RestaurantsPage({
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        {demo && <p className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">Sample restaurants for development. Live availability and prices may differ.</p>}
         <RestaurantList
           restaurants={restaurants}
           activeTag={params.tag}

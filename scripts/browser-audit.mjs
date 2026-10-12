@@ -42,7 +42,7 @@ const fixture = http.createServer(async (request, response) => {
     if (!url.searchParams.has('id') && homeState === 'error') { response.statusCode = 503; response.end(JSON.stringify({ message: 'Fixture outage' })); return; }
     if (!url.searchParams.has('id') && homeState === 'empty') { response.end('[]'); return; }
     const id = url.searchParams.get('id')?.replace(/^eq\./, '');
-    response.end(JSON.stringify(id ? restaurants.find(row => row.id === id) : restaurants)); return;
+    response.end(JSON.stringify(id ? restaurants.find(row => row.id === id) ?? null : restaurants)); return;
   }
   if (url.pathname.includes('/rest/v1/menu_items')) {
     const id = url.searchParams.get('restaurant_id')?.replace(/^eq\./, '');
@@ -100,6 +100,11 @@ try {
   await page.goto(`${appUrl}/restaurants`); await page.waitForLoadState('networkidle');
   for (const width of [320, 390, 768, 1440]) await layout(page, 'discovery', width);
   await audit(page, 'discovery-desktop'); await page.setViewportSize({width:390,height:844}); await audit(page,'discovery-mobile');
+  await page.getByRole('link').filter({has:page.getByRole('heading',{name:restaurants[0].name,exact:true})}).click();
+  await page.waitForURL(`${appUrl}/restaurants/${uid(1)}`);
+  await page.getByRole('button',{name:`View ${meals[0].name} details`}).waitFor();
+  check('Clicking a listed restaurant opens its real menu route',new URL(page.url()).pathname===`/restaurants/${uid(1)}` && await page.getByRole('button',{name:`View ${meals[0].name} details`}).isVisible());
+  await page.goto(`${appUrl}/restaurants`); await page.waitForLoadState('networkidle');
   await page.getByRole('radio', {name:'Aba',exact:true}).click();
   check('City filter excludes Umuahia', !(await page.getByRole('heading',{name:restaurants[5].name}).count()));
   const city = page.getByRole('radio',{name:'Aba',exact:true}); await city.focus(); await page.keyboard.press('ArrowRight'); await page.waitForTimeout(75);
@@ -194,6 +199,13 @@ try {
   check('Cancel keeps cart contents',await cartPage.getByRole('heading',{name:meals[0].name}).count()===1);
   await cartPage.getByRole('button',{name:'Clear cart',exact:true}).click(); await cartPage.getByRole('dialog').getByRole('button',{name:'Clear cart',exact:true}).click(); await cartPage.getByRole('dialog').waitFor({state:'hidden'}); await audit(cartPage,'cart-empty');
   check('Confirm clears cart and exposes recovery',await cartPage.getByRole('heading',{name:'Your cart is empty'}).isVisible());
+  homeState='empty'; await page.goto(`${appUrl}/restaurants`);
+  await page.getByRole('heading',{name:'No restaurants found'}).waitFor();
+  check('Empty production catalog has no sample restaurant links',await page.locator('a[href^="/restaurants/"]').count()===0);
+  await audit(page,'catalog-empty');
+  homeState='normal';
+  const missingResponse=await page.goto(`${appUrl}/restaurants/${uid(888)}`);
+  check('Unknown restaurant UUID returns a genuine 404',missingResponse.status()===404);
   result.passed = result.layouts.every(row=>row.passed) && result.interactions.every(row=>row.passed) && result.audits.every(row=>row.violations.length===0) && result.errors.length===0;
   fs.writeFileSync(path.join(output,'server.log'),serverLog);
 } catch(error) {
