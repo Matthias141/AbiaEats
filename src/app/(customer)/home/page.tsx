@@ -8,7 +8,6 @@ import {
   Check,
   ChevronDown,
   MapPin,
-  Search,
   ShoppingBag,
   UtensilsCrossed,
 } from "lucide-react";
@@ -20,12 +19,12 @@ import { Modal } from "@/components/ui/modal";
 import { createClient } from "@/lib/supabase/client";
 import {
   CITY_OPTIONS,
-  CUISINE_FILTERS,
   filterRestaurants,
   formatCityName,
   normalizeCityValue,
 } from "@/lib/discovery";
-import { getCuisineIcon } from "@/lib/cuisine-icons";
+import { RestaurantSearch, CuisineFilters } from "@/components/customer/discovery-controls";
+import { Button } from "@/components/ui/primitives/button";
 import { MOCK_RESTAURANTS } from "@/lib/mock-data";
 import { useCart } from "@/contexts/cart-context";
 import type { RestaurantPublic } from "@/types/database";
@@ -108,7 +107,7 @@ export default function CustomerHomePage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
           <Link
             href="/"
-            className="hidden font-body text-2xl font-semibold tracking-tight sm:block"
+            className="hidden font-brand text-2xl font-semibold tracking-tight sm:block"
           >
             abia<span className="text-brand-orange-dark">eats</span>
             <span className="text-brand-orange">.</span>
@@ -133,7 +132,7 @@ export default function CustomerHomePage() {
           <Link
             href="/cart"
             aria-label={`View cart, ${itemCount} items`}
-            className="premium-icon-button relative flex size-11 items-center justify-center rounded-full border border-white/80 bg-white/80 text-gray-800 backdrop-blur-xl active:scale-95"
+            className="premium-icon-button ui-press relative flex size-11 items-center justify-center rounded-full border border-border bg-background text-foreground"
           >
             <ShoppingBag className="size-5" aria-hidden="true" />
             {itemCount > 0 && (
@@ -148,58 +147,24 @@ export default function CustomerHomePage() {
         <section className="mb-6 flex items-center justify-between gap-5" aria-labelledby="home-heading">
           <div className="min-w-0">
             <p className="mb-2 text-sm text-gray-600">Restaurants in {formatCityName(city)}</p>
-            <h1 id="home-heading" className="text-3xl font-bold leading-tight tracking-tight text-[#311b12] sm:text-4xl">
+            <h1 id="home-heading" className="text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
               Find your next meal.
             </h1>
             <p className="mt-2 text-sm leading-relaxed text-gray-600">Local kitchens. Your usual favourites.</p>
           </div>
-          <div className="premium-image-frame relative size-24 shrink-0 overflow-hidden rounded-2xl sm:size-32">
+          <div className="relative size-24 shrink-0 overflow-hidden rounded-2xl sm:size-32">
             <Image
               src="/images/jollof-hero.webp"
               alt="Jollof rice with grilled chicken and fried plantain"
               fill
               priority
               sizes="(max-width: 640px) 96px, 128px"
-              className="object-cover"
+              className="food-photo object-cover"
             />
           </div>
         </section>
-        <div role="search" className="relative mb-6">
-          <label htmlFor="home-search" className="sr-only">
-            Search restaurants and cuisines
-          </label>
-          <Search
-            className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-gray-500"
-            aria-hidden="true"
-          />
-          <input
-            id="home-search"
-            type="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-            placeholder="Find a restaurant or cuisine…"
-            className="eats-search w-full py-4 pl-12 pr-4 text-base"
-          />
-        </div>
-        <section aria-label="Filter by cuisine" className="mb-8">
-          <div className="flex flex-wrap gap-2">
-            {CUISINE_FILTERS.map((category) => {
-              const Icon = getCuisineIcon(category.value);
-              return (
-                <button
-                  type="button"
-                  key={category.value}
-                  aria-pressed={activeCategory === category.value}
-                  onClick={() => setActiveCategory(category.value)}
-                  className={`eats-filter ${activeCategory === category.value ? "eats-filter-active" : ""}`}
-                >
-                  <Icon className="size-6 shrink-0" aria-hidden="true" />
-                  {category.label === "All" ? "All food" : category.label}
-                </button>
-              );
-            })}
-          </div>
-        </section>
+        <div role="search" className="mb-6"><RestaurantSearch id="home-search" value={searchQuery} onChange={setSearchQuery} /></div>
+        <section aria-label="Filter by cuisine" className="mb-8"><CuisineFilters value={activeCategory} onChange={setActiveCategory} /></section>
         <section
           id="restaurants"
           aria-labelledby="restaurants-heading"
@@ -252,13 +217,9 @@ export default function CustomerHomePage() {
               <p className="mt-2 text-sm text-gray-600">
                 Check your connection and try again.
               </p>
-              <button
-                type="button"
-                onClick={() => void fetchRestaurants()}
-                className="eats-button mt-5"
-              >
+              <Button onClick={() => void fetchRestaurants()} className="mt-5">
                 Try again
-              </button>
+              </Button>
             </div>
           ) : filtered.length ? (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -282,18 +243,17 @@ export default function CustomerHomePage() {
                   ? "Try another cuisine or a shorter search."
                   : "Try the other city, or check back as local kitchens join."}
               </p>
-              <button
-                type="button"
+              <Button
                 onClick={() => {
                   if (hasFilters) {
                     setSearchQuery("");
                     setActiveCategory("all");
                   } else setShowCityPicker(true);
                 }}
-                className="eats-button mt-5"
+                className="mt-5"
               >
                 {hasFilters ? "Clear filters" : "Change city"}
-              </button>
+              </Button>
             </div>
           )}
         </section>

@@ -4,9 +4,10 @@ import {
   ArrowRight,
   Bike,
   CreditCard,
-  MapPin,
   Search,
 } from "lucide-react";
+import { Button } from "@/components/ui/primitives/button";
+import { FieldGroup, Field, FieldLabel } from "@/components/ui/primitives/field";
 import { getCuisineIcon } from "@/lib/cuisine-icons";
 
 const CRAVINGS = [
@@ -51,63 +52,39 @@ export default function LandingPage() {
             >
               Log in
             </Link>
-            <Link href="/home" className="eats-button">
+            <Button asChild variant="secondary" size="sm"><Link href="/home">
               Find food
               <ArrowRight
-                className="hidden size-4 sm:block"
+                data-icon="inline-end"
+                className="hidden sm:block"
                 aria-hidden="true"
               />
-            </Link>
+            </Link></Button>
           </div>
         </nav>
       </header>
       <main id="main-content">
-        <section className="mx-auto grid max-w-6xl items-center gap-8 px-4 pb-10 pt-8 sm:px-6 sm:pb-16 sm:pt-14 lg:grid-cols-[1fr_1fr] lg:gap-12">
+        <section className="mx-auto grid max-w-6xl items-center gap-8 px-4 pb-8 pt-6 sm:px-6 sm:pb-12 sm:pt-12 lg:grid-cols-[1fr_1fr] lg:gap-12">
           <div>
-            <p className="mb-6 flex items-center gap-2 text-sm font-medium text-[#674739]">
-              <MapPin
-                className="size-4 text-brand-orange-dark"
-                aria-hidden="true"
-              />
-              Food delivery in Aba & Umuahia
-            </p>
-            <h1 className="max-w-xl text-[clamp(2.5rem,5.5vw,4.25rem)] font-bold leading-[1.08] tracking-[-.035em] text-[#311b12]">
+            <h1 className="max-w-xl font-brand text-[clamp(2.125rem,5.5vw,4.25rem)] font-semibold leading-[1.1] tracking-[-.02em] text-foreground">
               Your favourites.
               <br />
               Delivered in Abia.
             </h1>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-[#674739] sm:text-lg">
+            <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
               Jollof rice, pepper soup, shawarma. Choose a restaurant in
               your city and order what you’re hungry for.
             </p>
-            <form
-              action="/restaurants"
-              className="premium-search-panel mt-8 rounded-2xl p-2"
-            >
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <div className="flex min-h-12 flex-1 items-center gap-3 px-3">
-                  <MapPin
-                    className="size-5 shrink-0 text-brand-orange-dark"
-                    aria-hidden="true"
-                  />
-                  <label htmlFor="landing-city" className="sr-only">
-                    Your city
-                  </label>
-                  <select
-                    id="landing-city"
-                    name="city"
-                    defaultValue="aba"
-                    className="min-h-11 w-full bg-white text-base text-gray-900"
-                  >
-                    <option value="aba">Aba</option>
-                    <option value="umuahia">Umuahia</option>
+            <form action="/restaurants" className="mt-6">
+              <FieldGroup className="gap-3 sm:flex-row sm:items-end">
+                <Field className="flex-1">
+                  <FieldLabel htmlFor="landing-city">Choose your city</FieldLabel>
+                  <select id="landing-city" name="city" defaultValue="aba" className="ui-native-select">
+                    <option value="aba">Aba</option><option value="umuahia">Umuahia</option>
                   </select>
-                </div>
-                <button type="submit" className="eats-button rounded-xl">
-                  <Search className="size-4" aria-hidden="true" />
-                  Find restaurants
-                </button>
-              </div>
+                </Field>
+                <Button type="submit"><Search data-icon="inline-start" aria-hidden="true" />Find restaurants</Button>
+              </FieldGroup>
             </form>
             <p className="mt-4 text-xs leading-relaxed text-gray-600">
               Browse first. Add your delivery address and review the total at
@@ -122,21 +99,21 @@ export default function LandingPage() {
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 550px"
-                className="object-cover transition-transform duration-700 hover:scale-[1.025]"
+                className="food-photo object-cover"
               />
             </div>
 
           </div>
         </section>
         <section
-          className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16"
+          className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12"
           aria-labelledby="cravings-heading"
         >
           <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2
                 id="cravings-heading"
-                className="text-3xl tracking-tight sm:text-4xl"
+                className="text-2xl tracking-tight sm:text-3xl"
               >
                 What are you hungry for?
               </h2>
@@ -152,33 +129,17 @@ export default function LandingPage() {
               <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-3 gap-x-3 gap-y-2 sm:grid-cols-6">
             {CRAVINGS.map((category) => {
               const Icon = getCuisineIcon(category.tag);
               return (
                 <Link
                   key={category.tag}
                   href={`/restaurants?tag=${category.tag}`}
-                  className="premium-card group flex flex-col items-start gap-3 rounded-2xl p-4 sm:flex-row sm:items-center active:scale-[0.985]"
+                  className="cuisine-tile ui-press"
                 >
-                  <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#fff0e4]">
-                    <Icon
-                      className="size-11"
-                      aria-hidden="true"
-                    />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-body text-base font-semibold text-[#311b12]">
-                      {category.name}
-                    </h3>
-                    <p className="mt-1 hidden text-xs leading-relaxed text-gray-600 sm:block">
-                      {category.note}
-                    </p>
-                  </div>
-                  <ArrowRight
-                    className="hidden size-4 shrink-0 text-gray-500 transition-transform duration-200 sm:block"
-                    aria-hidden="true"
-                  />
+                  <span className="cuisine-tile-icon"><Icon aria-hidden="true" /></span>
+                  <span>{category.name}</span>
                 </Link>
               );
             })}
@@ -203,7 +164,7 @@ export default function LandingPage() {
                 },
                 {
                   icon: Bike,
-                  title: "Make room at the table",
+                  title: "Receive your meal",
                   text: "Your restaurant prepares your meal and sends its rider to your delivery address.",
                 },
               ].map((step, index) => (
@@ -228,25 +189,7 @@ export default function LandingPage() {
             </ol>
           </div>
         </section>
-        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-          <div className="flex flex-col items-start justify-between gap-6 rounded-3xl bg-[#311b12] p-7 text-white sm:flex-row sm:items-center sm:p-10">
-            <div>
-              <h2 className="text-3xl leading-tight sm:text-4xl">
-                Your next favourite is nearby.
-              </h2>
-              <p className="mt-3 text-sm text-[#e6cdc0]">
-                Explore Aba and Umuahia, one kitchen at a time.
-              </p>
-            </div>
-            <Link
-              href="/home"
-              className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-[#311b12]"
-            >
-              Let’s find food
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </Link>
-          </div>
-        </section>
+
       </main>
       <footer className="border-t border-[#e8e3dd] px-4 py-7 sm:px-6">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 text-sm text-gray-600">

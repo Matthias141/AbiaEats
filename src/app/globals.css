@@ -517,3 +517,13 @@
   .ui-dialog, .restaurant-card, .premium-card, .cuisine-tile-icon { border: 1px solid CanvasText; }
   :focus-visible { outline: 2px solid Highlight; }
 }
+
+@layer components {
+  .ui-native-select { min-height: 3rem; width: 100%; border: 1px solid hsl(var(--input)); border-radius: .875rem; background: white; color: var(--foreground); padding: .625rem .875rem; font-size: 1rem; }
+  .nav-item-active { background: hsl(var(--accent)); box-shadow: none; }
+  .restaurant-card-image { transition: opacity 150ms ease-out; }
+  .restaurant-card { transition: opacity 150ms ease-out; }
+  .restaurant-card:hover, .restaurant-card:hover .restaurant-card-image { transform: none; }
+}
+
+@layer components { .cart-food-row { display: grid; grid-template-columns: 4rem minmax(0,1fr); gap: .875rem; padding: 1rem; border: 1px solid transparent; border-radius: 1.25rem; background: white; box-shadow: var(--shadow-sm); } }

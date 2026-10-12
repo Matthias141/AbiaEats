@@ -16,6 +16,8 @@ import {
 import type { RestaurantPublic, MenuItem } from "@/types/database";
 import { useCart } from "@/contexts/cart-context";
 import { formatPrice } from "@/lib/utils";
+import { Button } from "@/components/ui/primitives/button";
+import { Badge } from "@/components/ui/primitives/badge";
 import { CuisineIcon } from "@/lib/cuisine-icons";
 import { MenuItemModal } from "@/components/customer/menu-item-modal";
 import { RestaurantSwitchModal } from "@/components/customer/restaurant-switch-modal";
@@ -82,7 +84,7 @@ export function RestaurantDetail({
         const container = tabsRef.current;
         const scrollLeft =
           btn.offsetLeft - container.offsetWidth / 2 + btn.offsetWidth / 2;
-        container.scrollTo({ left: scrollLeft, behavior: "smooth" });
+        container.scrollTo({ left: scrollLeft, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       }
     }
   }, [activeCategory]);
@@ -111,7 +113,7 @@ export function RestaurantDetail({
     };
   }, [categoryNames]);
 
-  const scrollToCategory = useCallback((category: string) => {
+  const scrollToCategory = useCallback((category: string, animate = true) => {
     // Suppress observer updates during programmatic scroll
     isManualScroll.current = true;
     setActiveCategory(category);
@@ -119,7 +121,7 @@ export function RestaurantDetail({
     if (el) {
       const yOffset = -120;
       const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
+      window.scrollTo({ top: y, behavior: !animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
     }
     // Re-enable observer after scroll animation settles
     setTimeout(() => {
@@ -210,7 +212,7 @@ export function RestaurantDetail({
   const cartTotal = subtotal + deliveryFee;
 
   return (
-    <div
+    <main
       id="main-content"
       tabIndex={-1}
       className="min-h-screen liquid-surface overflow-x-hidden pb-24"
@@ -261,7 +263,7 @@ export function RestaurantDetail({
         {/* Restaurant info block */}
         <div className="relative z-10 -mt-8 px-4">
           <div className="max-w-2xl mx-auto liquid-glass rounded-2xl p-5">
-            <div className="flex items-start gap-4">
+            <div className="flex flex-wrap items-start gap-4">
               {/* Logo */}
               <div className="relative w-14 h-14 rounded-xl liquid-chip overflow-hidden flex-shrink-0 flex items-center justify-center">
                 {restaurant.image_url ? (
@@ -273,31 +275,31 @@ export function RestaurantDetail({
                     className="object-cover"
                   />
                 ) : (
-                  <span className="text-xl font-bold text-brand-orange">
+                  <span className="text-xl font-bold text-primary">
                     {restaurant.name.charAt(0)}
                   </span>
                 )}
               </div>
 
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                  <h1 className="text-xl font-bold text-gray-900">
+              <div className="flex-1 basis-48 min-w-0">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h1 className="min-w-0 break-words text-xl font-bold text-foreground">
                     {restaurant.name}
                   </h1>
                   {/* Open/Closed badge */}
                   {restaurant.is_open ? (
-                    <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600 text-xs font-medium">
+                    <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-800 text-xs font-medium">
                       <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
                       Open
                     </span>
                   ) : (
-                    <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-500 text-xs font-medium">
+                    <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-800 text-xs font-medium">
                       Closed
                     </span>
                   )}
                 </div>
                 {restaurant.description && (
-                  <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">
+                  <p className="mt-1 break-words text-sm leading-relaxed text-muted-foreground">
                     {restaurant.description}
                   </p>
                 )}
@@ -310,7 +312,7 @@ export function RestaurantDetail({
                       <span className="font-semibold text-gray-900">
                         {restaurant.average_rating.toFixed(1)}
                       </span>
-                      <span className="text-gray-400">
+                      <span className="text-muted-foreground">
                         ({restaurant.rating_count})
                       </span>
                     </span>
@@ -332,7 +334,7 @@ export function RestaurantDetail({
                     {restaurant.cuisine_tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-0.5 rounded-full liquid-chip text-brand-orange text-xs font-medium"
+                        className="px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-xs font-medium"
                       >
                         {tag}
                       </span>
@@ -359,14 +361,14 @@ export function RestaurantDetail({
                   if (el) tabButtonRefs.current.set(category, el);
                 }}
                 aria-pressed={activeCategory === category}
-                onClick={() => scrollToCategory(category)}
+                onClick={event => scrollToCategory(category, event.detail !== 0)}
                 className={`
                   flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors
                   border-b-2 min-h-[44px]
                   ${
                     activeCategory === category
-                      ? "text-brand-orange border-brand-orange"
-                      : "text-gray-400 border-transparent hover:text-gray-600"
+                      ? "text-primary border-primary"
+                      : "text-muted-foreground border-transparent"
                   }
                 `}
               >
@@ -393,7 +395,7 @@ export function RestaurantDetail({
               </h3>
 
               {/* 2-column grid */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-4 min-[380px]:grid-cols-2">
                 {items.map((item) => {
                   const qty = getItemQuantity(item.id);
                   return (
@@ -429,37 +431,30 @@ export function RestaurantDetail({
 
                         {/* Popular badge */}
                         {item.is_popular && (
-                          <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full gradient-orange text-white text-[10px] font-semibold shadow-md">
+                          <Badge className="absolute top-2 left-2">
                             Popular
-                          </div>
+                          </Badge>
                         )}
 
                         {/* Quantity indicator (if in cart) */}
                         {qty > 0 && (
-                          <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-brand-orange text-white text-xs font-bold flex items-center justify-center shadow-md">
+                          <div className="absolute top-2 right-2 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold tabular-nums">
                             {qty}
                           </div>
                         )}
 
                         {/* Add button overlay */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleAddItem(item);
-                          }}
-                          className="absolute bottom-2 right-2 z-20 size-11 rounded-full gradient-orange text-white flex items-center justify-center shadow-lg shadow-brand-orange/30 active:scale-[0.90] transition-transform"
-                          aria-label={`Add ${item.name} to cart`}
-                        >
-                          <Plus className="w-4 h-4" strokeWidth={3} />
-                        </button>
+                        <Button size="icon" disabled={!restaurant.is_open} onClick={event => { event.stopPropagation(); handleAddItem(item); }} className="absolute bottom-2 right-2 z-20" aria-label={`Add ${item.name} to cart`}>
+                          <Plus aria-hidden="true" />
+                        </Button>
                       </div>
 
                       {/* Text content */}
                       <div className="p-3">
-                        <h4 className="text-sm font-medium text-gray-900 leading-tight line-clamp-2 min-h-[2.5rem]">
+                        <h4 className="break-words text-base font-semibold leading-relaxed text-foreground">
                           {item.name}
                         </h4>
-                        <p className="font-mono text-sm font-semibold text-brand-orange mt-1.5">
+                        <p className="tabular-nums text-sm font-semibold text-foreground mt-1.5">
                           {formatPrice(item.price)}
                         </p>
                       </div>
@@ -485,7 +480,6 @@ export function RestaurantDetail({
             </p>
             <Link
               href="/restaurants"
-              aria-label="Back to restaurants"
               className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-gray-300 active:scale-[0.97] transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -510,7 +504,7 @@ export function RestaurantDetail({
                   </div>
                   <span>View Cart</span>
                 </div>
-                <span className="font-mono font-bold">
+                <span className="tabular-nums font-bold">
                   {formatPrice(cartTotal)}
                 </span>
               </div>
@@ -534,6 +528,6 @@ export function RestaurantDetail({
           onCancel={handleSwitchCancel}
         />
       )}
-    </div>
+    </main>
   );
 }

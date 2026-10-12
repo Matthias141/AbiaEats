@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Outfit } from "next/font/google";
+import { SkipLink } from "@/components/ui/skip-link";
 import { CartProvider } from "@/contexts/cart-context";
 import "./globals.css";
 
@@ -56,9 +57,7 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${jetBrainsMono.variable} font-body antialiased bg-light-bg text-gray-900 overflow-x-hidden`}
       >
-        <a href="#app-content" className="skip-link">
-          Skip to main content
-        </a>
+        <SkipLink />
         <CartProvider>
           <div id="app-content" tabIndex={-1}>
             {children}

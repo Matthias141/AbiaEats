@@ -1,210 +1,54 @@
-'use client';
-
-import { useCart } from '@/contexts/cart-context';
-import { formatPrice } from '@/lib/utils';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, UtensilsCrossed } from 'lucide-react';
-
-// ============================================================================
-// Cart Page — Light Theme
-// ============================================================================
+"use client";
+import { useState } from "react";
+import { useCart } from "@/contexts/cart-context";
+import { formatPrice } from "@/lib/utils";
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
+import { Button } from "@/components/ui/primitives/button";
+import { Separator } from "@/components/ui/primitives/separator";
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/primitives/empty";
+import { Modal } from "@/components/ui/modal";
+import { CuisineIcon } from "@/lib/cuisine-icons";
 
 export default function CartPage() {
-  const {
-    items,
-    restaurantName,
-    deliveryFee,
-    subtotal,
-    total,
-    itemCount,
-    removeItem,
-    updateQuantity,
-    clearCart,
-  } = useCart();
-
-  const isEmpty = items.length === 0;
-
-  return (
-    <div className="min-h-screen liquid-surface overflow-x-hidden">
-      <div className="max-w-lg mx-auto pb-24">
-        {/* ================================================================
-            Header
-            ================================================================ */}
-        <header className="liquid-glass-nav px-4 flex items-center gap-3 pt-6 pb-4 rounded-b-[2rem] border-t-0 border-x-0">
-          <Link
-            href="/home"
-            className="flex items-center justify-center w-10 h-10 rounded-xl liquid-chip active:scale-95 transition-transform min-h-[44px] min-w-[44px]"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-700" />
-          </Link>
-          <h1 className="text-xl font-semibold text-gray-900">
-            Cart
-          </h1>
-          {!isEmpty && (
-            <span className="ml-auto text-sm text-gray-400">
-              {itemCount} {itemCount === 1 ? 'item' : 'items'}
-            </span>
-          )}
-        </header>
-
-        {/* ================================================================
-            Empty State
-            ================================================================ */}
-        {isEmpty && (
-          <div className="text-center py-24 px-4">
-            <div className="w-20 h-20 rounded-full liquid-chip flex items-center justify-center mx-auto mb-4">
-              <ShoppingBag className="w-10 h-10 text-gray-300" />
+  const { isHydrated, items, restaurantName, deliveryFee, subtotal, total, itemCount, updateQuantity, clearCart } = useCart();
+  const [confirmClear, setConfirmClear] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
+  const removedItem = items.find(item => item.menu_item_id === confirmRemove);
+  return <main id="main-content" className="min-h-screen bg-light-bg pb-28">
+    <header className="eats-topbar"><div className="mx-auto flex max-w-2xl items-center gap-4 px-4 py-4 sm:px-6">
+      <Button asChild variant="outline" size="icon"><Link href="/restaurants" aria-label="Back to restaurants"><ArrowLeft aria-hidden="true" /></Link></Button>
+      <h1 className="text-xl font-semibold">Cart</h1><span className="ml-auto text-sm text-muted-foreground tabular-nums">{itemCount} {itemCount === 1 ? "item" : "items"}</span>
+    </div></header>
+    <div className="mx-auto max-w-2xl px-4 pt-6 sm:px-6">
+      {!isHydrated ? <p role="status" className="text-muted-foreground">Loading your cart…</p> : items.length === 0 ? <Empty><EmptyHeader><EmptyMedia variant="icon"><ShoppingBag aria-hidden="true" /></EmptyMedia><EmptyTitle><h2>Your cart is empty</h2></EmptyTitle><EmptyDescription>Choose a restaurant and add a meal to get started.</EmptyDescription></EmptyHeader><EmptyContent><Button asChild><Link href="/restaurants">Browse restaurants</Link></Button></EmptyContent></Empty> : <>
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-muted-foreground">Ordering from <span className="font-semibold text-foreground">{restaurantName}</span></p><Button variant="outline" size="sm" onClick={() => setConfirmClear(true)}><Trash2 data-icon="inline-start" aria-hidden="true" />Clear cart</Button></div>
+        <div className="flex flex-col gap-4">
+          {items.map(item => <article key={item.menu_item_id} className="cart-food-row">
+            <div className="relative size-16 overflow-hidden rounded-xl bg-muted">
+              {item.image_url ? <Image src={item.image_url} alt="" fill sizes="64px" className="food-photo object-cover" /> : <CuisineIcon className="size-16" />}
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Your cart is empty
-            </h2>
-            <p className="text-gray-500 text-sm max-w-[260px] mx-auto mb-6">
-              Browse restaurants and add items to get started.
-            </p>
-            <Link
-              href="/home"
-              className="inline-flex items-center justify-center px-6 py-3 gradient-orange text-white text-sm font-semibold rounded-xl active:scale-95 transition-transform min-h-[44px]"
-            >
-              Browse Restaurants
-            </Link>
-          </div>
-        )}
-
-        {/* ================================================================
-            Cart Items
-            ================================================================ */}
-        {!isEmpty && (
-          <div className="px-4 pt-4">
-            {/* Restaurant name banner */}
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-gray-500">
-                Ordering from{' '}
-                <span className="font-semibold text-gray-900">
-                  {restaurantName}
-                </span>
-              </p>
-              <button
-                onClick={clearCart}
-                className="text-xs text-red-500 font-medium active:scale-95 transition-transform min-h-[44px] flex items-center"
-              >
-                Clear all
-              </button>
+            <div className="min-w-0"><h2 className="break-words text-base font-semibold leading-relaxed">{item.name}</h2><p className="mt-1 text-sm text-muted-foreground tabular-nums">{formatPrice(item.price)} each</p></div>
+            <div className="col-span-2 flex flex-wrap items-center justify-end gap-3">
+              <Button variant="outline" size="icon" aria-label={`Decrease ${item.name} quantity`} disabled={item.quantity <= 1} onClick={() => updateQuantity(item.menu_item_id, item.quantity - 1)}><Minus aria-hidden="true" /></Button>
+              <span className="w-6 text-center font-semibold tabular-nums" aria-live="polite">{item.quantity}</span>
+              <Button variant="outline" size="icon" aria-label={`Increase ${item.name} quantity`} disabled={item.quantity >= 20} onClick={() => updateQuantity(item.menu_item_id, item.quantity + 1)}><Plus aria-hidden="true" /></Button>
+              <Button variant="ghost" size="icon" aria-label={`Remove ${item.name}`} onClick={() => setConfirmRemove(item.menu_item_id)}><Trash2 aria-hidden="true" /></Button>
             </div>
-
-            {/* Item list */}
-            <div className="space-y-3 mb-6">
-              {items.map((item) => (
-                <div
-                  key={item.menu_item_id}
-                  className="flex items-center gap-3 liquid-glass rounded-2xl p-3"
-                >
-                  {/* Item image */}
-                  <div className="relative w-16 h-16 rounded-xl bg-gray-50 flex-shrink-0 flex items-center justify-center overflow-hidden">
-                    {item.image_url ? (
-                      <Image
-                        src={item.image_url}
-                        alt={item.name}
-                        fill
-                        sizes="64px"
-                        className="object-cover"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <UtensilsCrossed className="w-6 h-6 text-brand-orange/50" strokeWidth={1.5} aria-hidden="true" />
-                    )}
-                  </div>
-
-                  {/* Item details */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-sm text-gray-900 truncate">
-                      {item.name}
-                    </h3>
-                    <p className="text-brand-orange font-mono text-sm font-semibold mt-0.5">
-                      {formatPrice(item.price)}
-                    </p>
-                  </div>
-
-                  {/* Quantity controls */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <button
-                      onClick={() => updateQuantity(item.menu_item_id, item.quantity - 1)}
-                      className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-600 active:scale-90 transition-transform min-h-[44px] min-w-[44px] -m-2 p-2"
-                      aria-label={`Decrease ${item.name} quantity`}
-                    >
-                      <Minus className="w-4 h-4" />
-                    </button>
-
-                    <span className="w-6 text-center text-sm font-semibold text-gray-900 font-mono">
-                      {item.quantity}
-                    </span>
-
-                    <button
-                      onClick={() => updateQuantity(item.menu_item_id, item.quantity + 1)}
-                      disabled={item.quantity >= 20}
-                      className="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-50 text-brand-orange active:scale-90 transition-transform disabled:opacity-30 min-h-[44px] min-w-[44px] -m-2 p-2"
-                      aria-label={`Increase ${item.name} quantity`}
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
-
-                    <button
-                      onClick={() => removeItem(item.menu_item_id)}
-                      className="flex items-center justify-center w-8 h-8 rounded-lg text-red-400 hover:text-red-500 active:scale-90 transition-all ml-1 min-h-[44px] min-w-[44px] -m-2 p-2"
-                      aria-label={`Remove ${item.name}`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* ================================================================
-                Order Summary
-                ================================================================ */}
-            <div className="liquid-glass rounded-2xl p-4 mb-6 space-y-3">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">
-                Order Summary
-              </h3>
-
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Subtotal</span>
-                <span className="text-gray-900 font-mono">
-                  {formatPrice(subtotal)}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Delivery fee</span>
-                <span className="text-gray-900 font-mono">
-                  {deliveryFee > 0 ? formatPrice(deliveryFee) : 'Free'}
-                </span>
-              </div>
-
-              <div className="border-t border-gray-100 my-2" />
-
-              <div className="flex items-center justify-between">
-                <span className="text-gray-900 font-semibold">Total</span>
-                <span className="text-gray-900 font-mono font-bold text-lg">
-                  {formatPrice(total)}
-                </span>
-              </div>
-            </div>
-
-            {/* ================================================================
-                Checkout Button
-                ================================================================ */}
-            <Link
-              href="/checkout"
-              className="flex items-center justify-center w-full py-4 gradient-orange text-white font-semibold rounded-2xl active:scale-[0.98] transition-transform text-base min-h-[44px] shadow-lg shadow-brand-orange/25"
-            >
-              Proceed to Checkout
-            </Link>
-          </div>
-        )}
-      </div>
+          </article>)}
+        </div>
+        <section aria-labelledby="summary-heading" className="mt-8 flex flex-col gap-4">
+          <h2 id="summary-heading" className="text-lg font-semibold">Order summary</h2>
+          <dl className="flex flex-col gap-3"><div className="flex justify-between gap-4"><dt className="text-muted-foreground">Subtotal</dt><dd className="tabular-nums">{formatPrice(subtotal)}</dd></div><div className="flex justify-between gap-4"><dt className="text-muted-foreground">Delivery fee</dt><dd className="tabular-nums">{deliveryFee > 0 ? formatPrice(deliveryFee) : "Free"}</dd></div></dl>
+          <Separator /><div className="flex justify-between gap-4 text-lg font-semibold"><span>Total</span><span className="tabular-nums">{formatPrice(total)}</span></div>
+          <Button asChild size="lg"><Link href="/checkout">Continue to checkout</Link></Button>
+        </section>
+      </>}
     </div>
-  );
+    <Modal isOpen={confirmClear || Boolean(removedItem)} onClose={() => { setConfirmClear(false); setConfirmRemove(null); }} title={removedItem ? `Remove ${removedItem.name}?` : "Clear your cart?"}>
+      <p className="text-muted-foreground">{removedItem ? `This removes ${removedItem.quantity} ${removedItem.quantity === 1 ? "portion" : "portions"} from your cart.` : `This removes all ${itemCount} ${itemCount === 1 ? "item" : "items"} from your cart.`} You can add them again from the restaurant menu.</p>
+      <div className="flex flex-col gap-3 sm:flex-row"><Button variant="outline" onClick={() => { setConfirmClear(false); setConfirmRemove(null); }}>Keep cart</Button><Button variant="destructive" onClick={() => { if (removedItem) updateQuantity(removedItem.menu_item_id, 0); else clearCart(); setConfirmClear(false); setConfirmRemove(null); }}>{removedItem ? "Remove item" : "Clear cart"}</Button></div>
+    </Modal>
+  </main>;
 }

@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Clock, MapPin, Star } from "lucide-react";
+import { Badge } from "@/components/ui/primitives/badge";
+import { Skeleton } from "@/components/ui/primitives/skeleton";
 import { CuisineIcon } from "@/lib/cuisine-icons";
 import { formatCityName } from "@/lib/discovery";
 import { formatPrice } from "@/lib/utils";
@@ -34,15 +36,13 @@ export function RestaurantCard({
             />
           </div>
         )}
-        <span
-          className={`liquid-chip absolute left-3 top-3 rounded-full px-3 py-1.5 text-xs font-medium ${restaurant.is_open ? "text-green-800" : "!border-gray-800 !bg-gray-900 text-white"}`}
-        >
+        <Badge variant={restaurant.is_open ? "secondary" : "outline"} className="absolute left-3 top-3">
           {restaurant.is_open ? "Open now" : "Currently closed"}
-        </span>
+        </Badge>
       </div>
       <div className="p-4 sm:p-5">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-body text-lg font-semibold leading-tight tracking-tight text-gray-900">
+          <h3 className="font-body text-lg font-semibold leading-snug tracking-tight text-foreground">
             {restaurant.name}
           </h3>
           {restaurant.rating_count > 0 && (
@@ -61,15 +61,13 @@ export function RestaurantCard({
         <p className="mt-2 text-sm text-gray-600">
           {restaurant.cuisine_tags.slice(0, 3).join(" · ")}
         </p>
-        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-gray-100 pt-3 text-xs text-gray-600">
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-gray-100 pt-3 text-sm text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <Clock className="size-3.5" aria-hidden="true" />
             {restaurant.min_delivery_time}–{restaurant.max_delivery_time} min
           </span>
           <span
-            className={
-              restaurant.delivery_fee === 0 ? "font-medium text-green-800" : ""
-            }
+            className="tabular-nums"
           >
             {restaurant.delivery_fee === 0
               ? "Free delivery"
@@ -87,12 +85,12 @@ export function RestaurantCard({
 
 export function RestaurantCardSkeleton() {
   return (
-    <div className="restaurant-card animate-pulse" aria-hidden="true">
-      <div className="aspect-[16/10] bg-gray-200" />
+    <div className="restaurant-card" aria-hidden="true">
+      <Skeleton className="aspect-[16/10]" />
       <div className="flex flex-col gap-3 p-5">
-        <div className="h-5 w-3/4 rounded bg-gray-200" />
-        <div className="h-4 w-1/2 rounded bg-gray-100" />
-        <div className="mt-2 h-4 w-full rounded bg-gray-100" />
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
+        <Skeleton className="mt-2 h-4 w-full" />
       </div>
     </div>
   );

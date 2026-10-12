@@ -2,6 +2,7 @@
 
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
+import { Button } from "@/components/ui/primitives/button";
 import { Modal } from "@/components/ui/modal";
 
 interface RestaurantSwitchModalProps {
@@ -43,19 +44,9 @@ export function RestaurantSwitchModal({
           will clear your current cart.
         </p>
       </div>
-      <div className="flex gap-3">
-        <button
-          onClick={onCancel}
-          className="flex-1 min-h-[52px] rounded-xl bg-gray-50 border border-gray-200 text-gray-700 font-medium active:scale-[0.97] transition-all"
-        >
-          Keep Cart
-        </button>
-        <button
-          onClick={handleConfirm}
-          className="flex-1 min-h-[52px] rounded-xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/25 active:scale-[0.97] transition-all"
-        >
-          Clear & Add
-        </button>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Button variant="outline" onClick={onCancel} className="flex-1">Keep cart</Button>
+        <Button variant="destructive" onClick={handleConfirm} className="flex-1">Clear cart and add</Button>
       </div>
     </Modal>
   );

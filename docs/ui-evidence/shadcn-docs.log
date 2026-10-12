@@ -1,0 +1,39 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+button
+  - docs      http://127.0.0.1:4107/docs/components/radix/button
+  - examples  http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/examples/button-example.tsx
+
+dialog
+  - docs      http://127.0.0.1:4107/docs/components/radix/dialog
+  - examples  http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/examples/dialog-example.tsx
+  - api       https://www.radix-ui.com/docs/primitives/components/dialog.md
+
+input
+  - docs      http://127.0.0.1:4107/docs/components/radix/input
+  - examples  http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/examples/input-example.tsx
+
+field
+  - docs      http://127.0.0.1:4107/docs/components/radix/field
+  - examples  http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/examples/field-example.tsx
+
+input-group
+  - docs      http://127.0.0.1:4107/docs/components/radix/input-group
+  - examples  http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/examples/input-group-example.tsx
+
+toggle-group
+  - docs      http://127.0.0.1:4107/docs/components/radix/toggle-group
+  - examples  http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/examples/toggle-group-example.tsx
+  - api       https://www.radix-ui.com/docs/primitives/components/toggle-group.md
+
+skeleton
+  - docs      http://127.0.0.1:4107/docs/components/radix/skeleton
+  - examples  http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/examples/skeleton-example.tsx
+
+badge
+  - docs      http://127.0.0.1:4107/docs/components/radix/badge
+  - examples  http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/examples/badge-example.tsx
+
+empty
+  - docs      http://127.0.0.1:4107/docs/components/radix/empty
+  - examples  http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/examples/empty-example.tsx
+

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, type ReactNode } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/primitives/dialog";
-import { cn } from "@/lib/utils";
 
 interface ModalProps {
   isOpen: boolean; onClose: () => void; title?: string; children: ReactNode;
@@ -17,7 +16,7 @@ export function Modal({ isOpen, onClose, title = "Details", children, className,
     return () => { document.body.style.overflow = previousOverflow; };
   }, [isOpen]);
   return <Dialog open={isOpen} onOpenChange={open => { if (!open) onClose(); }}>
-    <DialogContent aria-describedby={undefined} className={cn(variant === "bottom-sheet" && "ui-dialog-sheet", className)}
+    <DialogContent aria-describedby={undefined} presentation={variant === "bottom-sheet" ? "sheet" : "dialog"} className={className}
       onOpenAutoFocus={() => { triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; }}
       onCloseAutoFocus={event => { event.preventDefault(); if (triggerRef.current?.isConnected) triggerRef.current.focus(); }}>
       <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
