@@ -1,0 +1,9 @@
+# Abia Eats UI skill implementation
+
+Scope: the public landing → home/discovery → restaurant/menu → cart handoff, including loading, error, empty, focus, zoom and reduced-motion states. Payments, account permissions, menu upload APIs, and vendor/admin dashboard flows are excluded. Shared primitive changes can affect those dashboards; do not imply full dashboard review.
+
+Requested skills and their upstream commits are recorded in `ui-skill-sources.json`. The ten instruction sources, Design Review checklist, shadcn composition/form/styling rules, and all six Better Interface domain skills were loaded. Adapt's current upstream combines its commands under Impeccable; its web adaptation reference owns that part of this pass.
+
+Design direction: keep the Abia Eats orange identity and original cuisine illustrations. Use a neutral light canvas, food-led imagery, smaller browsing chrome, and stronger information hierarchy. Native sans-serif text serves frequent app tasks; Outfit carries the wordmark and landing display. Glass belongs on floating navigation and overlays, with opaque food content underneath. Exact Beautiful Shadows small/medium/large recipes define elevation. Quantity, selected-filter and cart changes leave a static cue; press motion is brief and opt-in.
+
+Checkpoint: 14 official shadcn registry files are installed through shadcn CLI 4.21.4, using its checked-out official Tailwind 3 new-york registry served locally because the public registry was unreachable. Shared Button/Input/Modal compatibility adapters now consume the installed primitives. Discovery uses InputGroup, Field, ToggleGroup and Empty. Exact shadow recipes, focus tokens and reduced-motion press feedback are implemented. TypeScript and ESLint pass; all 238 tests in 11 files pass; the production build passes with 44 routes. Browser evidence is not yet complete; no visual approval is claimed.

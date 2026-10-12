@@ -4,35 +4,44 @@
 
 @layer base {
   :root {
-    --background: #faf7f3;
+    --background: #f8f8f6;
     --foreground: #1c1917;
     --font-fallback: system-ui, sans-serif;
-    --shadow-sm:
-      0 1px 2px rgba(49, 27, 18, 0.05),
-      0 5px 14px -6px rgba(49, 27, 18, 0.14),
-      0 0 0 1px rgba(49, 27, 18, 0.06);
-    --shadow-md:
-      0 1px 2px rgba(49, 27, 18, 0.04),
-      0 8px 18px -8px rgba(49, 27, 18, 0.16),
-      0 20px 42px -22px rgba(49, 27, 18, 0.22),
-      0 0 0 1px rgba(49, 27, 18, 0.06);
-    --shadow-lg:
-      0 2px 4px rgba(49, 27, 18, 0.05),
-      0 16px 32px -14px rgba(49, 27, 18, 0.22),
-      0 36px 70px -32px rgba(49, 27, 18, 0.28),
-      0 0 0 1px rgba(49, 27, 18, 0.06);
-    --shadow-orange:
-      0 10px 24px -10px rgba(201, 78, 16, 0.5),
-      0 2px 6px rgba(126, 45, 10, 0.16);
+    --primary: 20 89% 37%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 9% 94%;
+    --secondary-foreground: 30 5% 12%;
+    --muted: 40 9% 94%;
+    --muted-foreground: 30 4% 36%;
+    --accent: 24 100% 95%;
+    --accent-foreground: 20 89% 30%;
+    --destructive: 0 72% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 6% 84%;
+    --input: 30 4% 50%;
+    --ring: 20 89% 30%;
+    --radius: 0.875rem;
+    --ease-ui: cubic-bezier(0.23, 1, 0.32, 1);
+    --shadow-sm: 0px 2px 3px -1px rgba(0,0,0,0.1), 0px 1px 0px 0px rgba(25,28,33,0.02), 0px 0px 0px 1px rgba(25,28,33,0.08);
+    --shadow-md: 0px 0px 0px 1px rgba(0,0,0,0.06), 0px 1px 1px -0.5px rgba(0,0,0,0.06), 0px 3px 3px -1.5px rgba(0,0,0,0.06), 0px 6px 6px -3px rgba(0,0,0,0.06), 0px 12px 12px -6px rgba(0,0,0,0.06), 0px 24px 24px -12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 2.8px 2.2px rgba(0,0,0,0.034), 0 6.7px 5.3px rgba(0,0,0,0.048), 0 12.5px 10px rgba(0,0,0,0.06), 0 22.3px 17.9px rgba(0,0,0,0.072), 0 41.8px 33.4px rgba(0,0,0,0.086), 0 100px 80px rgba(0,0,0,0.12);
+    --shadow-orange: var(--shadow-sm);
   }
   .dark {
     --background: #0c0a09;
     --foreground: #faf7f3;
+    --primary: 24 95% 72%; --primary-foreground: 24 60% 12%;
+    --secondary: 30 6% 20%; --secondary-foreground: 40 9% 96%;
+    --muted: 30 6% 20%; --muted-foreground: 40 6% 74%;
+    --accent: 24 20% 20%; --accent-foreground: 24 95% 80%;
+    --destructive: 0 72% 40%; --destructive-foreground: 0 0% 100%;
+    --border: 30 6% 30%; --input: 40 6% 60%; --ring: 24 95% 72%;
   }
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+    scroll-padding-block: 6rem;
   }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -140,7 +149,7 @@
     justify-content: center;
   }
   .gradient-orange {
-    background: linear-gradient(135deg, #e85b18 0%, #b4430b 100%);
+    background: hsl(var(--primary));
   }
   .text-gradient-orange {
     color: #c94e10;
@@ -203,7 +212,7 @@
     padding: 0.75rem 1.4rem;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, #e85b18 0%, #b4430b 100%);
+    background: hsl(var(--primary));
     box-shadow: var(--shadow-orange), inset 0 1px 0 rgba(255, 255, 255, 0.22);
     border-radius: 999px;
     color: #fff;
@@ -348,7 +357,7 @@
     }
     .eats-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 14px 30px -12px rgba(201, 78, 16, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+      box-shadow: var(--shadow-sm);
     }
     .eats-filter:not(.eats-filter-active):hover {
       background: #f6eee6;
@@ -467,4 +476,44 @@
   .glass-card {
     background: #fff;
   }
+}
+
+/* Installed shadcn controls, themed for Abia Eats. */
+@layer components {
+  .beautiful-sm { @apply shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]; }
+  .beautiful-md { @apply shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_1px_-0.5px_rgba(0,0,0,0.06),0px_3px_3px_-1.5px_rgba(0,0,0,0.06),_0px_6px_6px_-3px_rgba(0,0,0,0.06),0px_12px_12px_-6px_rgba(0,0,0,0.06),0px_24px_24px_-12px_rgba(0,0,0,0.06)]; }
+  .beautiful-lg { @apply shadow-[0_2.8px_2.2px_rgba(0,_0,_0,_0.034),_0_6.7px_5.3px_rgba(0,_0,_0,_0.048),_0_12.5px_10px_rgba(0,_0,_0,_0.06),_0_22.3px_17.9px_rgba(0,_0,_0,_0.072),_0_41.8px_33.4px_rgba(0,_0,_0,_0.086),_0_100px_80px_rgba(0,_0,_0,_0.12)]; }
+  .ui-dialog { border: 1px solid transparent; background: rgba(255,255,255,.97); backdrop-filter: blur(20px); box-shadow: var(--shadow-lg); max-height: 85dvh; overflow-y: auto; overscroll-behavior: contain; }
+  .ui-dialog-sheet { inset-block-start: auto; inset-block-end: 0; transform: translate(-50%,0); border-radius: 1.5rem 1.5rem 0 0; padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+  .ui-press { transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+  .eats-button { background: hsl(var(--primary)); box-shadow: var(--shadow-sm); }
+  .premium-card { background: white; border: 1px solid transparent; box-shadow: var(--shadow-sm); }
+  .restaurant-card { background: white; border: 1px solid transparent; box-shadow: var(--shadow-md); }
+  .premium-image-frame { box-shadow: var(--shadow-lg); }
+  .restaurant-card h3 { line-height: 1.4; }
+  .restaurant-card-image, .food-photo { outline: 1px solid rgba(0,0,0,.1); outline-offset: -1px; }
+  .cuisine-tile { display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: .75rem .25rem; text-align: center; font-weight: 600; font-size: .875rem; line-height: 1.4; }
+  .cuisine-tile-icon { display: grid; place-items: center; width: 4.5rem; height: 4.5rem; border: 1px solid transparent; border-radius: 50%; background: hsl(var(--accent)); }
+  .cuisine-tile-icon svg { width: 3.5rem; height: 3.5rem; }
+  .food-category-artwork { width: 1.5rem !important; height: 1.5rem !important; }
+  .ui-dialog-close { display: flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; border-radius: 50%; background: hsl(var(--secondary)); }
+  @media (min-width: 640px) { .ui-dialog-sheet { inset-block-start: 50%; inset-block-end: auto; transform: translate(-50%,-50%); border-radius: 1.5rem; } }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ui-press { transition: transform 150ms ease-out, background-color 150ms ease-out, opacity 150ms ease-out; }
+  .ui-press:not(:disabled):active { transform: scale(.96); }
+}
+@media (hover: hover) and (pointer: fine) {
+  .ui-press:hover { filter: brightness(.96); }
+  .cuisine-tile:hover .cuisine-tile-icon { box-shadow: var(--shadow-sm); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui-press:active, .eats-button:active, .premium-card:active, .premium-icon-button:active, .restaurant-card:hover, .restaurant-card-image { transform: none !important; }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .ui-dialog { background: white; backdrop-filter: none; border-color: hsl(var(--input)); }
+}
+@media (forced-colors: active) {
+  .ui-dialog, .restaurant-card, .premium-card, .cuisine-tile-icon { border: 1px solid CanvasText; }
+  :focus-visible { outline: 2px solid Highlight; }
 }

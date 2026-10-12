@@ -1,0 +1,62 @@
+[
+  {
+    "name": "beautiful-shadows",
+    "repository": "https://github.com/MengTo/Skills.git",
+    "commit": "83a47fee32f0b6349bff1fede99257a5ef03dc93",
+    "source_path": "agent-skills/web-design/beautiful-shadows/SKILL.md"
+  },
+  {
+    "name": "accessibility",
+    "repository": "https://github.com/addyosmani/web-quality-skills.git",
+    "commit": "afa8da942115f2961fdbfa80807ea0b232ff6c00",
+    "source_path": "skills/accessibility/SKILL.md"
+  },
+  {
+    "name": "design-review",
+    "repository": "https://github.com/Superfuture/design-review.git",
+    "commit": "d4d2609b53fccb475d11490e2c6261e5eb2f0c5d",
+    "source_path": "design-review/skills/design-review/SKILL.md"
+  },
+  {
+    "name": "emil-design-eng",
+    "repository": "https://github.com/emilkowalski/skills.git",
+    "commit": "2d228630ba1446365f614a108cb8252f1feda202",
+    "source_path": "skills/emil-design-eng/SKILL.md"
+  },
+  {
+    "name": "shadcn",
+    "repository": "https://github.com/shadcn-ui/ui.git",
+    "commit": "993eb2c3151997ce08a49635c10fd8c8ef3713c7",
+    "source_path": "skills/shadcn/SKILL.md"
+  },
+  {
+    "name": "adapt",
+    "repository": "https://github.com/pbakaus/impeccable.git",
+    "commit": "c63b8dd7dd5a5f3c32eaabe1af76d0694f863ed2",
+    "source_path": "plugin/skills/impeccable/reference/adapt.md"
+  },
+  {
+    "name": "better-interface",
+    "repository": "https://github.com/jakubkrehel/skills.git",
+    "commit": "c0588bb6d654eb725046f0bf9deec338c34891ab",
+    "source_path": "skills/better-interface/SKILL.md"
+  },
+  {
+    "name": "interaction-design",
+    "repository": "https://github.com/wshobson/agents.git",
+    "commit": "46891e7e60da0e52baf1050b7b6391b64e84c6d9",
+    "source_path": "plugins/ui-design/skills/interaction-design/SKILL.md"
+  },
+  {
+    "name": "frontend-design",
+    "repository": "https://github.com/anthropics/skills.git",
+    "commit": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+    "source_path": "skills/frontend-design/SKILL.md"
+  },
+  {
+    "name": "apple-design",
+    "repository": "https://github.com/emilkowalski/skills.git",
+    "commit": "2d228630ba1446365f614a108cb8252f1feda202",
+    "source_path": "skills/apple-design/SKILL.md"
+  }
+]

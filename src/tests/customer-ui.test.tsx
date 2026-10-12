@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,16 +7,6 @@ import { Modal } from "@/components/ui/modal";
 import { RestaurantList } from "@/components/customer/restaurant-list";
 import { MOCK_RESTAURANTS } from "@/lib/mock-data";
 
-beforeEach(() => {
-  // jsdom does not implement the browser's dialog focus/inert behavior.
-  // These stubs test lifecycle and callbacks only; browser QA is still required.
-  HTMLDialogElement.prototype.showModal = function () {
-    this.setAttribute("open", "");
-  };
-  HTMLDialogElement.prototype.close = function () {
-    this.removeAttribute("open");
-  };
-});
 afterEach(() => {
   cleanup();
   document.body.style.overflow = "";
@@ -66,10 +56,7 @@ describe("Shared accessible controls", () => {
     );
     const dialog = screen.getByRole("dialog", { name: "Choose your city" });
     expect(document.body.style.overflow).toBe("hidden");
-    fireEvent(
-      dialog,
-      new Event("cancel", { bubbles: false, cancelable: true }),
-    );
+    fireEvent.keyDown(dialog, { key: "Escape", code: "Escape" });
     expect(close).toHaveBeenCalledOnce();
     unmount();
     expect(document.body.style.overflow).toBe("scroll");
@@ -86,7 +73,7 @@ describe("Restaurant discovery", () => {
     expect(
       screen.queryByRole("heading", { name: umuahiaRestaurant.name }),
     ).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "All cities" }));
+    fireEvent.click(screen.getByRole("radio", { name: "All cities" }));
     expect(
       screen.getByRole("heading", { name: umuahiaRestaurant.name }),
     ).toBeDefined();
@@ -106,8 +93,8 @@ describe("Restaurant discovery", () => {
     ).toBe("");
     expect(
       screen
-        .getByRole("button", { name: "All cities" })
-        .getAttribute("aria-pressed"),
+        .getByRole("radio", { name: "All cities" })
+        .getAttribute("aria-checked"),
     ).toBe("true");
     expect(
       screen.getByRole("heading", { name: umuahiaRestaurant.name }),
