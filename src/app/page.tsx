@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
+import { FoodBanner } from "@/components/customer/food-banner";
+import { CUISINE_PHOTOS } from "@/lib/cuisine-photography";
 import {
   ArrowRight,
   Bike,
@@ -8,7 +10,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/primitives/button";
 import { FieldGroup, Field, FieldLabel } from "@/components/ui/primitives/field";
-import { getCuisineIcon } from "@/lib/cuisine-icons";
+
 
 const CRAVINGS = [
   { name: "Jollof & rice", tag: "rice-dishes", note: "The everyday favourite" },
@@ -64,47 +66,17 @@ export default function LandingPage() {
         </nav>
       </header>
       <main id="main-content">
-        <section className="mx-auto grid max-w-6xl items-center gap-8 px-4 pb-8 pt-6 sm:px-6 sm:pb-12 sm:pt-12 lg:grid-cols-[1fr_1fr] lg:gap-12">
-          <div>
-            <h1 className="max-w-xl font-brand text-[clamp(2.125rem,5.5vw,4.25rem)] font-semibold leading-[1.1] tracking-[-.02em] text-foreground">
-              Your favourites.
-              <br />
-              Delivered in Abia.
-            </h1>
-            <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Jollof rice, pepper soup, shawarma. Choose a restaurant in
-              your city and order what you’re hungry for.
-            </p>
-            <form action="/restaurants" className="mt-6">
+        <div className="mx-auto max-w-6xl px-4 pb-2 pt-6 sm:px-6 sm:pt-8">
+          <FoodBanner headingId="landing-heading" title={<>Your favourites.<br />Delivered in Abia.</>} description="Jollof rice, pepper soup, shawarma. Choose a restaurant in your city and order what you’re hungry for.">
+            <form action="/restaurants">
               <FieldGroup className="gap-3 sm:flex-row sm:items-end">
-                <Field className="flex-1">
-                  <FieldLabel htmlFor="landing-city">Choose your city</FieldLabel>
-                  <select id="landing-city" name="city" defaultValue="aba" className="ui-native-select">
-                    <option value="aba">Aba</option><option value="umuahia">Umuahia</option>
-                  </select>
-                </Field>
+                <Field className="flex-1"><FieldLabel htmlFor="landing-city">Choose your city</FieldLabel><select id="landing-city" name="city" defaultValue="aba" className="ui-native-select"><option value="aba">Aba</option><option value="umuahia">Umuahia</option></select></Field>
                 <Button type="submit"><Search data-icon="inline-start" aria-hidden="true" />Find restaurants</Button>
               </FieldGroup>
             </form>
-            <p className="mt-4 text-xs leading-relaxed text-gray-600">
-              Browse first. Add your delivery address and review the total at
-              checkout.
-            </p>
-          </div>
-          <div className="relative">
-            <div className="premium-image-frame relative aspect-square overflow-hidden rounded-[2.5rem] bg-[#ffe5d2]">
-              <Image
-                src="/images/jollof-hero.webp"
-                alt="A bowl of Nigerian jollof rice, grilled chicken, and fried plantain"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 550px"
-                className="food-photo object-cover"
-              />
-            </div>
-
-          </div>
-        </section>
+            <p className="mt-3 text-xs leading-relaxed text-gray-600">Browse first. Review your food and delivery total at checkout.</p>
+          </FoodBanner>
+        </div>
         <section
           className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12"
           aria-labelledby="cravings-heading"
@@ -129,17 +101,17 @@ export default function LandingPage() {
               <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-x-3 gap-y-2 sm:grid-cols-6">
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
             {CRAVINGS.map((category) => {
-              const Icon = getCuisineIcon(category.tag);
+
               return (
                 <Link
                   key={category.tag}
                   href={`/restaurants?tag=${category.tag}`}
-                  className="cuisine-tile ui-press"
+                  className="ui-press overflow-hidden rounded-2xl bg-white beautiful-sm"
                 >
-                  <span className="cuisine-tile-icon"><Icon aria-hidden="true" /></span>
-                  <span>{category.name}</span>
+                  <span className="relative block aspect-[4/3] overflow-hidden"><Image src={CUISINE_PHOTOS[category.tag]} alt="" fill sizes="(min-width: 640px) 170px, 33vw" className="object-cover" /></span>
+                  <span className="block px-2 py-3 text-center text-sm font-semibold leading-snug">{category.name}</span>
                 </Link>
               );
             })}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Clock, MapPin, Star } from "lucide-react";
 import { Badge } from "@/components/ui/primitives/badge";
 import { Skeleton } from "@/components/ui/primitives/skeleton";
+import { getCuisinePhoto } from "@/lib/cuisine-photography";
 import { CuisineIcon } from "@/lib/cuisine-icons";
 import { formatCityName } from "@/lib/discovery";
 import { formatPrice } from "@/lib/utils";
@@ -13,6 +14,7 @@ export function RestaurantCard({
 }: {
   restaurant: RestaurantPublic;
 }) {
+  const inspirationPhoto = getCuisinePhoto(restaurant.cuisine_tags);
   return (
     <Link
       href={`/restaurants/${restaurant.id}`}
@@ -28,6 +30,11 @@ export function RestaurantCard({
             className="restaurant-card-image object-cover"
             loading="lazy"
           />
+        ) : inspirationPhoto ? (
+          <>
+            <Image src={inspirationPhoto} alt="" fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="restaurant-card-image object-cover" loading="lazy" />
+            <span className="absolute bottom-3 right-3 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-gray-900">Cuisine inspiration</span>
+          </>
         ) : (
           <div className="restaurant-card-image flex h-full items-center justify-center bg-[#f3ebe1]">
             <CuisineIcon

@@ -23,7 +23,7 @@ export function RestaurantList({ restaurants, activeTag, searchQuery, activeCity
         {[{ label: "All cities", value: "all-cities" }, ...CITY_OPTIONS].map(city => <ToggleGroupItem key={city.value} value={city.value}>{city.label}</ToggleGroupItem>)}
       </ToggleGroup>
     </FieldSet>
-    <FieldSet className="gap-2"><FieldLegend variant="label">What sounds good?</FieldLegend><CuisineFilters value={selectedTag} onChange={setSelectedTag} /></FieldSet>
+    <FieldSet className="gap-2"><FieldLegend variant="label">What sounds good?</FieldLegend><CuisineFilters value={selectedTag} onChange={setSelectedTag} photographic /></FieldSet>
     <p role="status" className="text-sm text-muted-foreground">{filtered.length} {filtered.length === 1 ? "restaurant" : "restaurants"}{selectedCity ? ` in ${formatCityName(selectedCity)}` : ""}</p>
     {filtered.length ? <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{filtered.map(restaurant => <RestaurantCard key={restaurant.id} restaurant={restaurant} />)}</div> :
       <Empty><EmptyHeader><EmptyMedia variant="icon"><UtensilsCrossed aria-hidden="true" /></EmptyMedia>

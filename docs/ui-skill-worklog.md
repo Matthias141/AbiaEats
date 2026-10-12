@@ -13,3 +13,5 @@ TypeScript and ESLint pass. All 241 tests in 13 files pass. Production build pas
 Screenshot disclosure was blocked by automatic approval review; the user subsequently requested screenshots remain unpublished. Code and text evidence can be published independently.
 
 Home spacing follow-up: grouped heading/search beside a larger desktop food image while retaining compact mobile imagery. Browser verification now covers 21 layouts, 19 axe audits and 18 interactions; TypeScript/lint/241 unit tests pass. See ui-review.md and ui-evidence/home-spacing-audit.json.
+
+Food imagery follow-up: shared full banner, photographic cuisine browsing, labelled inspiration fallbacks, eight new WebP assets plus the existing jollof image. TypeScript/lint/241 tests and browser verification (21 layouts, 19 axe audits, 18 interactions) pass. Vendor uploads retain priority; screenshots remain unpublished. Provenance and prompts are in food-image-provenance.json.
