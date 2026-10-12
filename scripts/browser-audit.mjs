@@ -111,6 +111,13 @@ try {
   await page.goto(`${appUrl}/home`); await page.getByRole('heading',{name:restaurants[0].name}).waitFor({timeout:10000});
   for (const width of [320,390,768,1440]) await layout(page,'home',width);
   await audit(page,'home-desktop'); await page.setViewportSize({width:390,height:844}); await audit(page,'home-mobile');
+  await page.getByRole('navigation',{name:'Customer navigation'}).getByRole('link',{name:'Explore',exact:true}).click();
+  await page.getByRole('heading',{name:'Restaurants',exact:true}).waitFor();
+  check('Guest Explore navigation reaches the listing',new URL(page.url()).pathname==='/restaurants');
+  await page.goto(`${appUrl}/explore?city=umuahia&tag=grills`);
+  await page.getByRole('heading',{name:'Restaurants',exact:true}).waitFor();
+  check('Explore alias preserves discovery filters',new URL(page.url()).pathname==='/restaurants' && new URL(page.url()).searchParams.get('city')==='umuahia' && new URL(page.url()).searchParams.get('tag')==='grills');
+  await page.goto(`${appUrl}/home`); await page.getByRole('heading',{name:restaurants[0].name}).waitFor();
   const cityTrigger = page.getByRole('button',{name:/Find food in/}); await cityTrigger.focus(); await page.keyboard.press('Enter');
   const dialog = page.getByRole('dialog',{name:'Choose your city'}); await dialog.waitFor(); await audit(page,'city-sheet');
   check('Dialog focuses inside', await dialog.evaluate(element => element.contains(document.activeElement)));
@@ -141,6 +148,13 @@ try {
   await page.setViewportSize({width:320,height:844}); await page.evaluate(()=>document.documentElement.style.fontSize='200%'); await layout(page,'menu-text-resize-200',320); await audit(page,'menu-text-resize-200'); await page.evaluate(()=>document.documentElement.style.fontSize='');
   await page.goto(`${appUrl}/restaurants/${uid(2)}`); await page.waitForLoadState('networkidle'); await audit(page,'menu-empty');
   check('Empty menu has a browsing recovery action',await page.getByRole('link',{name:'Browse other restaurants'}).isVisible());
+  await page.getByRole('navigation',{name:'Customer navigation'}).getByRole('link',{name:/^Cart/}).click();
+  await page.getByRole('heading',{name:meals[0].name,exact:true}).waitFor();
+  check('Guest Cart navigation keeps selected food',new URL(page.url()).pathname==='/cart');
+  await page.getByRole('link',{name:'Continue to checkout'}).click();
+  await page.getByRole('heading',{name:'Welcome back'}).waitFor();
+  check('Guest checkout requires sign-in and preserves destination',new URL(page.url()).pathname==='/auth/login' && new URL(page.url()).searchParams.get('redirectTo')==='/checkout');
+  check('Sign-in redirect preserves the local cart',(await page.evaluate(()=>JSON.parse(localStorage.getItem('abiaeats_cart')).items[0].quantity))===2);
   const authContext = await browser.newContext({viewport:{width:390,height:844}});
   const payload = Buffer.from(JSON.stringify({sub:uid(999),exp:Math.floor(Date.now()/1000)+3600,role:'authenticated',aud:'authenticated'})).toString('base64url');
   const token = `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')}.${payload}.fixture-signature`;
