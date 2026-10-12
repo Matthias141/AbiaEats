@@ -20,7 +20,7 @@ export function RestaurantCard({
       href={`/restaurants/${restaurant.id}`}
       className="restaurant-card group"
     >
-      <div className="relative aspect-[16/10] overflow-hidden bg-orange-50">
+      <div className="restaurant-photo relative aspect-[16/10] overflow-hidden rounded-[1.4rem] bg-orange-50">
         {restaurant.cover_image_url || restaurant.image_url ? (
           <Image
             src={restaurant.cover_image_url || restaurant.image_url || ""}
@@ -47,9 +47,9 @@ export function RestaurantCard({
           {restaurant.is_open ? "Open now" : "Currently closed"}
         </Badge>
       </div>
-      <div className="p-4 sm:p-5">
+      <div className="px-1 pb-3 pt-4">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-body text-lg font-semibold leading-snug tracking-tight text-foreground">
+          <h3 className="font-brand text-lg font-medium leading-snug tracking-tight text-foreground">
             {restaurant.name}
           </h3>
           {restaurant.rating_count > 0 && (
@@ -68,7 +68,7 @@ export function RestaurantCard({
         <p className="mt-2 text-sm text-gray-600">
           {restaurant.cuisine_tags.slice(0, 3).join(" · ")}
         </p>
-        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-gray-100 pt-3 text-sm text-muted-foreground">
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 pt-1 text-sm text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <Clock className="size-3.5" aria-hidden="true" />
             {restaurant.min_delivery_time}–{restaurant.max_delivery_time} min

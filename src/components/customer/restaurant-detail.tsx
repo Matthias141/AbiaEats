@@ -491,10 +491,10 @@ export function RestaurantDetail({
 
       {/* Floating Cart Bar */}
       {itemCount > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 liquid-glass-nav border-x-0 border-b-0 safe-bottom">
+        <div className="menu-cart-bar fixed left-0 right-0 z-40 px-4">
           <div className="max-w-2xl mx-auto">
             <Link href="/cart">
-              <div className="w-full min-h-[52px] flex items-center justify-between gap-3 px-5 py-3 rounded-2xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/25 active:scale-[0.97] transition-transform cursor-pointer">
+              <div className="w-full min-h-[52px] flex items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-gray-900 text-white font-medium beautiful-md active:scale-[0.97] transition-transform cursor-pointer">
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <ShoppingBag className="w-5 h-5" />

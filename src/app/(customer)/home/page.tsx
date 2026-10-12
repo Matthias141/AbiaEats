@@ -107,7 +107,7 @@ export default function CustomerHomePage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
           <Link
             href="/"
-            className="hidden font-brand text-2xl font-semibold tracking-tight sm:block"
+            className="font-brand text-xl font-semibold tracking-tight sm:text-2xl"
           >
             abia<span className="text-brand-orange-dark">eats</span>
             <span className="text-brand-orange">.</span>
@@ -118,11 +118,11 @@ export default function CustomerHomePage() {
             aria-haspopup="dialog"
             className="flex min-h-11 items-center gap-3 rounded-xl text-left"
           >
-            <span className="flex size-11 items-center justify-center rounded-full bg-orange-100 text-brand-orange-dark">
+            <span className="hidden size-11 items-center justify-center rounded-full bg-gray-100 text-foreground sm:flex">
               <MapPin className="size-5" aria-hidden="true" />
             </span>
             <span>
-              <span className="block text-xs text-gray-600">Find food in</span>
+              <span className="sr-only text-xs text-gray-600 sm:not-sr-only sm:block">Find food in</span>
               <span className="flex items-center gap-2 text-sm font-semibold">
                 {formatCityName(city)}, Abia
                 <ChevronDown className="size-4" aria-hidden="true" />
@@ -145,7 +145,7 @@ export default function CustomerHomePage() {
       </header>
       <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10">
         <div className="mb-6">
-          <FoodBanner headingId="home-heading" eyebrow={`Restaurants in ${formatCityName(city)}`} title="Find your next meal." description="Jollof, suya, pepper soup. Good food from local kitchens.">
+          <FoodBanner headingId="home-heading" eyebrow={`Restaurants in ${formatCityName(city)}`} title={<>Good food.<br />Close to home.</>} description="Your local favourites, ready to discover." compact>
             <div role="search"><RestaurantSearch id="home-search" value={searchQuery} onChange={setSearchQuery} /></div>
           </FoodBanner>
         </div>

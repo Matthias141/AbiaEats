@@ -20,9 +20,9 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Customer navigation"
-      className="fixed bottom-0 left-0 right-0 z-50 liquid-glass-nav border-x-0 border-b-0 safe-bottom"
+      className="customer-dock"
     >
-      <div className="max-w-lg mx-auto flex items-center justify-around px-2 h-16">
+      <div className="customer-dock-inner">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive =
             pathname === href ||
@@ -38,24 +38,21 @@ export function BottomNav() {
                 isCart && itemCount > 0 ? `Cart, ${itemCount} items` : label
               }
               className={cn(
-                "nav-item flex flex-col items-center justify-center gap-0.5 w-16 h-14 rounded-xl relative",
+                "customer-dock-item ui-press",
                 isActive
-                  ? "nav-item-active liquid-chip text-brand-orange-dark"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-white/35",
+                  ? "is-active"
+                  : "",
               )}
             >
-              <div className="relative">
+              <div className="customer-dock-icon">
                 <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
                 {isCart && itemCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full gradient-orange text-[10px] font-bold text-white px-1">
+                  <span className="absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-white text-[10px] font-bold text-gray-900 px-1">
                     {itemCount > 9 ? "9+" : itemCount}
                   </span>
                 )}
               </div>
               <span className="text-xs font-medium">{label}</span>
-              {isActive && (
-                <div className="absolute -bottom-0 w-5 h-0.5 rounded-full bg-brand-orange" />
-              )}
             </Link>
           );
         })}

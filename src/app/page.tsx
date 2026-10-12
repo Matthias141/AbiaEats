@@ -27,7 +27,7 @@ const CRAVINGS = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-light-bg">
+    <div className="min-h-screen bg-light-bg font-brand">
       <header className="eats-topbar">
         <nav
           aria-label="Main navigation"
@@ -108,10 +108,10 @@ export default function LandingPage() {
                 <Link
                   key={category.tag}
                   href={`/restaurants?tag=${category.tag}`}
-                  className="ui-press overflow-hidden rounded-2xl bg-white beautiful-sm"
+                  className="ui-press overflow-hidden rounded-2xl"
                 >
-                  <span className="relative block aspect-[4/3] overflow-hidden"><Image src={CUISINE_PHOTOS[category.tag]} alt="" fill sizes="(min-width: 640px) 170px, 33vw" className="object-cover" /></span>
-                  <span className="block px-2 py-3 text-center text-sm font-semibold leading-snug">{category.name}</span>
+                  <span className="relative block aspect-[4/3] overflow-hidden rounded-2xl"><Image src={CUISINE_PHOTOS[category.tag]} alt="" fill sizes="(min-width: 640px) 170px, 33vw" className="object-cover" /></span>
+                  <span className="block px-2 py-3 text-center text-sm font-medium leading-snug">{category.name}</span>
                 </Link>
               );
             })}
