@@ -494,7 +494,7 @@ export function RestaurantDetail({
         <div className="menu-cart-bar fixed left-0 right-0 z-40 px-4">
           <div className="max-w-2xl mx-auto">
             <Link href="/cart">
-              <div className="w-full min-h-[52px] flex items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-gray-900 text-white font-medium beautiful-md active:scale-[0.97] transition-transform cursor-pointer">
+              <div className="w-full min-h-[52px] flex flex-wrap items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-gray-900 text-white font-medium beautiful-md active:scale-[0.97] transition-transform cursor-pointer">
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <ShoppingBag className="w-5 h-5" />
@@ -504,7 +504,7 @@ export function RestaurantDetail({
                   </div>
                   <span>View Cart</span>
                 </div>
-                <span className="tabular-nums font-bold">
+                <span className="min-w-0 break-words text-right tabular-nums font-semibold">
                   {formatPrice(cartTotal)}
                 </span>
               </div>

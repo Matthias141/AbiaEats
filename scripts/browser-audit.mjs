@@ -145,7 +145,9 @@ try {
   check('Food sheet adds selected quantity and retains price',cart.items[0]?.quantity === 2 && cart.items[0]?.price === meals[0].price);
   await page.emulateMedia({reducedMotion:'reduce'}); await page.getByRole('button',{name:`Add ${meals[1].name} to cart`}).hover();
   check('Reduced motion removes press transforms',await page.getByRole('button',{name:`Add ${meals[1].name} to cart`}).evaluate(element=>getComputedStyle(element).transform==='none'));
-  await page.setViewportSize({width:320,height:844}); await page.evaluate(()=>document.documentElement.style.fontSize='200%'); await layout(page,'menu-text-resize-200',320); await audit(page,'menu-text-resize-200'); await page.evaluate(()=>document.documentElement.style.fontSize='');
+  await page.setViewportSize({width:320,height:844}); await page.evaluate(()=>document.documentElement.style.fontSize='200%'); await layout(page,'menu-text-resize-200',320);
+  check('Menu cart total fits at 200 percent text size',await page.getByRole('link',{name:/View Cart/}).evaluate(element=>{const box=element.getBoundingClientRect();const price=element.querySelector('.tabular-nums').getBoundingClientRect();return price.left>=box.left && price.right<=box.right && price.bottom<=box.bottom;}));
+  await audit(page,'menu-text-resize-200'); await page.evaluate(()=>document.documentElement.style.fontSize='');
   await page.goto(`${appUrl}/restaurants/${uid(2)}`); await page.waitForLoadState('networkidle'); await audit(page,'menu-empty');
   check('Empty menu has a browsing recovery action',await page.getByRole('link',{name:'Browse other restaurants'}).isVisible());
   await page.getByRole('navigation',{name:'Customer navigation'}).getByRole('link',{name:/^Cart/}).click();

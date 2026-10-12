@@ -377,6 +377,11 @@
       "details": ""
     },
     {
+      "name": "Menu cart total fits at 200 percent text size",
+      "passed": true,
+      "details": ""
+    },
+    {
       "name": "Empty menu has a browsing recovery action",
       "passed": true,
       "details": ""
