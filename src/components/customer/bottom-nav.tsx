@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Home, Search, ShoppingBag, User } from 'lucide-react';
-import { useCart } from '@/contexts/cart-context';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Home, Search, ShoppingBag, User } from "lucide-react";
+import { useCart } from "@/contexts/cart-context";
+import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: '/home', label: 'Home', icon: Home },
-  { href: '/restaurants', label: 'Explore', icon: Search },
-  { href: '/cart', label: 'Cart', icon: ShoppingBag },
-  { href: '/profile', label: 'Profile', icon: User },
+  { href: "/home", label: "Home", icon: Home },
+  { href: "/restaurants", label: "Explore", icon: Search },
+  { href: "/cart", label: "Cart", icon: ShoppingBag },
+  { href: "/profile", label: "Profile", icon: User },
 ];
 
 export function BottomNav() {
@@ -18,36 +18,41 @@ export function BottomNav() {
   const { itemCount } = useCart();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 liquid-glass-nav border-x-0 border-b-0 safe-bottom">
-      <div className="max-w-lg mx-auto flex items-center justify-around px-2 h-16">
+    <nav
+      aria-label="Customer navigation"
+      className="customer-dock"
+    >
+      <div className="customer-dock-inner">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive =
-            pathname === href || (href !== '/home' && pathname.startsWith(href));
-          const isCart = href === '/cart';
+            pathname === href ||
+            (href !== "/home" && pathname.startsWith(href));
+          const isCart = href === "/cart";
 
           return (
             <Link
               key={href}
               href={href}
+              aria-current={isActive ? "page" : undefined}
+              aria-label={
+                isCart && itemCount > 0 ? `Cart, ${itemCount} items` : label
+              }
               className={cn(
-                'flex flex-col items-center justify-center gap-0.5 w-16 h-14 rounded-xl transition-all relative',
+                "customer-dock-item ui-press",
                 isActive
-                  ? 'liquid-chip text-brand-orange shadow-sm'
-                  : 'text-gray-400 hover:text-gray-600 hover:bg-white/35'
+                  ? "is-active"
+                  : "",
               )}
             >
-              <div className="relative">
-                <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 2} />
+              <div className="customer-dock-icon">
+                <Icon className="w-5 h-5" strokeWidth={isActive ? 2.2 : 1.8} aria-hidden="true" />
                 {isCart && itemCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full gradient-orange text-[10px] font-bold text-white px-1">
-                    {itemCount > 9 ? '9+' : itemCount}
+                  <span className="absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-white text-[10px] font-bold text-gray-900 px-1">
+                    {itemCount > 9 ? "9+" : itemCount}
                   </span>
                 )}
               </div>
-              <span className="text-[10px] font-medium">{label}</span>
-              {isActive && (
-                <div className="absolute -bottom-0 w-5 h-0.5 rounded-full bg-brand-orange" />
-              )}
+              <span className="text-xs font-medium">{label}</span>
             </Link>
           );
         })}

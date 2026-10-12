@@ -304,7 +304,10 @@ export default function RestaurantMenuPage() {
                 </label>
                 <label className="flex items-center gap-2.5 cursor-pointer">
                   <input type="checkbox" checked={form.is_popular} onChange={e => setForm(f => ({ ...f, is_popular: e.target.checked }))} className="w-4 h-4 accent-orange-500 rounded" />
-                  <span className="text-sm text-gray-700">Mark as popular ⭐</span>
+                  <span className="flex items-center gap-1.5 text-sm text-gray-700">
+                    Mark as popular
+                    <Star className="size-4 text-amber-600" aria-hidden="true" />
+                  </span>
                 </label>
               </div>
             </div>

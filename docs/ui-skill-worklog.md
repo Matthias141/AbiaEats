@@ -1,0 +1,28 @@
+# Abia Eats UI skill implementation
+
+Scope: the public landing → home/discovery → restaurant/menu → cart handoff, including loading, error, empty, focus, zoom and reduced-motion states. Payments, account permissions, menu upload APIs, and vendor/admin dashboard flows are excluded. Shared primitive changes can affect those dashboards; do not imply full dashboard review.
+
+Requested skills and their upstream commits are recorded in `ui-skill-sources.json`. The ten instruction sources, Design Review checklist, shadcn composition/form/styling rules, and all six Better Interface domain skills were loaded. Adapt's current upstream combines its commands under Impeccable; its web adaptation reference owns that part of this pass.
+
+Design direction: keep the Abia Eats orange identity and original cuisine illustrations. Use a neutral light canvas, food-led imagery, smaller browsing chrome, and stronger information hierarchy. Native sans-serif text serves frequent app tasks; Outfit carries the wordmark and landing display. Glass belongs on floating navigation and overlays, with opaque food content underneath. Exact Beautiful Shadows small/medium/large recipes define elevation. Quantity, selected-filter and cart changes leave a static cue; press motion is brief and opt-in.
+
+Completed: 14 official shadcn primitives are installed through CLI 4.21.4 using the checked-out official Tailwind 3 new-york registry. Shared adapters, discovery, menu and cart use them. Browser review found and fixed contrast, sheet placement, cart hydration and text-resize layout problems. Cart deletion now requires confirmation and removes the complete selected item.
+
+TypeScript and ESLint pass. All 241 tests in 13 files pass. Production build passes with 44 routes. Chromium verification covers 17 layout cases, 18 axe state audits with no reported violations and 18 interaction assertions. Adapt's mechanical detector returned no findings. The consolidated six-domain review, ten-source mapping and practical verification limits are recorded in `ui-review.md` and `ui-evidence/`. No Pro audit, physical-device testing or screen-reader walkthrough is claimed. No third-party review telemetry was sent.
+
+Screenshot disclosure was blocked by automatic approval review; the user subsequently requested screenshots remain unpublished. Code and text evidence can be published independently.
+
+Home spacing follow-up: grouped heading/search beside a larger desktop food image while retaining compact mobile imagery. Browser verification now covers 21 layouts, 19 axe audits and 18 interactions; TypeScript/lint/241 unit tests pass. See ui-review.md and ui-evidence/home-spacing-audit.json.
+
+Food imagery follow-up: shared full banner, photographic cuisine browsing, labelled inspiration fallbacks, eight new WebP assets plus the existing jollof image. TypeScript/lint/241 tests and browser verification (21 layouts, 19 axe audits, 18 interactions) pass. Vendor uploads retain priority; screenshots remain unpublished. Provenance and prompts are in food-image-provenance.json.
+
+Customer routing follow-up: public guest cart, Explore alias, safe checkout return after password sign-in. Middleware boundaries regression-tested; 258 tests/14 files and browser checks (21 layouts, 19 axe audits, 23 interactions) pass. Hosted reported 404 remains unreproduced through deployment protection; canonical button/alias are verified locally.
+
+Visual redesign: compact dark photo feature, separate search, circular cuisine controls, lighter restaurant presentation, scoped Outfit typography, floating charcoal dock and non-overlapping menu cart action. Verified 258 tests/14 files, 21 layouts, 19 axe audits, 23 interactions and zero detector findings. Aesthetic approval remains the user’s decision; local screenshots remain unpublished.
+
+Final visual follow-up: menu cart total wraps safely at enlarged text sizes, with a bounding-box browser assertion. Final checks pass: 258 tests in 14 files; 21 layouts, 19 axe audits and 24 interactions. The main redesign deployment at 838db56 succeeded; subsequent commits require their own deployment status check.
+
+Ordering refinement: shorter menu header, cleaner meal cards, explicit missing-photo state, customer charcoal actions, consistent food-sheet/cart/city/switch dialog typography, compact Empty states and restrained card interactions. Local checks: 258 tests/14 files; 21 layouts, 19 axe audits, 25 interactions; detector has no findings. No ordering/API/money logic changed.
+
+
+Browsing/motion refinement: frontend-design informed compact photo pills, clearer navigation selection and restrained restaurant metadata. Emil design engineering informed short customer sheet entry/exit, retained content during closing, focus return and canceled-quantity reset. Existing accessibility, shadow and responsive guidance remains applied. Verification: 258 tests/14 files, 21 layouts, 19 axe audits, 29 browser interactions, no page errors or detector findings. Physical-device smoothness and live deployment require separate confirmation. No verification screenshots uploaded.

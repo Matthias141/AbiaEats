@@ -1,22 +1,36 @@
-'use client';
+"use client";
 
-import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowLeft, Star, Clock, MapPin, Plus, ShoppingBag, Share2, ClipboardList } from 'lucide-react';
-import type { RestaurantPublic, MenuItem } from '@/types/database';
-import { useCart } from '@/contexts/cart-context';
-import { formatPrice } from '@/lib/utils';
-import { CuisineIcon } from '@/lib/cuisine-icons';
-import { MenuItemModal } from '@/components/customer/menu-item-modal';
-import { RestaurantSwitchModal } from '@/components/customer/restaurant-switch-modal';
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  ArrowLeft,
+  Star,
+  Clock,
+  MapPin,
+  Plus,
+  ShoppingBag,
+  Share2,
+  ClipboardList,
+} from "lucide-react";
+import type { RestaurantPublic, MenuItem } from "@/types/database";
+import { useCart } from "@/contexts/cart-context";
+import { formatPrice } from "@/lib/utils";
+import { Button } from "@/components/ui/primitives/button";
+import { Badge } from "@/components/ui/primitives/badge";
+import { CuisineIcon } from "@/lib/cuisine-icons";
+import { MenuItemModal } from "@/components/customer/menu-item-modal";
+import { RestaurantSwitchModal } from "@/components/customer/restaurant-switch-modal";
 
 interface RestaurantDetailProps {
   restaurant: RestaurantPublic;
   menuItems: MenuItem[];
 }
 
-export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProps) {
+export function RestaurantDetail({
+  restaurant,
+  menuItems,
+}: RestaurantDetailProps) {
   const {
     addItem,
     getItemQuantity,
@@ -27,7 +41,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
   } = useCart();
 
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>('');
+  const [activeCategory, setActiveCategory] = useState<string>("");
   const [showSwitchModal, setShowSwitchModal] = useState(false);
   const [pendingItem, setPendingItem] = useState<MenuItem | null>(null);
 
@@ -50,7 +64,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
     return cats;
   }, [menuItems]);
 
-  const categoryNames = useMemo(() => Array.from(categories.keys()), [categories]);
+  const categoryNames = useMemo(
+    () => Array.from(categories.keys()),
+    [categories],
+  );
 
   // Set initial active category
   useEffect(() => {
@@ -67,7 +84,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
         const container = tabsRef.current;
         const scrollLeft =
           btn.offsetLeft - container.offsetWidth / 2 + btn.offsetWidth / 2;
-        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+        container.scrollTo({ left: scrollLeft, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
       }
     }
   }, [activeCategory]);
@@ -85,7 +102,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
             }
           });
         },
-        { rootMargin: '-120px 0px -60% 0px', threshold: 0 }
+        { rootMargin: "-120px 0px -60% 0px", threshold: 0 },
       );
       observer.observe(el);
       observers.push(observer);
@@ -96,7 +113,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
     };
   }, [categoryNames]);
 
-  const scrollToCategory = useCallback((category: string) => {
+  const scrollToCategory = useCallback((category: string, animate = true) => {
     // Suppress observer updates during programmatic scroll
     isManualScroll.current = true;
     setActiveCategory(category);
@@ -104,7 +121,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
     if (el) {
       const yOffset = -120;
       const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({ top: y, behavior: !animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
     }
     // Re-enable observer after scroll animation settles
     setTimeout(() => {
@@ -130,10 +147,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
           image_url: item.image_url,
         },
         restaurant.name,
-        restaurant.delivery_fee
+        restaurant.delivery_fee,
       );
     },
-    [restaurant, needsRestaurantSwitch, addItem]
+    [restaurant, needsRestaurantSwitch, addItem],
   );
 
   const handleItemClick = useCallback(
@@ -145,7 +162,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
       }
       setSelectedItem(item);
     },
-    [restaurant.id, needsRestaurantSwitch]
+    [restaurant.id, needsRestaurantSwitch],
   );
 
   const handleSwitchConfirm = useCallback(() => {
@@ -161,7 +178,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
           image_url: pendingItem.image_url,
         },
         restaurant.name,
-        restaurant.delivery_fee
+        restaurant.delivery_fee,
       );
       setPendingItem(null);
     }
@@ -195,14 +212,18 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
   const cartTotal = subtotal + deliveryFee;
 
   return (
-    <div className="min-h-screen liquid-surface overflow-x-hidden pb-24">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className={`min-h-screen liquid-surface overflow-x-hidden ${itemCount > 0 ? "pb-56" : "pb-28"}`}
+    >
       {/* Hero Section */}
       <div className="relative">
         {/* Cover Image */}
-        <div className="aspect-[16/9] relative overflow-hidden bg-gray-100">
+        <div className="relative h-52 overflow-hidden bg-gray-100 sm:h-72 lg:h-80">
           {restaurant.cover_image_url || restaurant.image_url ? (
             <Image
-              src={restaurant.cover_image_url || restaurant.image_url || ''}
+              src={restaurant.cover_image_url || restaurant.image_url || ""}
               alt={restaurant.name}
               fill
               sizes="100vw"
@@ -211,7 +232,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50 flex items-center justify-center">
-              <CuisineIcon tags={restaurant.cuisine_tags} className="w-20 h-20 text-brand-orange/40" />
+              <CuisineIcon
+                tags={restaurant.cuisine_tags}
+                className="w-20 h-20 text-brand-orange/40"
+              />
             </div>
           )}
           {/* Gradient overlay */}
@@ -222,13 +246,15 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
         <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20">
           <Link
             href="/restaurants"
-            className="w-10 h-10 rounded-xl liquid-chip flex items-center justify-center active:scale-[0.97] transition-transform"
+            aria-label="Back to restaurants"
+            className="size-11 rounded-xl liquid-chip flex items-center justify-center active:scale-[0.97] transition-transform"
           >
             <ArrowLeft className="w-5 h-5 text-gray-700" />
           </Link>
           <button
             onClick={handleShare}
-            className="w-10 h-10 rounded-xl liquid-chip flex items-center justify-center active:scale-[0.97] transition-transform"
+            aria-label="Share restaurant"
+            className="size-11 rounded-xl liquid-chip flex items-center justify-center active:scale-[0.97] transition-transform"
           >
             <Share2 className="w-5 h-5 text-gray-700" />
           </button>
@@ -236,10 +262,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
 
         {/* Restaurant info block */}
         <div className="relative z-10 -mt-8 px-4">
-          <div className="max-w-2xl mx-auto liquid-glass rounded-2xl p-5">
-            <div className="flex items-start gap-4">
+          <div className="max-w-2xl mx-auto rounded-3xl border border-gray-200 bg-white p-5 beautiful-sm">
+            <div className="flex flex-wrap items-start gap-4">
               {/* Logo */}
-              <div className="w-14 h-14 rounded-xl liquid-chip overflow-hidden flex-shrink-0 flex items-center justify-center">
+              <div className="relative w-14 h-14 rounded-xl liquid-chip overflow-hidden flex-shrink-0 flex items-center justify-center">
                 {restaurant.image_url ? (
                   <Image
                     src={restaurant.image_url}
@@ -249,29 +275,31 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                     className="object-cover"
                   />
                 ) : (
-                  <span className="text-xl font-bold text-brand-orange">
+                  <span className="text-xl font-bold text-primary">
                     {restaurant.name.charAt(0)}
                   </span>
                 )}
               </div>
 
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                  <h1 className="text-xl font-bold text-gray-900">{restaurant.name}</h1>
+              <div className="flex-1 basis-48 min-w-0">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <h1 className="min-w-0 break-words text-xl font-bold text-foreground">
+                    {restaurant.name}
+                  </h1>
                   {/* Open/Closed badge */}
                   {restaurant.is_open ? (
-                    <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-600 text-xs font-medium">
+                    <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-50 text-green-800 text-xs font-medium">
                       <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
                       Open
                     </span>
                   ) : (
-                    <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-500 text-xs font-medium">
+                    <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-800 text-xs font-medium">
                       Closed
                     </span>
                   )}
                 </div>
                 {restaurant.description && (
-                  <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">
+                  <p className="mt-1 break-words text-sm leading-relaxed text-muted-foreground">
                     {restaurant.description}
                   </p>
                 )}
@@ -284,14 +312,15 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                       <span className="font-semibold text-gray-900">
                         {restaurant.average_rating.toFixed(1)}
                       </span>
-                      <span className="text-gray-400">
+                      <span className="text-muted-foreground">
                         ({restaurant.rating_count})
                       </span>
                     </span>
                   )}
                   <span className="flex items-center gap-1 text-sm text-gray-500">
                     <Clock className="w-3.5 h-3.5" />
-                    {restaurant.min_delivery_time}-{restaurant.max_delivery_time} min
+                    {restaurant.min_delivery_time}-
+                    {restaurant.max_delivery_time} min
                   </span>
                   <span className="flex items-center gap-1 text-sm text-gray-500">
                     <MapPin className="w-3.5 h-3.5" />
@@ -305,7 +334,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                     {restaurant.cuisine_tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-0.5 rounded-full liquid-chip text-brand-orange text-xs font-medium"
+                        className="px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-xs font-medium"
                       >
                         {tag}
                       </span>
@@ -320,7 +349,7 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
 
       {/* Category Tabs - Sticky */}
       {categoryNames.length > 0 && (
-        <div className="sticky top-0 z-30 liquid-glass-nav border-x-0 mt-4">
+        <div className="menu-category-bar sticky top-0 z-30 mt-4">
           <div
             ref={tabsRef}
             className="max-w-2xl mx-auto flex overflow-x-auto no-scrollbar px-4 gap-1"
@@ -331,14 +360,15 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                 ref={(el) => {
                   if (el) tabButtonRefs.current.set(category, el);
                 }}
-                onClick={() => scrollToCategory(category)}
+                aria-pressed={activeCategory === category}
+                onClick={event => scrollToCategory(category, event.detail !== 0)}
                 className={`
                   flex-shrink-0 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors
                   border-b-2 min-h-[44px]
                   ${
                     activeCategory === category
-                      ? 'text-brand-orange border-brand-orange'
-                      : 'text-gray-400 border-transparent hover:text-gray-600'
+                      ? "text-primary border-primary"
+                      : "text-muted-foreground border-transparent"
                   }
                 `}
               >
@@ -365,17 +395,22 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
               </h3>
 
               {/* 2-column grid */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-4 min-[380px]:grid-cols-2">
                 {items.map((item) => {
                   const qty = getItemQuantity(item.id);
                   return (
-                    <div
+                    <article
                       key={item.id}
-                      onClick={() => handleItemClick(item)}
-                      className="liquid-glass liquid-lift rounded-2xl overflow-hidden cursor-pointer transition-all active:scale-[0.97]"
+                      className="menu-product relative overflow-hidden rounded-3xl bg-white"
                     >
+                      <button
+                        type="button"
+                        onClick={() => handleItemClick(item)}
+                        aria-label={`View ${item.name} details`}
+                        className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-offset-[-4px]"
+                      />
                       {/* Image area */}
-                      <div className="relative aspect-square overflow-hidden bg-gray-50">
+                      <div className="relative aspect-[5/4] overflow-hidden bg-gray-50">
                         {item.image_url ? (
                           <Image
                             src={item.image_url}
@@ -386,48 +421,45 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                             loading="lazy"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
-                            <CuisineIcon tags={restaurant.cuisine_tags} className="w-10 h-10 text-brand-orange/40" />
+                          <div className="grid h-full grid-rows-[minmax(0,1fr)_auto] bg-[#f3f3ef]">
+                            <CuisineIcon
+                              tags={restaurant.cuisine_tags}
+                              className="m-auto size-16 max-h-full"
+                            />
+                            <span className="block py-2 pl-3 pr-16 text-xs leading-snug text-muted-foreground">Awaiting photo</span>
                           </div>
                         )}
 
                         {/* Popular badge */}
                         {item.is_popular && (
-                          <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full gradient-orange text-white text-[10px] font-semibold shadow-md">
+                          <Badge variant="secondary" className="absolute top-2 left-2">
                             Popular
-                          </div>
+                          </Badge>
                         )}
 
                         {/* Quantity indicator (if in cart) */}
                         {qty > 0 && (
-                          <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-brand-orange text-white text-xs font-bold flex items-center justify-center shadow-md">
+                          <div className="absolute top-2 right-2 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold tabular-nums">
                             {qty}
                           </div>
                         )}
 
                         {/* Add button overlay */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleAddItem(item);
-                          }}
-                          className="absolute bottom-2 right-2 w-8 h-8 rounded-full gradient-orange text-white flex items-center justify-center shadow-lg shadow-brand-orange/30 active:scale-[0.90] transition-transform"
-                          aria-label={`Add ${item.name} to cart`}
-                        >
-                          <Plus className="w-4 h-4" strokeWidth={3} />
-                        </button>
+                        <Button size="icon" disabled={!restaurant.is_open} onClick={event => { event.stopPropagation(); handleAddItem(item); }} className="absolute bottom-2 right-2 z-20 rounded-full" aria-label={`Add ${item.name} to cart`}>
+                          <Plus aria-hidden="true" />
+                        </Button>
                       </div>
 
                       {/* Text content */}
                       <div className="p-3">
-                        <h4 className="text-sm font-medium text-gray-900 leading-tight line-clamp-2 min-h-[2.5rem]">
+                        <h4 className="break-words text-[15px] font-medium leading-relaxed text-foreground">
                           {item.name}
                         </h4>
-                        <p className="font-mono text-sm font-semibold text-brand-orange mt-1.5">
+                        <p className="tabular-nums text-sm font-medium text-foreground mt-1.5">
                           {formatPrice(item.price)}
                         </p>
                       </div>
-                    </div>
+                    </article>
                   );
                 })}
               </div>
@@ -435,12 +467,17 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
           ))
         ) : (
           <div className="text-center py-20">
-            <ClipboardList className="w-14 h-14 text-gray-300 mx-auto mb-4" strokeWidth={1.5} aria-hidden="true" />
+            <ClipboardList
+              className="w-14 h-14 text-gray-300 mx-auto mb-4"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Menu coming soon
             </h3>
             <p className="text-sm text-gray-500 max-w-xs mx-auto">
-              This restaurant hasn&apos;t added menu items yet. Check back later!
+              This restaurant hasn&apos;t added menu items yet. Check back
+              later!
             </p>
             <Link
               href="/restaurants"
@@ -455,10 +492,10 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
 
       {/* Floating Cart Bar */}
       {itemCount > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 liquid-glass-nav border-x-0 border-b-0 safe-bottom">
+        <div className="menu-cart-bar fixed left-0 right-0 z-40 px-4">
           <div className="max-w-2xl mx-auto">
             <Link href="/cart">
-              <div className="w-full min-h-[52px] flex items-center justify-between gap-3 px-5 py-3 rounded-2xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/25 active:scale-[0.97] transition-transform cursor-pointer">
+              <div className="w-full min-h-[52px] flex flex-wrap items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-gray-900 text-white font-medium beautiful-md active:scale-[0.97] transition-transform cursor-pointer">
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <ShoppingBag className="w-5 h-5" />
@@ -468,7 +505,9 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
                   </div>
                   <span>View Cart</span>
                 </div>
-                <span className="font-mono font-bold">{formatPrice(cartTotal)}</span>
+                <span className="min-w-0 break-words text-right tabular-nums font-semibold">
+                  {formatPrice(cartTotal)}
+                </span>
               </div>
             </Link>
           </div>
@@ -490,6 +529,6 @@ export function RestaurantDetail({ restaurant, menuItems }: RestaurantDetailProp
           onCancel={handleSwitchCancel}
         />
       )}
-    </div>
+    </main>
   );
 }

@@ -1,0 +1,146 @@
+# Abia Eats UI review — 12 October 2026
+
+Scope: landing, discovery/home, restaurant/menu and cart, including their loading, error, empty and modal states. This is a source and rendered-browser review of those surfaces. Shared primitive changes also reach dashboards, whose complete layouts were not reviewed. Backend APIs, permissions, restaurant uploads and payments are outside this pass.
+
+## Sources and installed components
+
+All ten requested instruction sources were loaded from their upstream repositories. The manifest [ui-skill-sources.json](ui-skill-sources.json) records exact commits and instruction paths; Design Review's checklist and Better Interface's six owning domain skills were also loaded. These sources guide the implementation; they are not claimed as permanently installed personal agent skills.
+
+| Requested skill | Applied work and evidence |
+| --- | --- |
+| Beautiful Shadows | Exact neutral small/medium/large recipes in `globals.css`; hierarchy assigns elevation to cards, image frame and overlays. |
+| Accessibility | Field labels/errors, named Radix dialogs, real main-focus skip link, keyboard filters, visible focus, contrast fixes; axe and interaction results below. |
+| Design Review | Standard checklist and consolidated findings below; no Pro audit or certification claimed. No third-party review telemetry sent. |
+| Emil Design Engineering | Before/after findings, touch controls, explicit short transitions, press feedback, reduced-motion behavior and full text wrapping. |
+| shadcn | CLI 4.21.4 installed 14 official Tailwind 3 new-york registry primitives; shared adapters and customer controls consume them. |
+| Adapt | Current upstream Impeccable context and web-adaptation reference; phone sheets, wrapped filters/header, 320–1440px checks and text resizing. Mechanical detector ran once and returned `[]`. |
+| Better Interface | Accessibility, layout, writing, typography, colors and UI domain instructions reviewed; each appears in the consolidated findings. |
+| Interaction Design | Loading/error/empty recovery, persistent selections, quantity feedback, cancellation and confirmation; interaction evidence below. |
+| Frontend Design | Food-led hierarchy, direct local copy, distinctive original food artwork, restrained browsing chrome. |
+| Apple Design | Native app text, instant press feedback, familiar controls, readable glass and reduced transparency/motion fallbacks. |
+
+The public shadcn registry was unreachable. Installation used the checked-out official registry served locally to the CLI, preserving upstream source rather than hand-writing imitation components. `components.json` configures Radix/new-york and aliases the primitives directory. CLI info/search/docs logs are retained. Installed files: Badge, Button, Dialog, Empty, Field, InputGroup, Input, Label, Separator, Skeleton, Spinner, Textarea, ToggleGroup and Toggle. Existing Button/Input/Modal APIs are compatibility adapters over these primitives, keeping callers stable. New discovery and cart controls compose the installed components. This is a scoped migration, not a claim that every pre-existing app control was migrated.
+
+## Consolidated findings
+
+Severity describes the issue before the fix. All rows below are resolved in this change; the review has no remaining HIGH finding in the inspected scope.
+
+| Severity | Domain | Location | Before | After | Why / verification |
+| --- | --- | --- | --- | --- | --- |
+| HIGH | Accessibility / colors | `restaurant-detail.tsx`, shared tokens | Green status and pale rating metadata failed normal-text contrast in browser audit. | Dark green/red status text; readable muted text and primary tokens. | Final 18 axe state audits have no reported WCAG A/AA violations. |
+| HIGH | UI / accessibility | `ui/modal.tsx`, `primitives/dialog.tsx` | Browser focus behavior had not been verified; initial responsive sheet classes positioned the sheet incorrectly. | Named Radix dialog, focus containment, Escape, trigger restoration and mobile bottom placement. | Browser keyboard checks pass; city and food sheets end at viewport bottom 844px. |
+| HIGH | UI | `cart-context.tsx` | Persisted client cart could produce hydration mismatch and an early empty write. | Restore after mount and save only after hydration; initial loading state matches the server. | No browser page errors; two hydration regression tests cover restoration and invalid storage. |
+| HIGH | Layout / typography | `restaurant-detail.tsx` | At 200% root text size and 320px, logo plus padding left a narrow column despite no horizontal overflow. | Header wraps the information below its logo when space is insufficient. | Text-resize screenshot is visually inspected as well as mechanically checked. |
+| MEDIUM | Accessibility / layout | Shared inputs/buttons, menu/cart controls | Small or inconsistently named actions and unconstrained text wrapping. | 44px minimum action targets, 48px fields, associated labels and separate native menu actions; full food names wrap. | Unit tests plus 320/390/768/1440px layout checks. |
+| MEDIUM | Accessibility | `ui/skip-link.tsx`, root layout | Hash navigation alone did not establish focus in main content. | Skip link focuses the actual main landmark. | Browser focus assertion passes. |
+| MEDIUM | UI / writing | Cart confirmation and `cart-controls.test.tsx` | Removal could be accidental; single-decrement API did not match whole-item removal copy. | Clear/remove confirmation; cancellation preserves contents, whole-item removal uses quantity zero. | Browser clear/cancel checks; regression test confirms all two portions are removed only after confirmation. |
+| MEDIUM | UI / accessibility | Discovery controls | Selection semantics and keyboard behavior were inconsistent. | Labelled Field/InputGroup and radio-style ToggleGroups with roving focus. | Arrow focus, keyboard selection and empty-search recovery pass. |
+| MEDIUM | Typography / writing | Landing, home, menu and cart | Decorative display text and repeated campaign panels competed with finding food; full descriptions could be clipped. | Native app typography, Outfit brand/display, concise food-first copy and full wrapping; price figures use tabular numerals. | Mobile/desktop screenshots and text-resize inspection. |
+| MEDIUM | Colors / UI | `globals.css`, card and overlay components | Repeated decorative elevation obscured hierarchy. | Exact neutral elevation recipes; restrained navigation/overlay glass and opaque content cards. | Visual inspection; reduced transparency/contrast fallbacks in source. |
+| MEDIUM | UI | Press and menu scrolling rules | Motion could continue under reduced-motion preferences. | Short action feedback is opt-in; reduced motion removes press transforms and smooth category scroll. | Browser reduced-motion assertion plus source review. |
+| MEDIUM | Writing / UI | Landing and shared restaurant cards | Generic cuisine imagery and unsupported promotional claims weakened credibility. | Original cuisine SVGs, accurate fees/payment-review copy and generated hero labelled as brand imagery in provenance. | Source/copy review; fixture food image never presented as actual vendor photography. |
+
+## Verification
+
+- `npx tsc --noEmit`: passed.
+- `npm run lint`: passed.
+- `npm test`: 241 tests in 13 files passed.
+- Production Next build: passed, 44 routes. Existing middleware and Vitest configuration deprecation warnings remain.
+- `BROWSER_EXECUTABLE_PATH=/tmp/chromium npm run test:ui`: production Chromium 153.0.8010.0 against an isolated local HTTP fixture; no production credentials or real transactions.
+- 17 layout cases: landing, discovery, menu and cart at 320, 390, 768 and 1440px, plus menu with root text size 200% at 320px. No measured horizontal overflow/clipped controls.
+- 18 state audits using axe WCAG A/AA tags: no reported violations; loading, empty, error, sheets and cart confirmation included.
+- 18 interaction assertions passed: skip focus, filter keyboard/selection, recovery, dialog containment/Escape/return, quantity/price persistence, sheet placement, reduced motion and cart confirmation/cancellation.
+- No captured browser page errors. Detailed cases and geometry: [audit.json](ui-evidence/audit.json).
+
+The browser harness builds/starts Next and its fake backend in one process. It is reproducible with Playwright's Chromium installed (`npx playwright install chromium`), or a compatible Chromium supplied through `BROWSER_EXECUTABLE_PATH`. Sample authentication exercises real middleware routing; it does not verify production authentication or RLS. The generated hero is attached to one fixture item solely to inspect image layout. Final whole-item removal behavior additionally has a dedicated unit regression test.
+
+## Rendered evidence
+
+18 screenshots were generated and visually inspected locally. Their upload was stopped when automatic approval review rejected screenshot disclosure to this GitHub repository. Screenshots are not part of this published commit; the JSON results and CLI/build logs are included. The user requested that verification screenshots remain unpublished. Screenshots cover landing, discovery, home loading/error/empty states, city and food sheets, menu text resizing, and cart confirmation/recovery.
+
+## Verdict and limits
+
+Approve the inspected scope for human design review. Automated axe results are not WCAG conformance certification. Viewports are Chromium emulation, not physical device results. Real VoiceOver/NVDA/TalkBack, Safari/Firefox, physical iPhone/Android, every screen at browser zoom, dark/RTL layouts, dashboard flows, real network performance and live Supabase/payment/invitation behavior are **not verified**. The 200% check is root text resizing on the menu, not a claim of full cross-app browser zoom coverage.
+
+The pre-existing server-side mock inventory fallback remains a separate launch risk. This pass does not claim an audit-clean dependency tree or remove existing noncritical advisories. PR #25 remains draft and unmerged.
+
+## Home spacing follow-up
+
+The desktop home heading and 128px photograph left an unbalanced open area. The heading and search now form the left column, alongside a 288×216px food image with rounded corners and neutral layered elevation. The mobile photograph remains 96px, with search below both columns; tablet imagery stays 128px. Image `sizes` matches these widths to avoid downloading desktop-sized imagery on a phone. No listings, data queries or availability behavior changed.
+
+TypeScript, lint and all 241 tests in 13 files pass. The production browser run passes 21 layout cases, 19 axe state audits and 18 interactions with no reported violations/page errors; the four additional layout cases cover home at 320/390/768/1440px. Desktop and mobile renders were inspected locally. [Follow-up results](ui-evidence/home-spacing-audit.json) contain the exact cases. Screenshots are omitted at the user's request. Physical-device and other-browser limitations above still apply.
+
+## Food imagery follow-up
+
+The spacing-only pass was insufficient for the requested photographic direction. Landing and home now have a full food banner, landing has six image-led cuisine cards, and home/discovery use a horizontally scrollable photographic filter row. Eight new optimised WebP assets (about 452 KiB combined) join the existing jollof image, giving nine distinct brand/cuisine images. The banner is 1280px wide; new category assets are 480px wide. Next Image supplies responsive sizes and lazy-loads category/card images; only the banner is prioritised.
+
+Restaurant card uploads retain priority. Without a vendor photo, a matching generic category image is visibly labelled “Cuisine inspiration”; unknown cuisines retain custom artwork. Named menu-item photos are never fabricated. Generated sources, final asset paths and exact prompts are recorded in [food-image-provenance.json](food-image-provenance.json). This is photorealistic generated brand imagery, not a claim of documentary restaurant photography.
+
+TypeScript/lint and 241 tests in 13 files pass. Production Chromium checks pass 21 layout cases, 19 axe state audits and 18 interaction assertions with no reported violations or page errors; see [food-imagery-audit.json](ui-evidence/food-imagery-audit.json). Landing/home desktop and mobile screenshots were visually inspected locally and remain unpublished at the user's request. Horizontal cuisine scrolling is intentional and preserves radio keyboard controls. Physical-device, other-browser and live-data limitations remain as documented above.
+
+Residual risk: inspiration images can still be mistaken for actual vendor meals if the label is overlooked; vendor-uploaded photography is the durable solution. The label is the early distinction, and upload preference is preserved. This pass cannot make a zero-restaurant dataset into genuine available inventory. Image bytes are bounded, but real mobile-network performance remains unmeasured.
+
+## Guest cart and Explore routing follow-up
+
+Guest cart access was incorrectly gated by sign-in even though its contents are local browsing state. Middleware now permits exactly `/cart`; checkout, profile, admin, restaurant-owner and operations routes retain their existing authentication/role boundaries. A new public `/explore` alias redirects to `/restaurants`, preserving only the supported city/tag/search parameters. The existing Explore navigation button still points directly to the canonical listing.
+
+Password sign-in now honours known customer `redirectTo` destinations, including `/checkout`, rather than always going home. An exact allowlist rejects external URLs, unrecognised paths and injected queries. This does not grant access to protected routes or change order/payment logic.
+
+Verification: TypeScript/lint pass; 258 tests in 14 files pass. Seventeen new unit cases cover public guest paths, protected routes and safe login return. Production Chromium passes 21 layouts, 19 axe state audits and 23 interaction checks. Five added browser checks exercise actual Explore/Cart navigation, alias filter preservation, checkout sign-in routing and cart persistence. [Results](ui-evidence/customer-routing-audit.json). Password-authentication itself remains outside the local fixture verification; the return-path helper is unit-tested. The `/explore` alias resolves a missing literal route; canonical Explore navigation was successful locally before/after and the user's reported hosted 404 could not be reproduced through direct HTTP because Vercel deployment protection intervenes.
+
+Residual risk: an older deployment, stale client or different hostname can still produce a 404; the exact failing URL is needed if it persists on this commit. Cart access exposes only the browser's locally stored selection; protected APIs remain unchanged. Screenshots remain unpublished.
+
+## Customer visual redesign
+
+Direction: a compact photographic food app, based on the supplied white/black/orange mobile references. This replaces the beige two-panel customer banner and heavy boxed category/restaurant treatment. The home banner is now a shorter dark photographic feature, with search below it. Circular cuisine thumbnails replace the boxed filter cards. Restaurant photos retain subtle elevation; details sit on the canvas without another surrounding panel. Outfit medium-weight typography is scoped to the customer app, while the landing display also uses Outfit. Admin/owner typography is unchanged.
+
+The full-width bottom strip becomes a floating charcoal glass dock with restrained orange active-icon feedback. Keyboard focus is white against the dark dock, reduced transparency produces a solid fill, and forced-colour rules preserve system colours. The menu cart action is positioned above the dock, preventing the two controls from covering one another. Existing food assets, upload priority, inspiration labels, radio keyboard behavior, guest cart access and protected checkout remain.
+
+Verification: TypeScript/lint and 258 tests in 14 files pass. Production Chromium passes 21 layouts, 19 axe state audits and 24 interaction checks with no page errors or reported violations; [results](ui-evidence/sleek-ui-audit.json). Mobile/desktop landing/home and menu text resizing were visually inspected locally. Adapt's mechanical detector returned `[]`; [output](ui-evidence/sleek-adapt-detector.json). Screenshots remain unpublished at the user's request. This establishes functional and measured accessibility checks, not user approval of the aesthetic direction. Physical devices, real assistive technology and complete live-data flows remain unverified.
+
+Most likely residual UI failure: fixed controls can obscure content on unusually short viewports or very large text. Menu cart/dock separation and text-resize inspection reduce that risk; page padding and scroll recovery remain. The optional inspiration label can still be overlooked, so actual vendor photos remain preferable. The previous deployment failed despite passing GitHub/local builds; a new deployment must be checked before claiming this revision is live.
+
+Final enlarged-text check: menu cart label and amount can wrap onto separate rows at 200% text size. A browser assertion verifies the complete amount stays within its action box. Functional counts remain 258 unit tests; browser interactions now total 24.
+
+## Ordering surface refinement
+
+The customer menu now uses a shorter cover header, cleaner category navigation and lighter 5:4 meal cards. Add controls are round; missing menu photographs use original artwork with an explicit “Awaiting photo” label, laid out separately from the add control. Named menu photos remain vendor-provided. Customer primary actions are charcoal, with orange preserved for brand/selection cues. The theme and Outfit typography are also applied explicitly to customer dialogs, whose portals sit outside the customer layout. Owner/admin surfaces are unaffected.
+
+Food sheets have rounded imagery, a simpler quantity stepper and a single dark pill action. Cart controls and the checkout handoff use consistent radii. Home empty/error states now compose installed shadcn Empty primitives; fee explanation is a small inline note rather than another elevated panel. Restaurant cards have short press feedback and pointer-only hover elevation; reduced motion remains respected.
+
+Menu bottom padding grows when the cart action is visible, ensuring the final item remains above the floating action after scrolling. A dedicated browser assertion verifies that boundary; quantity, confirmation, pricing calculations, stored selections and API logic are unchanged.
+
+Verification: TypeScript, lint, production build and 258 tests in 14 files pass. Browser results pass 21 layouts, 19 axe state audits and 25 interactions with no reported violations or page errors. [Detailed results](ui-evidence/ordering-polish-audit.json). Menu, food sheet, cart, empty states and enlarged text were inspected locally. Adapt detector returned no findings; [output](ui-evidence/ordering-polish-detector.json). Screenshots remain unpublished. Shared customer tokens also reach checkout/profile; this is not a claim of complete visual/backend QA for those flows. Actual devices and screen readers remain unverified.
+
+Residual risks: missing vendor uploads still limit the visual richness of menus; placeholder labels identify that boundary. Very large text and unusually short screens can make fixed actions obstruct content; enlarged-text and last-item assertions reduce that risk, with scrolling/padding preserved. Mouse hover is supplemental; touch and keyboard actions retain their own feedback.
+
+
+## Browsing density and sheet motion
+
+Direction: retain Abia Eats food photography, Outfit typography and brand orange, while bringing restaurant content earlier in the mobile viewport. Palette: paper #f8f8f6, white #ffffff, charcoal #181818, border #dedede, brand orange #f26522 and focus orange #9a390e. Left-aligned content uses compact filters and independent restaurant imagery; navigation and overlays provide depth. No new photographs, animated marketing sections or animation dependencies were added.
+
+| Before | After | Why |
+| --- | --- | --- |
+| Large circular cuisine controls with labels underneath | 40px photo thumbnails in horizontally scrolling pills, with a dark selected state | Less vertical chrome; more restaurants visible sooner; existing radio semantics retained |
+| Dense banner scrim and repeated city eyebrow | Brighter food photo, shorter copy block and location kept in the header | Food remains recognizable; redundant labels removed |
+| Loose restaurant metadata spacing | Tighter title, cuisine and delivery spacing; softer image corners | Faster scanning without reducing touch targets |
+| Small orange selected navigation icon | Full selected tab background with orange icon | Current destination is easier to identify |
+| Food sheet disappears as soon as selection is cleared | Retained sheet content with 220ms entrance and 140ms exit, preserving Radix focus restoration | Gives opening/closing spatial feedback without delaying shopping actions |
+| Translucent food sheet | Opaque white content surface | Keeps text contrast independent of the underlying photograph |
+
+Motion is scoped to customer dialogs and navigation. Mobile sheets translate a short distance; desktop dialogs use subtle scale/opacity. Reduced motion removes those animations and press transforms; forced colors retain a system-selected state. The last selected food remains in memory only to allow the closing transition. Reopening resets quantity from the cart; canceled edits never become cart changes.
+
+Verification: TypeScript and ESLint pass; 258 tests in 14 files pass. Production build passes. Chromium passes 21 layout cases, 19 settled-state axe audits with no reported violations, and 29 interaction assertions with zero page errors. [Results](ui-evidence/smooth-ui-audit.json). Adapt detector reports no findings; [output](ui-evidence/smooth-ui-detector.json). Mobile and desktop home plus the settled food sheet were visually inspected locally. Verification screenshots remain unpublished.
+
+Most likely failure modes: missing vendor photographs still leave menu artwork, a narrow viewport can require horizontal cuisine scrolling, and fixed navigation can obscure content on unusually short screens. Early signals are repeated missing-photo labels, clipped labels outside the intended scroller, or the last item failing the floating-cart clearance assertion. Layout, enlarged-text and last-item checks reduce these risks. Physical-device frame pacing, Safari/Firefox, actual screen readers and live backend flows remain unverified; automated axe is not accessibility certification. A successful local build does not prove the latest commit is deployed.
+
+
+## Production catalog and restaurant detail consistency
+
+The Explore server page substituted MOCK_RESTAURANTS both for an empty public catalog and for failed Supabase queries, including in production. Their mock-* IDs were then rejected by the production detail route's UUID validation. This created clickable entries whose detail routes could never resolve. The local browser harness had previously used valid fixture UUIDs and did not cover the empty production list boundary.
+
+Production Explore now displays only rows loaded from restaurants_public. A successful empty query reaches the existing empty state; failed queries reach a named retry/back-home error boundary. Development-only sample fallback remains explicitly labeled. Restaurant detail uses maybeSingle to distinguish missing rows from query failures; missing/invalid IDs retain notFound, while restaurant/menu errors reach the same boundary rather than being disguised as missing restaurants or empty menus. Active/available query filters, Supabase RLS clients and protected checkout remain unchanged.
+
+Verification: TypeScript and ESLint pass; 266 tests in 15 files pass, including eight new catalog/detail regression cases. Production build passes. Chromium passes 21 layouts, 20 axe state audits and 32 interaction assertions with zero page errors or reported violations. The new browser cases click an actual listing card into its UUID menu route, verify an empty production list exposes no sample links, and verify an unknown UUID returns 404. [Results](ui-evidence/catalog-routing-audit.json). Screenshots remain unpublished. Retry UI is compiled but outage recovery is not exercised against a live Supabase deployment.
+
+Residual risk: a Vercel environment with missing credentials, missing restaurants_public, failed RLS reads or no active inventory still cannot display real restaurants. Early warning is the retry error boundary or an empty catalog rather than eight sample entries. Correct configuration and real active restaurant records remain required; this patch neither seeds production data nor changes database permissions. A listed restaurant can also be deactivated before a click; a real not-found result remains correct. Hosted verification is still limited by Vercel sign-in protection.

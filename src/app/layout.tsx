@@ -1,17 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Outfit, Playfair_Display } from "next/font/google";
+import { JetBrains_Mono, Outfit } from "next/font/google";
+import { SkipLink } from "@/components/ui/skip-link";
 import { CartProvider } from "@/contexts/cart-context";
 import "./globals.css";
 
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
   display: "swap",
 });
 
@@ -48,7 +43,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  viewportFit: "cover",
   themeColor: "#FFFFFF",
 };
 
@@ -60,9 +55,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${outfit.variable} ${playfair.variable} ${jetBrainsMono.variable} font-body antialiased bg-white text-gray-900 overflow-x-hidden`}
+        className={`${outfit.variable} ${jetBrainsMono.variable} font-body antialiased bg-light-bg text-gray-900 overflow-x-hidden`}
       >
-        <CartProvider>{children}</CartProvider>
+        <SkipLink />
+        <CartProvider>
+          <div id="app-content" tabIndex={-1}>
+            {children}
+          </div>
+        </CartProvider>
       </body>
     </html>
   );

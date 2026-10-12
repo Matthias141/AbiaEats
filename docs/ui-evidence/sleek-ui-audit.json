@@ -1,0 +1,556 @@
+{
+  "engine": "Chromium",
+  "fixture": "Isolated local HTTP fixture; sample content, no live backend",
+  "layouts": [
+    {
+      "name": "landing",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "body": 320,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "landing",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "landing",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "landing",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "discovery",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "body": 320,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "discovery",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "discovery",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "discovery",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "home",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "body": 320,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "home",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "home",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "home",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "menu",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "body": 320,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "menu",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "menu",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "menu",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "menu-text-resize-200",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "body": 320,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "cart",
+      "width": 320,
+      "viewport": 320,
+      "document": 320,
+      "body": 320,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "cart",
+      "width": 390,
+      "viewport": 390,
+      "document": 390,
+      "body": 390,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "cart",
+      "width": 768,
+      "viewport": 768,
+      "document": 768,
+      "body": 768,
+      "clipped": [],
+      "passed": true
+    },
+    {
+      "name": "cart",
+      "width": 1440,
+      "viewport": 1440,
+      "document": 1440,
+      "body": 1440,
+      "clipped": [],
+      "passed": true
+    }
+  ],
+  "audits": [
+    {
+      "name": "landing-desktop",
+      "violations": []
+    },
+    {
+      "name": "landing-mobile",
+      "violations": []
+    },
+    {
+      "name": "discovery-desktop",
+      "violations": []
+    },
+    {
+      "name": "discovery-mobile",
+      "violations": []
+    },
+    {
+      "name": "discovery-empty",
+      "violations": []
+    },
+    {
+      "name": "home-desktop",
+      "violations": []
+    },
+    {
+      "name": "home-mobile",
+      "violations": []
+    },
+    {
+      "name": "city-sheet",
+      "geometry": {
+        "top": 550.5,
+        "bottom": 844,
+        "height": 293.5,
+        "viewportHeight": 844,
+        "cssTop": "550.5px",
+        "cssBottom": "0px",
+        "transform": "matrix(1, 0, 0, 1, -179, 0)",
+        "classes": "ui-dialog fixed left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 gap-4 p-6 bottom-0 top-auto rounded-t-3xl sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:rounded-3xl"
+      },
+      "violations": []
+    },
+    {
+      "name": "home-loading",
+      "violations": []
+    },
+    {
+      "name": "home-empty",
+      "violations": []
+    },
+    {
+      "name": "home-error",
+      "violations": []
+    },
+    {
+      "name": "menu-desktop",
+      "violations": []
+    },
+    {
+      "name": "menu-mobile",
+      "violations": []
+    },
+    {
+      "name": "food-sheet",
+      "geometry": {
+        "top": 181.5,
+        "bottom": 844,
+        "height": 662.5,
+        "viewportHeight": 844,
+        "cssTop": "181.5px",
+        "cssBottom": "0px",
+        "transform": "matrix(1, 0, 0, 1, -179, 0)",
+        "classes": "ui-dialog fixed left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 gap-4 p-6 bottom-0 top-auto rounded-t-3xl sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:rounded-3xl"
+      },
+      "violations": []
+    },
+    {
+      "name": "menu-text-resize-200",
+      "violations": []
+    },
+    {
+      "name": "menu-empty",
+      "violations": []
+    },
+    {
+      "name": "cart-mobile",
+      "violations": []
+    },
+    {
+      "name": "clear-cart-confirmation",
+      "geometry": {
+        "top": 276.25,
+        "bottom": 567.75,
+        "height": 291.5,
+        "viewportHeight": 844,
+        "cssTop": "422px",
+        "cssBottom": "130.5px",
+        "transform": "matrix(1, 0, 0, 1, -179, -145.75)",
+        "classes": "ui-dialog fixed left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 gap-4 p-6 top-1/2 -translate-y-1/2 rounded-3xl"
+      },
+      "violations": []
+    },
+    {
+      "name": "cart-empty",
+      "violations": []
+    }
+  ],
+  "interactions": [
+    {
+      "name": "Skip link moves focus into main",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "City filter excludes Umuahia",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "City arrows move focus",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "City group supports keyboard selection",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Empty search recovers with Clear filters",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Guest Explore navigation reaches the listing",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Explore alias preserves discovery filters",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Dialog focuses inside",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Dialog traps focus",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Escape closes and restores trigger focus",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Retry recovers from outage",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Food sheet is anchored to mobile bottom",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Quantity starts at one with decrease disabled",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Food sheet adds selected quantity and retains price",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Reduced motion removes press transforms",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Menu cart total fits at 200 percent text size",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Empty menu has a browsing recovery action",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Guest Cart navigation keeps selected food",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Guest checkout requires sign-in and preserves destination",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Sign-in redirect preserves the local cart",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Authenticated fixture reaches cart through real middleware",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Clear cart requires confirmation",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Cancel keeps cart contents",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "name": "Confirm clears cart and exposes recovery",
+      "passed": true,
+      "details": ""
+    }
+  ],
+  "errors": [],
+  "notVerified": [
+    "Physical iPhone/Android",
+    "Safari/WebKit and Firefox",
+    "VoiceOver/NVDA/TalkBack",
+    "Live Supabase RLS, invitations and payments"
+  ],
+  "browserVersion": "153.0.8010.0",
+  "passed": true,
+  "fixtureRequests": [
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "OPTIONS",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "OPTIONS",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "OPTIONS",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/menu_items"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/restaurants_public"
+    },
+    {
+      "method": "GET",
+      "path": "/rest/v1/menu_items"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    }
+  ]
+}

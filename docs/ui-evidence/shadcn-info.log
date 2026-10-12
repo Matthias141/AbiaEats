@@ -1,0 +1,73 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+{
+  "project": {
+    "framework": "Next.js",
+    "frameworkName": "next-app",
+    "frameworkVersion": "16.3.8",
+    "srcDirectory": true,
+    "rsc": true,
+    "typescript": true,
+    "tailwindVersion": "v3",
+    "tailwindConfig": "tailwind.config.ts",
+    "tailwindCss": "src/app/globals.css",
+    "importAlias": "@"
+  },
+  "config": {
+    "style": "new-york",
+    "base": "radix",
+    "rsc": true,
+    "typescript": true,
+    "iconLibrary": "lucide",
+    "rtl": false,
+    "menuColor": null,
+    "menuAccent": null,
+    "aliases": {
+      "components": "@/components",
+      "utils": "@/lib/utils",
+      "ui": "@/components/ui/primitives",
+      "lib": "@/lib",
+      "hooks": "@/hooks"
+    },
+    "resolvedPaths": {
+      "cwd": "/workspace/scratch/79078a0e416a/AbiaEats",
+      "tailwindConfig": "/workspace/scratch/79078a0e416a/AbiaEats/tailwind.config.ts",
+      "tailwindCss": "/workspace/scratch/79078a0e416a/AbiaEats/src/app/globals.css",
+      "utils": "/workspace/scratch/79078a0e416a/AbiaEats/src/lib/utils",
+      "components": "/workspace/scratch/79078a0e416a/AbiaEats/src/components",
+      "lib": "/workspace/scratch/79078a0e416a/AbiaEats/src/lib",
+      "hooks": "/workspace/scratch/79078a0e416a/AbiaEats/src/hooks",
+      "ui": "/workspace/scratch/79078a0e416a/AbiaEats/src/components/ui/primitives"
+    },
+    "registries": {
+      "@shadcn": "http://127.0.0.1:4107/r/styles/{style}/{name}.json"
+    }
+  },
+  "preset": {
+    "code": null,
+    "fallbacks": [],
+    "values": null
+  },
+  "components": [
+    "badge",
+    "button",
+    "dialog",
+    "empty",
+    "field",
+    "input-group",
+    "input",
+    "label",
+    "separator",
+    "skeleton",
+    "spinner",
+    "textarea",
+    "toggle-group",
+    "toggle"
+  ],
+  "links": {
+    "docs": "http://127.0.0.1:4107/docs",
+    "components": "http://127.0.0.1:4107/docs/components/radix/[component].md",
+    "ui": "http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/ui/[component].tsx",
+    "examples": "http://127.0.0.1:4107/code/apps/v4/registry/bases/radix/examples/[component]-example.tsx",
+    "schema": "http://127.0.0.1:4107/schema.json"
+  }
+}

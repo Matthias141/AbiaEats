@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { X, Minus, Plus, Clock, ShoppingBag, UtensilsCrossed } from 'lucide-react';
-import type { MenuItem, RestaurantPublic } from '@/types/database';
-import { useCart } from '@/contexts/cart-context';
-import { formatPrice } from '@/lib/utils';
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { Minus, Plus, Clock, ShoppingBag } from "lucide-react";
+import type { MenuItem, RestaurantPublic } from "@/types/database";
+import { useCart } from "@/contexts/cart-context";
+import { formatPrice } from "@/lib/utils";
+import { Button } from "@/components/ui/primitives/button";
+import { Badge } from "@/components/ui/primitives/badge";
+import { CuisineIcon } from "@/lib/cuisine-icons";
+import { Modal } from "@/components/ui/modal";
 
 interface MenuItemModalProps {
   item: MenuItem | null;
@@ -14,27 +18,26 @@ interface MenuItemModalProps {
 }
 
 export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps) {
+  // Keep the closing sheet mounted so Radix can finish its exit and restore focus.
+  const [lastItem, setLastItem] = useState<MenuItem | null>(item);
+  useEffect(() => { if (item) setLastItem(item); }, [item]);
+  const displayedItem = item ?? lastItem;
+  if (!displayedItem) return null;
+  return <MenuItemSheet item={displayedItem} restaurant={restaurant} onClose={onClose} isOpen={Boolean(item)} />;
+}
+
+function MenuItemSheet({ item, restaurant, onClose, isOpen }: {
+  item: MenuItem; restaurant: RestaurantPublic; onClose: () => void; isOpen: boolean;
+}) {
   const { addItem, removeItem, getItemQuantity } = useCart();
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    if (item) {
+    if (isOpen) {
       const existing = getItemQuantity(item.id);
       setQuantity(existing > 0 ? existing : 1);
     }
-  }, [item, getItemQuantity]);
-
-  // Lock body scroll when modal is open
-  useEffect(() => {
-    if (item) {
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = '';
-      };
-    }
-  }, [item]);
-
-  if (!item) return null;
+  }, [item, isOpen, getItemQuantity]);
 
   const existingQty = getItemQuantity(item.id);
 
@@ -63,120 +66,88 @@ export function MenuItemModal({ item, restaurant, onClose }: MenuItemModalProps)
   };
 
   return (
-    <div className="fixed inset-0 z-[60]">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in"
-        onClick={onClose}
-      />
-
-      {/* Sheet */}
-      <div className="absolute bottom-0 left-0 right-0 max-h-[90vh] liquid-glass rounded-t-3xl overflow-hidden animate-slide-up-sheet">
-        {/* Handle bar */}
-        <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full bg-gray-200" />
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={item.name}
+      variant="bottom-sheet"
+      className="customer-dialog"
+    >
+      <div>
+        {/* Image */}
+        <div className="aspect-[16/10] rounded-2xl bg-gray-50 relative overflow-hidden">
+          {item.image_url ? (
+            <Image
+              src={item.image_url}
+              alt={item.name}
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center gap-3 bg-muted"><CuisineIcon tags={restaurant.cuisine_tags} className="size-24" /><span className="text-sm text-muted-foreground">Photo coming soon</span></div>
+          )}
+          {item.is_popular && (
+            <Badge variant="secondary" className="absolute top-4 left-4">
+              Popular
+            </Badge>
+          )}
         </div>
 
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full liquid-chip flex items-center justify-center"
-        >
-          <X className="w-4 h-4 text-gray-600" />
-        </button>
-
-        <div className="overflow-y-auto max-h-[85vh] custom-scrollbar">
-          {/* Image */}
-          <div className="aspect-[16/10] bg-gray-50 relative overflow-hidden">
-            {item.image_url ? (
-              <Image
-                src={item.image_url}
-                alt={item.name}
-                fill
-                sizes="100vw"
-                className="object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
-                <UtensilsCrossed className="w-16 h-16 text-brand-orange/50" strokeWidth={1.5} aria-hidden="true" />
-              </div>
-            )}
-            {item.is_popular && (
-              <div className="absolute top-4 left-4 px-3 py-1 rounded-full gradient-orange text-white text-xs font-medium">
-                Popular
-              </div>
-            )}
+        {/* Content */}
+        <div className="pt-5 pb-6">
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <span className="tabular-nums text-xl font-semibold text-foreground">
+              {formatPrice(item.price)}
+            </span>
+            <span className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Clock className="w-3.5 h-3.5" />
+              {restaurant.min_delivery_time}–{restaurant.max_delivery_time} min
+              delivery
+            </span>
           </div>
 
-          {/* Content */}
-          <div className="px-5 pt-5 pb-32">
-            <h2 className="text-2xl font-bold text-gray-900">{item.name}</h2>
+          {item.description && (
+            <p className="mt-4 text-sm text-gray-500 leading-relaxed">
+              {item.description}
+            </p>
+          )}
 
-            <div className="flex items-center gap-3 mt-2">
-              <span className="font-mono text-xl font-bold text-brand-orange">
-                {formatPrice(item.price)}
-              </span>
-              <span className="flex items-center gap-1 text-xs text-gray-400">
-                <Clock className="w-3.5 h-3.5" />
-                {restaurant.min_delivery_time}-{restaurant.max_delivery_time} min delivery
+          {/* Delivery info */}
+          <div className="mt-6 flex flex-col gap-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-500">Delivery fee</span>
+              <span className="font-medium text-gray-900">
+                {formatPrice(restaurant.delivery_fee)}
               </span>
             </div>
-
-            {item.description && (
-              <p className="mt-4 text-sm text-gray-500 leading-relaxed">
-                {item.description}
-              </p>
-            )}
-
-            {/* Delivery info */}
-            <div className="mt-6 p-4 rounded-2xl liquid-glass-soft">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">Delivery fee</span>
-                <span className="font-medium text-gray-900">{formatPrice(restaurant.delivery_fee)}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm mt-2">
-                <span className="text-gray-500">From</span>
-                <span className="font-medium text-gray-900">{restaurant.name}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom bar */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 liquid-glass-nav border-x-0 border-b-0 safe-bottom">
-          <div className="flex items-center gap-4">
-            {/* Quantity controls */}
-            <div className="flex items-center gap-3 liquid-chip rounded-xl px-3 py-2">
-              <button
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors active:scale-95"
-              >
-                <Minus className="w-4 h-4 text-gray-600" />
-              </button>
-              <span className="font-mono text-sm w-6 text-center font-semibold text-gray-900">
-                {quantity}
+            <div className="flex flex-wrap items-center justify-between gap-2 text-sm mt-2">
+              <span className="text-gray-500">From</span>
+              <span className="font-medium text-gray-900">
+                {restaurant.name}
               </span>
-              <button
-                onClick={() => setQuantity((q) => Math.min(20, q + 1))}
-                className="w-8 h-8 rounded-lg gradient-orange flex items-center justify-center text-white active:scale-95"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
             </div>
-
-            {/* Add to cart button */}
-            <button
-              onClick={handleAddToCart}
-              className="flex-1 min-h-[52px] flex items-center justify-center gap-2 rounded-xl gradient-orange text-white font-medium shadow-lg shadow-brand-orange/25 active:scale-[0.97] transition-all"
-            >
-              <ShoppingBag className="w-5 h-5" />
-              <span>
-                {existingQty > 0 ? 'Update' : 'Add'} — {formatPrice(item.price * quantity)}
-              </span>
-            </button>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Bottom bar */}
+      <div className="sticky bottom-0 border-t border-gray-200 bg-white pt-4 safe-bottom">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          {/* Quantity controls */}
+          <div className="flex items-center justify-between gap-3 rounded-full border border-gray-200 bg-gray-50 px-2 py-1.5">
+            <Button variant="ghost" size="icon" className="rounded-full bg-white" aria-label="Decrease quantity" disabled={quantity === 1} onClick={() => setQuantity(q => Math.max(1, q - 1))}><Minus aria-hidden="true" /></Button>
+            <span className="w-6 text-center tabular-nums font-semibold" aria-live="polite">{quantity}</span>
+            <Button variant="ghost" size="icon" className="rounded-full bg-white" aria-label="Increase quantity" disabled={quantity === 20} onClick={() => setQuantity(q => Math.min(20, q + 1))}><Plus aria-hidden="true" /></Button>
+          </div>
+
+          {/* Add to cart button */}
+          <Button onClick={handleAddToCart} disabled={!restaurant.is_open} className="flex-1 rounded-full">
+            <ShoppingBag data-icon="inline-start" aria-hidden="true" />
+            <span>{existingQty > 0 ? "Update cart" : "Add to cart"} — <span className="tabular-nums">{formatPrice(item.price * quantity)}</span></span>
+          </Button>
+        </div>
+      </div>
+    </Modal>
   );
 }

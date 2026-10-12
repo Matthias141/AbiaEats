@@ -10,10 +10,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
+        destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
+        border: "hsl(var(--border))", input: "hsl(var(--input))", ring: "hsl(var(--ring))",
+
         brand: {
           orange: "#F26522",
           "orange-light": "#FF8A50",
-          "orange-dark": "#C94E10",
+          "orange-dark": "#B4430B",
         },
         dark: {
           bg: "#0C0A09",
@@ -22,7 +29,7 @@ const config: Config = {
           "border-light": "#44403C",
         },
         light: {
-          bg: "#FAF7F3",
+          bg: "#F8F8F6",
           card: "#FFFFFF",
           border: "#E7E5E4",
         },
@@ -35,8 +42,9 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
       fontFamily: {
-        heading: ["var(--font-playfair)", "serif"],
-        body: ["var(--font-outfit)", "sans-serif"],
+        heading: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+        body: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+        brand: ["var(--font-outfit)", "sans-serif"],
         mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
       backdropBlur: {
