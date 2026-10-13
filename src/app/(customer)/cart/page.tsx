@@ -38,7 +38,7 @@ export default function CartPage() {
             </div>
           </article>)}
         </div>
-        <section aria-labelledby="summary-heading" className="mt-8 flex flex-col gap-4">
+        <section aria-labelledby="summary-heading" className="cart-summary mt-8 flex flex-col gap-4">
           <h2 id="summary-heading" className="text-lg font-semibold">Order summary</h2>
           <dl className="flex flex-col gap-3"><div className="flex justify-between gap-4"><dt className="text-muted-foreground">Subtotal</dt><dd className="tabular-nums">{formatPrice(subtotal)}</dd></div><div className="flex justify-between gap-4"><dt className="text-muted-foreground">Delivery fee</dt><dd className="tabular-nums">{deliveryFee > 0 ? formatPrice(deliveryFee) : "Free"}</dd></div></dl>
           <Separator /><div className="flex justify-between gap-4 text-lg font-semibold"><span>Total</span><span className="tabular-nums">{formatPrice(total)}</span></div>

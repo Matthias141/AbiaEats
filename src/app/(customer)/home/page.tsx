@@ -144,13 +144,13 @@ export default function CustomerHomePage() {
           </Link>
         </div>
       </header>
-      <div className="mx-auto max-w-6xl px-4 pt-4 sm:px-6 sm:pt-6">
-        <div className="mb-6">
-          <FoodBanner headingId="home-heading" title={<>Good food.<br />Close to home.</>} description="Your local favourites, ready to discover." compact>
+      <div className="customer-content mx-auto max-w-6xl px-4 pt-5 sm:px-6 sm:pt-8">
+        <div className="mb-5">
+          <FoodBanner headingId="home-heading" title={<>Good food.<br />Right here.</>} description="Discover the flavours of Aba and Umuahia." compact>
             <div role="search"><RestaurantSearch id="home-search" value={searchQuery} onChange={setSearchQuery} /></div>
           </FoodBanner>
         </div>
-        <section aria-label="Filter by cuisine" className="mb-5"><CuisineFilters value={activeCategory} onChange={setActiveCategory} photographic /></section>
+        <section aria-label="Filter by cuisine" className="mb-7"><CuisineFilters value={activeCategory} onChange={setActiveCategory} photographic /></section>
         <section
           id="restaurants"
           aria-labelledby="restaurants-heading"
@@ -161,7 +161,7 @@ export default function CustomerHomePage() {
             <div>
               <h2
                 id="restaurants-heading"
-                className="text-xl tracking-tight sm:text-2xl"
+                className="text-[1.375rem] font-semibold tracking-tight sm:text-[1.75rem]"
               >
                 {hasFilters
                   ? "Find your favourite"
@@ -188,7 +188,7 @@ export default function CustomerHomePage() {
             </p>
           )}
           {loading ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="restaurant-grid grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               <RestaurantCardSkeleton />
               <RestaurantCardSkeleton />
               <RestaurantCardSkeleton />
@@ -207,7 +207,7 @@ export default function CustomerHomePage() {
               </Button></EmptyContent>
             </Empty>
           ) : filtered.length ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="restaurant-grid grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((restaurant) => (
                 <RestaurantCard key={restaurant.id} restaurant={restaurant} />
               ))}

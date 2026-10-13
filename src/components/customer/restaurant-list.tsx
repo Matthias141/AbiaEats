@@ -16,16 +16,16 @@ export function RestaurantList({ restaurants, activeTag, searchQuery, activeCity
   const [selectedCity, setSelectedCity] = useState(activeCity || "");
   const filtered = filterRestaurants(restaurants, { search, cuisine: selectedTag, city: selectedCity });
   const hasFilters = Boolean(search || selectedTag !== "all" || selectedCity);
-  return <div className="flex flex-col gap-6">
+  return <div className="discovery-layout flex flex-col gap-5">
     <div role="search"><RestaurantSearch id="restaurant-search" value={search} onChange={setSearch} /></div>
-    <FieldSet className="gap-2"><FieldLegend variant="label">Choose a city</FieldLegend>
+    <FieldSet className="city-controls gap-2"><FieldLegend variant="label">Choose a city</FieldLegend>
       <ToggleGroup type="single" value={selectedCity || "all-cities"} aria-label="Choose a city" onValueChange={value => { if (value) setSelectedCity(value === "all-cities" ? "" : value); }} className="flex-wrap justify-start gap-2">
         {[{ label: "All cities", value: "all-cities" }, ...CITY_OPTIONS].map(city => <ToggleGroupItem key={city.value} value={city.value}>{city.label}</ToggleGroupItem>)}
       </ToggleGroup>
     </FieldSet>
     <FieldSet className="gap-2"><FieldLegend variant="label">What sounds good?</FieldLegend><CuisineFilters value={selectedTag} onChange={setSelectedTag} photographic /></FieldSet>
     <p role="status" className="text-sm text-muted-foreground">{filtered.length} {filtered.length === 1 ? "restaurant" : "restaurants"}{selectedCity ? ` in ${formatCityName(selectedCity)}` : ""}</p>
-    {filtered.length ? <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{filtered.map(restaurant => <RestaurantCard key={restaurant.id} restaurant={restaurant} />)}</div> :
+    {filtered.length ? <div className="restaurant-grid grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{filtered.map(restaurant => <RestaurantCard key={restaurant.id} restaurant={restaurant} />)}</div> :
       <Empty><EmptyHeader><EmptyMedia variant="icon"><UtensilsCrossed aria-hidden="true" /></EmptyMedia>
         <EmptyTitle><h2>No restaurants found</h2></EmptyTitle>
         <EmptyDescription>{hasFilters ? "Try another city, a different cuisine, or a shorter search." : "Local kitchens will appear here as they become available."}</EmptyDescription>

@@ -80,7 +80,8 @@ async function layout(page, name, width, height = 900) {
   result.layouts.push({ name, width, ...metrics, passed: metrics.document <= metrics.viewport + 1 && metrics.body <= metrics.viewport + 1 && metrics.clipped.length === 0 });
 }
 try {
-  await run(process.execPath, ['node_modules/next/dist/bin/next', 'build'], 'build.log');
+  // Optional for repeated browser checks of an unchanged, already-built fixture.
+  if (process.env.UI_AUDIT_SKIP_BUILD !== '1') await run(process.execPath, ['node_modules/next/dist/bin/next', 'build'], 'build.log');
   let ready = false; let serverLog = '';
   next = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--port', String(appPort), '--hostname', '127.0.0.1'], { env, stdio: ['ignore','pipe','pipe'] });
   next.stdout.on('data', data => { serverLog += data; if (data.toString().includes('Ready')) ready = true; }); next.stderr.on('data', data => serverLog += data);
@@ -156,6 +157,10 @@ try {
   await page.getByRole('button',{name:/^Add to cart/}).click(); await page.getByRole('dialog').waitFor({state:'hidden'});
   const cart = await page.evaluate(()=>JSON.parse(localStorage.getItem('abiaeats_cart')));
   check('Food sheet adds selected quantity and retains price',cart.items[0]?.quantity === 2 && cart.items[0]?.price === meals[0].price);
+  await page.getByRole('button',{name:`Add ${meals[0].name} to cart`}).click();
+  check('Inline menu quantity increments immediately',(await page.evaluate(()=>JSON.parse(localStorage.getItem('abiaeats_cart')).items[0].quantity))===3);
+  await page.getByRole('button',{name:`Decrease ${meals[0].name} quantity`}).click();
+  check('Inline menu quantity decreases without opening a sheet',(await page.evaluate(()=>JSON.parse(localStorage.getItem('abiaeats_cart')).items[0].quantity))===2);
   await page.emulateMedia({reducedMotion:'reduce'});
   await itemTrigger.click(); await page.getByRole('dialog').waitFor();
   check('Reduced motion opens food sheets without movement',await page.getByRole('dialog').evaluate(el=>getComputedStyle(el).animationName==='none'));
