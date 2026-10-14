@@ -27,7 +27,7 @@ const CRAVINGS = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-light-bg font-brand">
+    <div className="landing-surface min-h-screen bg-light-bg">
       <header className="eats-topbar">
         <nav
           aria-label="Main navigation"
@@ -67,7 +67,7 @@ export default function LandingPage() {
       </header>
       <main id="main-content">
         <div className="mx-auto max-w-6xl px-4 pb-2 pt-6 sm:px-6 sm:pt-8">
-          <FoodBanner headingId="landing-heading" title={<>Your favourites.<br />Delivered in Abia.</>} description="Jollof rice, pepper soup, shawarma. Choose a restaurant in your city and order what you’re hungry for.">
+          <FoodBanner headingId="landing-heading" title={<>Abia flavours.<br />At your door.</>} description="Jollof rice, pepper soup, shawarma. Choose a restaurant in your city and order what you’re hungry for.">
             <form action="/restaurants">
               <FieldGroup className="gap-3 sm:flex-row sm:items-end">
                 <Field className="flex-1"><FieldLabel htmlFor="landing-city">Choose your city</FieldLabel><select id="landing-city" name="city" defaultValue="aba" className="ui-native-select"><option value="aba">Aba</option><option value="umuahia">Umuahia</option></select></Field>

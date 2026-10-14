@@ -20,7 +20,7 @@ export function RestaurantCard({
       href={`/restaurants/${restaurant.id}`}
       className="restaurant-card group ui-press"
     >
-      <div className="restaurant-photo relative aspect-[16/10] overflow-hidden rounded-[1.25rem] bg-orange-50">
+      <div className="restaurant-photo relative aspect-[16/9] overflow-hidden rounded-[1rem] bg-orange-50">
         {restaurant.cover_image_url || restaurant.image_url ? (
           <Image
             src={restaurant.cover_image_url || restaurant.image_url || ""}
@@ -33,7 +33,7 @@ export function RestaurantCard({
         ) : inspirationPhoto ? (
           <>
             <Image src={inspirationPhoto} alt="" fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="restaurant-card-image object-cover" loading="lazy" />
-            <span className="absolute bottom-3 right-3 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-gray-900">Cuisine inspiration</span>
+            <span className="restaurant-inspiration-label absolute bottom-3 right-3 rounded-full bg-white/95 px-2.5 py-1 text-xs font-medium text-gray-900">Cuisine inspiration</span>
           </>
         ) : (
           <div className="restaurant-card-image flex h-full items-center justify-center bg-[#f3ebe1]">
@@ -44,12 +44,13 @@ export function RestaurantCard({
           </div>
         )}
         <Badge variant={restaurant.is_open ? "secondary" : "outline"} className="restaurant-open-badge absolute left-3 top-3">
-          {restaurant.is_open ? "Open now" : "Currently closed"}
+          <span className={`size-1.5 rounded-full ${restaurant.is_open ? "bg-green-700" : "bg-gray-500"}`} aria-hidden="true" />
+          {restaurant.is_open ? "Open now" : "Closed"}
         </Badge>
       </div>
-      <div className="px-1 pb-2 pt-3">
+      <div className="restaurant-card-copy">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-brand text-[1.0625rem] font-medium leading-snug tracking-tight text-foreground">
+          <h3 className="text-[1.0625rem] font-semibold leading-snug tracking-tight text-foreground">
             {restaurant.name}
           </h3>
           {restaurant.rating_count > 0 && (
@@ -93,8 +94,8 @@ export function RestaurantCard({
 export function RestaurantCardSkeleton() {
   return (
     <div className="restaurant-card" aria-hidden="true">
-      <Skeleton className="aspect-[16/10]" />
-      <div className="flex flex-col gap-3 p-5">
+      <Skeleton className="restaurant-photo aspect-[16/9]" />
+      <div className="restaurant-card-copy flex flex-col gap-3">
         <Skeleton className="h-5 w-3/4" />
         <Skeleton className="h-4 w-1/2" />
         <Skeleton className="mt-2 h-4 w-full" />

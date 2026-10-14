@@ -23,6 +23,7 @@ const restaurants = MOCK_RESTAURANTS.map((row, index) => ({ ...row, id: uid(inde
 const meals = MOCK_RESTAURANTS.flatMap((row, index) => getMockMenuItems(row.id).map((meal, mealIndex) => ({ ...meal, id: uid((index + 1) * 100 + mealIndex), restaurant_id: uid(index + 1), image_url: null })));
 // Brand photograph is used only as a test image, never as a real vendor photograph.
 restaurants[0].cover_image_url = '/images/jollof-hero.webp';
+restaurants[1].is_open = false;
 meals[0].image_url = '/images/jollof-hero.webp';
 let homeState = 'normal';
 const requests = [];
@@ -80,7 +81,8 @@ async function layout(page, name, width, height = 900) {
   result.layouts.push({ name, width, ...metrics, passed: metrics.document <= metrics.viewport + 1 && metrics.body <= metrics.viewport + 1 && metrics.clipped.length === 0 });
 }
 try {
-  await run(process.execPath, ['node_modules/next/dist/bin/next', 'build'], 'build.log');
+  // Optional for repeated browser checks of an unchanged, already-built fixture.
+  if (process.env.UI_AUDIT_SKIP_BUILD !== '1') await run(process.execPath, ['node_modules/next/dist/bin/next', 'build'], 'build.log');
   let ready = false; let serverLog = '';
   next = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--port', String(appPort), '--hostname', '127.0.0.1'], { env, stdio: ['ignore','pipe','pipe'] });
   next.stdout.on('data', data => { serverLog += data; if (data.toString().includes('Ready')) ready = true; }); next.stderr.on('data', data => serverLog += data);
@@ -100,6 +102,13 @@ try {
   await page.goto(`${appUrl}/restaurants`); await page.waitForLoadState('networkidle');
   for (const width of [320, 390, 768, 1440]) await layout(page, 'discovery', width);
   await audit(page, 'discovery-desktop'); await page.setViewportSize({width:390,height:844}); await audit(page,'discovery-mobile');
+  await page.getByRole('checkbox',{name:'Open now',exact:true}).check();
+  check('Open-now filter excludes closed kitchens',!(await page.getByRole('heading',{name:restaurants[1].name,exact:true}).count()));
+  await page.getByRole('checkbox',{name:'Open now',exact:true}).uncheck();
+  await page.getByLabel('Sort by').selectOption('fee');
+  const cheapest=[...restaurants].sort((a,b)=>a.delivery_fee-b.delivery_fee)[0];
+  check('Delivery-fee sorting places the lowest fee first',(await page.locator('.restaurant-card h3').first().textContent())===cheapest.name);
+  await page.getByLabel('Sort by').selectOption('orders');
   await page.getByRole('link').filter({has:page.getByRole('heading',{name:restaurants[0].name,exact:true})}).click();
   await page.waitForURL(`${appUrl}/restaurants/${uid(1)}`);
   await page.getByRole('button',{name:`View ${meals[0].name} details`}).waitFor();
@@ -117,6 +126,7 @@ try {
   await page.getByRole('button',{name:'Clear filters'}).click();
   await page.goto(`${appUrl}/home`); await page.getByRole('heading',{name:restaurants[0].name}).waitFor({timeout:10000});
   for (const width of [320,390,768,1440]) await layout(page,'home',width);
+  check('Desktop navigation uses a rail outside the content',await page.locator('.customer-dock').evaluate(element=>{const r=element.getBoundingClientRect();const main=document.querySelector('main').getBoundingClientRect();return r.width<120 && r.height>r.width && r.right<=main.left;}));
   await audit(page,'home-desktop'); await page.setViewportSize({width:390,height:844}); await audit(page,'home-mobile');
   await page.getByRole('navigation',{name:'Customer navigation'}).getByRole('link',{name:'Explore',exact:true}).click();
   await page.getByRole('heading',{name:'Restaurants',exact:true}).waitFor();
@@ -142,7 +152,9 @@ try {
   await page.goto(`${appUrl}/restaurants/${uid(1)}`); await page.waitForLoadState('networkidle');
   for(const width of [320,390,768,1440]) await layout(page,'menu',width);
   await audit(page,'menu-desktop'); await page.setViewportSize({width:390,height:844}); await audit(page,'menu-mobile');
-  const itemTrigger = page.getByRole('button',{name:`View ${meals[0].name} details`}); await itemTrigger.focus(); await page.keyboard.press('Enter');
+  const itemTrigger = page.getByRole('button',{name:`View ${meals[0].name} details`});
+  const initialMealHeight=await itemTrigger.evaluate(element=>element.closest('article').getBoundingClientRect().height);
+  await itemTrigger.focus(); await page.keyboard.press('Enter');
   await page.getByRole('dialog',{name:meals[0].name}).waitFor(); await audit(page,'food-sheet');
   check('Food sheet has a short spatial entrance',await page.getByRole('dialog').evaluate(el=>{const s=getComputedStyle(el);return s.animationName==='customer-sheet-in' && parseFloat(s.animationDuration)<=.25;}));
   await page.getByRole('dialog').evaluate(async el=>{await Promise.all(el.getAnimations().map(a=>a.finished.catch(()=>{})));});
@@ -156,6 +168,16 @@ try {
   await page.getByRole('button',{name:/^Add to cart/}).click(); await page.getByRole('dialog').waitFor({state:'hidden'});
   const cart = await page.evaluate(()=>JSON.parse(localStorage.getItem('abiaeats_cart')));
   check('Food sheet adds selected quantity and retains price',cart.items[0]?.quantity === 2 && cart.items[0]?.price === meals[0].price);
+  check('Adding a dish preserves its menu card height',Math.abs((await itemTrigger.evaluate(element=>element.closest('article').getBoundingClientRect().height))-initialMealHeight)<1);
+  await page.setViewportSize({width:1440,height:900});
+  const liveOrder=page.getByRole('region',{name:'Your order',exact:true});
+  check('Desktop order panel reflects the selected dish and quantity',await liveOrder.getByText(meals[0].name,{exact:true}).isVisible() && await liveOrder.getByRole('link',{name:'View cart (2)',exact:true}).isVisible());
+  await audit(page,'menu-order-desktop');
+  await page.setViewportSize({width:390,height:844});
+  await page.getByRole('button',{name:`Add ${meals[0].name} to cart`}).click();
+  check('Inline menu quantity increments immediately',(await page.evaluate(()=>JSON.parse(localStorage.getItem('abiaeats_cart')).items[0].quantity))===3);
+  await page.getByRole('button',{name:`Decrease ${meals[0].name} quantity`}).click();
+  check('Inline menu quantity decreases without opening a sheet',(await page.evaluate(()=>JSON.parse(localStorage.getItem('abiaeats_cart')).items[0].quantity))===2);
   await page.emulateMedia({reducedMotion:'reduce'});
   await itemTrigger.click(); await page.getByRole('dialog').waitFor();
   check('Reduced motion opens food sheets without movement',await page.getByRole('dialog').evaluate(el=>getComputedStyle(el).animationName==='none'));
@@ -192,7 +214,13 @@ try {
   await cartPage.goto(`${appUrl}/cart`); await cartPage.waitForLoadState('networkidle');
   check('Authenticated fixture reaches cart through real middleware',new URL(cartPage.url()).pathname === '/cart');
   for(const width of [320,390,768,1440]) await layout(cartPage,'cart',width);
+  check('Desktop cart summary sits beside the food list',await cartPage.locator('.order-layout').evaluate(element=>{const item=element.querySelector('.cart-food-row').getBoundingClientRect();const summary=element.querySelector('.order-summary').getBoundingClientRect();return summary.left>=item.right && Math.abs(summary.top-element.getBoundingClientRect().top)<2;}));
+  await audit(cartPage,'cart-desktop');
   await cartPage.setViewportSize({width:390,height:844}); await audit(cartPage,'cart-mobile');
+  check('Mobile cart exposes a persistent checkout action',await cartPage.locator('.cart-checkout-bar').evaluate(element=>getComputedStyle(element).position==='fixed' && element.getBoundingClientRect().bottom<innerHeight));
+  await cartPage.setViewportSize({width:320,height:844}); await cartPage.evaluate(()=>document.documentElement.style.fontSize='200%'); await layout(cartPage,'cart-text-resize-200',320);
+  check('Enlarged-text checkout remains within the screen',await cartPage.locator('.cart-checkout-bar').evaluate(element=>{const r=element.getBoundingClientRect();const action=element.querySelector('a').getBoundingClientRect();return r.top>=0 && action.left>=r.left && action.right<=r.right && action.bottom<=r.bottom;}));
+  await audit(cartPage,'cart-text-resize-200'); await cartPage.evaluate(()=>document.documentElement.style.fontSize=''); await cartPage.setViewportSize({width:390,height:844});
   await cartPage.getByRole('button',{name:'Clear cart',exact:true}).click(); await audit(cartPage,'clear-cart-confirmation');
   check('Clear cart requires confirmation',await cartPage.getByRole('dialog',{name:'Clear your cart?'}).isVisible());
   await cartPage.getByRole('button',{name:'Keep cart'}).click(); await cartPage.getByRole('dialog').waitFor({state:'hidden'});
