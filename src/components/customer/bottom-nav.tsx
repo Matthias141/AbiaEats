@@ -22,6 +22,7 @@ export function BottomNav() {
       aria-label="Customer navigation"
       className="customer-dock"
     >
+      <Link href="/home" aria-label="Abia Eats home" className="customer-nav-brand font-brand">ae<span>.</span></Link>
       <div className="customer-dock-inner">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive =

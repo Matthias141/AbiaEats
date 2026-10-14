@@ -1,6 +1,6 @@
 # Customer UI redesign — 13 October 2026
 
-Implemented on local branch `ui/abia-eats-polish`, based on `0f1d255` from the existing customer UI branch. This is separate from the restaurant onboarding work. It has not been committed, pushed, merged or deployed.
+The first pass was published as commit `d6631b8` in draft PR #29 on `ui/abia-eats-polish`, based on `0f1d255` from the existing customer UI branch. This is separate from restaurant onboarding. The combined food-first/native-layout follow-up is described in `ui-native-review.md`. No merge or live deployment is claimed here.
 
 ## Design changes
 

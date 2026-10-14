@@ -145,12 +145,15 @@ export default function CustomerHomePage() {
         </div>
       </header>
       <div className="customer-content mx-auto max-w-6xl px-4 pt-5 sm:px-6 sm:pt-8">
-        <div className="mb-5">
-          <FoodBanner headingId="home-heading" title={<>Good food.<br />Right here.</>} description="Discover the flavours of Aba and Umuahia." compact>
-            <div role="search"><RestaurantSearch id="home-search" value={searchQuery} onChange={setSearchQuery} /></div>
+        <div className="home-search-intro mb-4">
+          <h1 id="home-heading" className="text-[1.75rem] leading-tight tracking-tight sm:text-4xl">Find your next favourite.</h1>
+          <div role="search"><RestaurantSearch id="home-search" value={searchQuery} onChange={setSearchQuery} /></div>
+        </div>
+        <div className="mb-4">
+          <FoodBanner headingId="home-feature-heading" headingLevel={2} title={<>A taste<br />of home.</>} description="Jollof, suya and the flavours you know." compact>
           </FoodBanner>
         </div>
-        <section aria-label="Filter by cuisine" className="mb-7"><CuisineFilters value={activeCategory} onChange={setActiveCategory} photographic /></section>
+        <section aria-label="Filter by cuisine" className="mb-4"><CuisineFilters value={activeCategory} onChange={setActiveCategory} photographic /></section>
         <section
           id="restaurants"
           aria-labelledby="restaurants-heading"

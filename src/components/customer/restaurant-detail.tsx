@@ -23,6 +23,7 @@ import { getCuisinePhoto } from "@/lib/cuisine-photography";
 import { CuisineIcon } from "@/lib/cuisine-icons";
 import { MenuItemModal } from "@/components/customer/menu-item-modal";
 import { RestaurantSwitchModal } from "@/components/customer/restaurant-switch-modal";
+import { OrderSummary } from "@/components/customer/order-summary";
 
 interface RestaurantDetailProps {
   restaurant: RestaurantPublic;
@@ -218,7 +219,7 @@ export function RestaurantDetail({
     <main
       id="main-content"
       tabIndex={-1}
-      className={`min-h-screen liquid-surface overflow-x-hidden ${itemCount > 0 ? "pb-56" : "pb-28"}`}
+      className={`restaurant-menu min-h-screen liquid-surface overflow-x-hidden ${itemCount > 0 ? "pb-56" : "pb-28"}`}
     >
       {/* Hero Section */}
       <div className="relative">
@@ -391,7 +392,8 @@ export function RestaurantDetail({
       )}
 
       {/* Menu Content */}
-      <div className="max-w-3xl mx-auto px-4 mt-6">
+      <div className="menu-layout mx-auto max-w-6xl px-4 mt-6 sm:px-6">
+        <div className="menu-sections min-w-0">
         {menuItems.length > 0 ? (
           Array.from(categories.entries()).map(([category, items]) => (
             <div
@@ -405,8 +407,7 @@ export function RestaurantDetail({
                 {category}
               </h3>
 
-              {/* 2-column grid */}
-              <div className="grid grid-cols-1 gap-4 min-[380px]:grid-cols-2 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 min-[380px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
                 {items.map((item) => {
                   const qty = getItemQuantity(item.id);
                   return (
@@ -421,7 +422,7 @@ export function RestaurantDetail({
                         className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-offset-[-4px]"
                       />
                       {/* Image area */}
-                      <div className="relative aspect-square overflow-hidden bg-gray-50">
+                      <div className="relative aspect-square overflow-hidden bg-gray-50 sm:aspect-[5/4]">
                         {item.image_url ? (
                           <Image
                             src={item.image_url}
@@ -454,8 +455,6 @@ export function RestaurantDetail({
                           </div>
                         )}
 
-                        {/* Add button overlay */}
-                        {qty === 0 && <Button size="icon" disabled={!restaurant.is_open} onClick={event => { event.stopPropagation(); handleAddItem(item); }} className="absolute bottom-2 right-2 z-20 rounded-full" aria-label={`Add ${item.name} to cart`}><Plus aria-hidden="true" /></Button>}
                       </div>
 
                       {/* Text content */}
@@ -467,13 +466,17 @@ export function RestaurantDetail({
                         <p className="tabular-nums text-sm font-medium text-foreground mt-1.5">
                           {formatPrice(item.price)}
                         </p>
-                        {qty > 0 && (
-                          <div className="meal-stepper relative z-20 mt-3 flex w-fit items-center gap-1 rounded-full bg-white p-1">
+                        <div className="meal-controls relative z-20 mt-3">
+                        {qty > 0 ? (
+                          <div className="meal-stepper flex w-full items-center justify-between gap-1 rounded-xl bg-white p-1">
                             <Button size="icon" variant="ghost" disabled={!restaurant.is_open} aria-label={`Decrease ${item.name} quantity`} onClick={() => updateQuantity(item.id, qty - 1)} className="rounded-full"><Minus aria-hidden="true" /></Button>
                             <span key={qty} className="meal-quantity min-w-4 text-center text-sm font-semibold tabular-nums">{qty}</span>
                             <Button size="icon" disabled={!restaurant.is_open || qty >= 20} onClick={() => handleAddItem(item)} className="rounded-full" aria-label={`Add ${item.name} to cart`}><Plus aria-hidden="true" /></Button>
                           </div>
+                        ) : (
+                          <Button variant="outline" disabled={!restaurant.is_open} onClick={() => handleAddItem(item)} className="meal-add-button w-full rounded-xl" aria-label={`Add ${item.name} to cart`}><Plus aria-hidden="true" />Add</Button>
                         )}
+                        </div>
                       </div>
                     </article>
                   );
@@ -504,6 +507,8 @@ export function RestaurantDetail({
             </Link>
           </div>
         )}
+        </div>
+        <aside className="menu-order-panel"><OrderSummary id="menu-order-heading" destination="cart" previewItems /></aside>
       </div>
 
       {/* Floating Cart Bar */}

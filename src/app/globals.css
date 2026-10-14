@@ -552,7 +552,7 @@
   .food-feature { position: relative; min-height: 15rem; overflow: hidden; border-radius: 1.75rem; background: white; box-shadow: var(--shadow-md); }
   .food-feature-media { position: absolute; inset: 0 0 0 56%; }
   .food-feature-copy { position: relative; z-index: 1; width: 56%; min-height: inherit; display: flex; flex-direction: column; justify-content: center; padding: 1.5rem 1.25rem; }
-  .food-feature-copy h1 { color: #171a20; font-size: clamp(1.5rem,4.5vw,3.75rem); font-weight: 650; line-height: 1.02; letter-spacing: -.055em; }
+  .food-feature-copy h1, .food-feature-copy h2 { color: #171a20; font-size: clamp(1.5rem,4.5vw,3.75rem); font-weight: 650; line-height: 1.02; letter-spacing: -.055em; }
   .food-feature-description { max-width: 17rem; margin-top: .875rem; color: #555c67; font-size: .8125rem; line-height: 1.6; }
   .food-feature-eyebrow { margin-bottom: .75rem; color: #555c67; font-size: .8125rem; }
   .landing-feature-image { box-shadow: var(--shadow-md); }
@@ -665,3 +665,78 @@
   .meal-quantity { animation: meal-quantity-feedback 160ms var(--ease-ui); }
 }
 @keyframes meal-quantity-feedback { from { opacity: .5; transform: scale(.9); } to { opacity: 1; transform: scale(1); } }
+
+/* Food-first browsing with native task layouts. Desktop owns a separate rail. */
+@layer components {
+  .customer-nav-brand { display: none; }
+  .home-search-intro { display: grid; gap: 1rem; align-items: center; }
+  .customer-content .food-feature { min-height: 10.5rem; }
+  .customer-content .food-feature-copy { padding-block: 1.5rem; }
+  .menu-order-panel { display: none; }
+  .menu-layout, .order-layout { display: grid; gap: 2rem; }
+  .order-summary { display: flex; min-width: 0; flex-direction: column; gap: 1.25rem; padding: 1.5rem; border: 1px solid #e1e3e7; border-radius: 1.5rem; background: white; box-shadow: var(--shadow-md); }
+  .order-summary-empty { display: flex; flex-direction: column; align-items: flex-start; gap: .875rem; padding-block: 1rem; }
+  @media (max-width: 639px) { .order-summary { padding: 1rem; } }
+  .order-preview-list { display: flex; flex-direction: column; gap: .875rem; max-height: 35dvh; overflow-y: auto; }
+  .order-preview-quantity { display: grid; min-width: 1.75rem; min-height: 1.75rem; place-items: center; border-radius: .5rem; background: #fff0e6; color: #9a390e; font-weight: 600; }
+  .order-summary-checkout { display: none; }
+  .customer-cart .cart-food-row { grid-template-columns: min(4rem,80px) minmax(0,1fr); }
+  .cart-items-column { container: cart-items / inline-size; min-width: 0; }
+  .cart-item-photo { width: 100%; max-width: 80px; aspect-ratio: 1; }
+  .cart-item-controls { grid-column: 1 / -1; }
+  .cart-checkout-bar { position: fixed; z-index: 40; bottom: calc(100px + env(safe-area-inset-bottom)); left: 1rem; right: 1rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; max-width: 42rem; margin-inline: auto; padding: 1rem; border: 1px solid #e1e3e7; border-radius: 1.5rem; background: white; box-shadow: var(--shadow-md); }
+  .cart-checkout-bar > a { flex: 1; min-width: 0; }
+  .customer-dock-item > span { max-width: 100%; overflow-wrap: anywhere; text-align: center; }
+  .cart-checkout-bar { bottom: calc(80px + 1.5rem + env(safe-area-inset-bottom)); }
+  .meal-controls { height: 3.5rem; display: flex; align-items: center; }
+  .meal-controls .meal-stepper { height: 3.5rem; box-shadow: none; border: 1px solid #dedfe3; }
+  .meal-add-button { color: #9a390e; border-color: #dedfe3; background: white; }
+  .menu-product h4 { min-height: 2.9em; }
+  .discovery-quick-controls { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem; }
+  .open-filter { display: inline-flex; min-height: 2.75rem; align-items: center; gap: .625rem; border: 1px solid #dedfe3; border-radius: .875rem; background: white; padding: .625rem .875rem; font-size: .875rem; font-weight: 500; }
+  .open-filter input { width: 1rem; height: 1rem; accent-color: #b4430b; }
+  .discovery-results-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; }
+  .discovery-sort { min-height: 2.75rem; max-width: 100%; border: 1px solid #dedfe3; border-radius: .75rem; background: white; padding: .5rem .75rem; font-size: .875rem; }
+  @media (max-width: 639px) {
+    .customer-surface .restaurant-card { display: grid; grid-template-columns: 7rem minmax(0,1fr); align-items: stretch; gap: .75rem; border-radius: 1.25rem; }
+    .customer-surface .restaurant-photo { aspect-ratio: auto; min-height: 8rem; border-radius: .875rem; }
+    .restaurant-card-copy { padding: .5rem .25rem .5rem 0; }
+    .restaurant-card-copy h3 { font-size: 1rem; }
+    .restaurant-card-copy > p { font-size: .75rem; line-height: 1.5; }
+    .restaurant-card-copy > div:last-child { gap: .375rem .5rem; margin-top: .5rem; font-size: .75rem; }
+    .restaurant-inspiration-label { right: .375rem; bottom: .375rem; left: .375rem; padding: .25rem; border-radius: .5rem; text-align: center; font-size: .625rem; line-height: 1.3; }
+    .restaurant-open-badge { left: .5rem; top: .5rem; padding: .25rem .375rem; font-size: .625rem; }
+  }
+  @media (min-width: 380px) and (max-width: 639px) {
+    .customer-surface .restaurant-card { grid-template-columns: 8rem minmax(0,1fr); }
+  }
+  @media (max-width: 379px) {
+    .cart-checkout-bar > a { flex-basis: 100%; }
+  }
+  @media (min-width: 768px) {
+    .home-search-intro { grid-template-columns: minmax(0,1fr) minmax(18rem,.85fr); gap: 2rem; }
+    .customer-content .food-feature { min-height: 17rem; }
+  }
+  @media (min-width: 1024px) {
+    .customer-surface { padding-inline-start: 7.25rem; }
+    .customer-dock { top: 1rem; bottom: 1rem; left: 1rem; width: 5.5rem; max-width: none; transform: none; border-radius: 1.5rem; padding: .5rem; background: white; backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: var(--shadow-sm); }
+    .customer-nav-brand { display: flex; min-height: 4.5rem; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 1.75rem; font-weight: 600; letter-spacing: -.08em; }
+    .customer-nav-brand span { color: #b4430b; }
+    .customer-dock-inner { flex-direction: column; gap: .75rem; }
+    .customer-dock-item { flex: 0 0 auto; min-height: 4.25rem; border-radius: 1rem; }
+    .menu-layout { grid-template-columns: minmax(0,1fr) 20rem; align-items: start; }
+    .menu-order-panel { display: block; position: sticky; top: 5rem; max-height: calc(100dvh - 6rem); overflow-y: auto; border-radius: 1.5rem; }
+    .order-layout { grid-template-columns: minmax(0,1fr) 20rem; align-items: start; }
+    .order-layout > .order-summary { position: sticky; top: 6rem; }
+    .menu-cart-bar, .cart-checkout-bar { display: none; }
+    .order-summary-checkout { display: inline-flex; }
+    .restaurant-menu, .customer-cart { padding-bottom: 3rem; }
+  }
+}
+@container cart-items (max-width: 18rem) {
+  .customer-cart .cart-food-row { grid-template-columns: minmax(0,1fr); }
+}
+@media (forced-colors: active) {
+  .order-summary, .cart-checkout-bar, .customer-dock { background: Canvas; border: 1px solid CanvasText; }
+  .order-preview-quantity { background: Highlight; color: HighlightText; }
+}

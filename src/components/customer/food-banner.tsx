@@ -1,21 +1,23 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 
-export function FoodBanner({ headingId, eyebrow, title, description, children, compact = false }: {
+export function FoodBanner({ headingId, eyebrow, title, description, children, compact = false, headingLevel = 1 }: {
   headingId: string;
   eyebrow?: string;
   title: ReactNode;
   description: string;
   children?: ReactNode;
   compact?: boolean;
+  headingLevel?: 1 | 2;
 }) {
+  const Heading = headingLevel === 1 ? "h1" : "h2";
   if (compact) return (
     <section aria-labelledby={headingId}>
       <div className="food-feature">
         <div className="food-feature-media"><Image src="/images/food-banner.webp" alt="Nigerian jollof rice, grilled chicken, plantain, egusi soup and suya" fill priority sizes="(min-width: 1280px) 610px, 55vw" className="food-feature-photo object-cover object-right" /></div>
         <div className="food-feature-copy">
           {eyebrow && <p className="food-feature-eyebrow">{eyebrow}</p>}
-          <h1 id={headingId}>{title}</h1>
+          <Heading id={headingId}>{title}</Heading>
           <p className="food-feature-description">{description}</p>
         </div>
       </div>
