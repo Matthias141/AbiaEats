@@ -6,8 +6,7 @@
  * calling supabase.auth.signInWithPassword() directly.
  *
  * Rate limit: 5 attempts per 15 minutes per IP (loginRateLimit in rate-limit.ts).
- * Fails open if Upstash is not configured — add UPSTASH_REDIS_REST_URL +
- * UPSTASH_REDIS_REST_TOKEN to Vercel env to enable.
+ * Uses a per-instance memory fallback in production if Upstash is not configured.
  */
 
 import { NextResponse } from 'next/server';
@@ -16,13 +15,12 @@ import { loginSchema } from '@/lib/validations';
 import { loginRateLimit, applyRateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: Request) {
-  // ── Rate limiting (fail open if Upstash not yet configured) ────────────────
+  // ── Rate limiting ────────────────────────────────────────────────────────
   try {
     const blocked = await applyRateLimit(loginRateLimit, request);
     if (blocked) return blocked;
   } catch {
-    // Upstash env vars not set — skip rate limiting, allow the request.
-    // Configure UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN to enable.
+    // Preserve availability on Redis service errors; missing config uses memory.
   }
 
   // ── Parse + validate body ──────────────────────────────────────────────────
