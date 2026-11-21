@@ -54,7 +54,8 @@ src/
 ├── lib/                    # Supabase client, Paystack helpers, WhatsApp SDK
 └── types/                  # TypeScript definitions
 supabase/
-└── migrations/             # Database schema and RLS policies
+├── schema.sql              # Base database schema and RLS policies
+└── *patch*.sql             # Schema and security patches
 infra/
 └── audit-worm/             # AWS infrastructure audit tooling
 ```
@@ -65,22 +66,26 @@ Pre-revenue. Core ordering flow and payment integration complete. Rider supply a
 
 ## Running Locally
 
-```bash
-# Install dependencies
-npm install
+1. With Node.js 22, run `npm ci` and `cp .env.example .env.local`. Fill in the Supabase URL and keys from your development project. Keep the service role key server-only.
+2. Set `NEXT_PUBLIC_OPAY_ACCOUNT_NAME` and `NEXT_PUBLIC_OPAY_ACCOUNT_NUMBER` in `.env.local` to the name and 10-digit account number customers should see. Use test values for local checkout; never send a transfer to a test account. These two values are public and must be set before starting or building Next.js. Restart local dev or rebuild and redeploy after changing them. Without a valid account, checkout won't accept orders.
+3. Set up the database as shown below, then run `npm run dev` and open [http://localhost:3000](http://localhost:3000).
 
-# Set up environment variables
-cp .env.example .env.local
-# Fill in: Supabase URL/keys, Paystack keys, WhatsApp Cloud API credentials
+### Set up a fresh Supabase database
 
-# Run database migrations
-npx supabase db push
+Use a new development Supabase project. In its **SQL Editor**, run each linked file in its own query, in this order. This repository ships SQL scripts rather than a Supabase CLI migrations directory, so `supabase db push` does not install the schema.
 
-# Start development server
-npm run dev
-```
+1. [Base schema](supabase/schema.sql)
+2. [Initial security patches](supabase/security-patches.sql)
+3. [v3: Function hardening](supabase/security-patches-v3.sql)
+4. [v4: Restaurant applications](supabase/schema-patch-v4.sql)
+5. [v6: RLS hardening](supabase/security-patches-v6-rls-hardening.sql)
+6. [v7: Order and profile safeguards](supabase/security-patches-v7-remaining.sql)
+7. [v8: Order idempotency](supabase/security-patches-v8-idempotency.sql)
+8. [v9: View security](supabase/security-patches-v9-view-security-invoker.sql)
+9. [v10: Vendor invites](supabase/schema-patch-v10-vendor-invites.sql)
+10. [v11: Unique payment references](supabase/security-patches-v11-payment-reference-uniqueness.sql). Run the duplicate-reference pre-check at the top of the file first; proceed only if it returns no rows.
 
-Open [http://localhost:3000](http://localhost:3000).
+Skip the legacy v5 Vault patch; v9 uses the bank columns from the base schema and does not require that patch. Don't replay this fresh-install sequence against an existing or production database.
 
 ## Author
 
