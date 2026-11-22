@@ -9,6 +9,7 @@ import {
   Clock,
   MapPin,
   Plus,
+  Minus,
   ShoppingBag,
   Share2,
   ClipboardList,
@@ -18,9 +19,11 @@ import { useCart } from "@/contexts/cart-context";
 import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/primitives/button";
 import { Badge } from "@/components/ui/primitives/badge";
+import { getCuisinePhoto } from "@/lib/cuisine-photography";
 import { CuisineIcon } from "@/lib/cuisine-icons";
 import { MenuItemModal } from "@/components/customer/menu-item-modal";
 import { RestaurantSwitchModal } from "@/components/customer/restaurant-switch-modal";
+import { OrderSummary } from "@/components/customer/order-summary";
 
 interface RestaurantDetailProps {
   restaurant: RestaurantPublic;
@@ -38,8 +41,11 @@ export function RestaurantDetail({
     itemCount,
     subtotal,
     deliveryFee,
+    updateQuantity,
   } = useCart();
 
+  const [shareStatus, setShareStatus] = useState("");
+  const inspirationPhoto = getCuisinePhoto(restaurant.cuisine_tags);
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [showSwitchModal, setShowSwitchModal] = useState(false);
@@ -190,21 +196,19 @@ export function RestaurantDetail({
   }, []);
 
   const handleShare = useCallback(async () => {
+    setShareStatus("");
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: restaurant.name,
-          text: `Check out ${restaurant.name} on AbiaEats!`,
-          url: window.location.href,
-        });
-      } catch {
-        // User cancelled or share failed silently
+        await navigator.share({ title: restaurant.name, text: `Check out ${restaurant.name} on AbiaEats!`, url: window.location.href });
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === "AbortError")) setShareStatus("Couldn’t share this restaurant. Try again.");
       }
     } else {
       try {
         await navigator.clipboard.writeText(window.location.href);
+        setShareStatus("Restaurant link copied.");
       } catch {
-        // Clipboard write failed silently
+        setShareStatus("Couldn’t copy the link. Copy the address from your browser.");
       }
     }
   }, [restaurant.name]);
@@ -215,12 +219,12 @@ export function RestaurantDetail({
     <main
       id="main-content"
       tabIndex={-1}
-      className={`min-h-screen liquid-surface overflow-x-hidden ${itemCount > 0 ? "pb-56" : "pb-28"}`}
+      className={`restaurant-menu min-h-screen liquid-surface overflow-x-hidden ${itemCount > 0 ? "pb-56" : "pb-28"}`}
     >
       {/* Hero Section */}
       <div className="relative">
         {/* Cover Image */}
-        <div className="relative h-52 overflow-hidden bg-gray-100 sm:h-72 lg:h-80">
+        <div className="restaurant-cover relative h-56 overflow-hidden bg-gray-100 sm:h-72 lg:h-80">
           {restaurant.cover_image_url || restaurant.image_url ? (
             <Image
               src={restaurant.cover_image_url || restaurant.image_url || ""}
@@ -230,6 +234,11 @@ export function RestaurantDetail({
               className="object-cover"
               priority
             />
+          ) : inspirationPhoto ? (
+            <>
+              <Image src={inspirationPhoto} alt="" fill sizes="100vw" className="object-cover" priority />
+              <span className="absolute bottom-12 right-4 z-10 rounded-full bg-white px-3 py-1 text-xs font-medium">Cuisine inspiration</span>
+            </>
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50 flex items-center justify-center">
               <CuisineIcon
@@ -239,7 +248,7 @@ export function RestaurantDetail({
             </div>
           )}
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-white" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-transparent to-transparent" />
         </div>
 
         {/* Navigation overlays */}
@@ -262,7 +271,7 @@ export function RestaurantDetail({
 
         {/* Restaurant info block */}
         <div className="relative z-10 -mt-8 px-4">
-          <div className="max-w-2xl mx-auto rounded-3xl border border-gray-200 bg-white p-5 beautiful-sm">
+          <div className="restaurant-info max-w-3xl mx-auto rounded-3xl bg-white p-5 sm:p-7">
             <div className="flex flex-wrap items-start gap-4">
               {/* Logo */}
               <div className="relative w-14 h-14 rounded-xl liquid-chip overflow-hidden flex-shrink-0 flex items-center justify-center">
@@ -347,12 +356,15 @@ export function RestaurantDetail({
         </div>
       </div>
 
+      <p role="status" className="mx-auto max-w-3xl px-5 text-sm text-muted-foreground">{shareStatus}</p>
+      <p role="status" className="sr-only">{itemCount} {itemCount === 1 ? "item" : "items"} in your cart</p>
+
       {/* Category Tabs - Sticky */}
       {categoryNames.length > 0 && (
         <div className="menu-category-bar sticky top-0 z-30 mt-4">
           <div
             ref={tabsRef}
-            className="max-w-2xl mx-auto flex overflow-x-auto no-scrollbar px-4 gap-1"
+            className="max-w-3xl mx-auto flex overflow-x-auto no-scrollbar px-4 gap-1"
           >
             {categoryNames.map((category) => (
               <button
@@ -380,7 +392,8 @@ export function RestaurantDetail({
       )}
 
       {/* Menu Content */}
-      <div className="max-w-2xl mx-auto px-4 mt-6">
+      <div className="menu-layout mx-auto max-w-6xl px-4 mt-6 sm:px-6">
+        <div className="menu-sections min-w-0">
         {menuItems.length > 0 ? (
           Array.from(categories.entries()).map(([category, items]) => (
             <div
@@ -388,14 +401,13 @@ export function RestaurantDetail({
               ref={(el) => {
                 if (el) categoryRefs.current.set(category, el);
               }}
-              className="mb-8"
+              className="mb-9"
             >
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 {category}
               </h3>
 
-              {/* 2-column grid */}
-              <div className="grid grid-cols-1 gap-4 min-[380px]:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 min-[380px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
                 {items.map((item) => {
                   const qty = getItemQuantity(item.id);
                   return (
@@ -410,7 +422,7 @@ export function RestaurantDetail({
                         className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-offset-[-4px]"
                       />
                       {/* Image area */}
-                      <div className="relative aspect-[5/4] overflow-hidden bg-gray-50">
+                      <div className="relative aspect-square overflow-hidden bg-gray-50 sm:aspect-[5/4]">
                         {item.image_url ? (
                           <Image
                             src={item.image_url}
@@ -421,12 +433,11 @@ export function RestaurantDetail({
                             loading="lazy"
                           />
                         ) : (
-                          <div className="grid h-full grid-rows-[minmax(0,1fr)_auto] bg-[#f3f3ef]">
+                          <div className="flex h-full items-center justify-center bg-[#f3f3ef]">
                             <CuisineIcon
                               tags={restaurant.cuisine_tags}
                               className="m-auto size-16 max-h-full"
                             />
-                            <span className="block py-2 pl-3 pr-16 text-xs leading-snug text-muted-foreground">Awaiting photo</span>
                           </div>
                         )}
 
@@ -444,20 +455,28 @@ export function RestaurantDetail({
                           </div>
                         )}
 
-                        {/* Add button overlay */}
-                        <Button size="icon" disabled={!restaurant.is_open} onClick={event => { event.stopPropagation(); handleAddItem(item); }} className="absolute bottom-2 right-2 z-20 rounded-full" aria-label={`Add ${item.name} to cart`}>
-                          <Plus aria-hidden="true" />
-                        </Button>
                       </div>
 
                       {/* Text content */}
-                      <div className="p-3">
+                      <div className="p-4">
                         <h4 className="break-words text-[15px] font-medium leading-relaxed text-foreground">
                           {item.name}
                         </h4>
+                        {!item.image_url && <p className="mt-1 text-xs text-muted-foreground">Photo coming soon</p>}
                         <p className="tabular-nums text-sm font-medium text-foreground mt-1.5">
                           {formatPrice(item.price)}
                         </p>
+                        <div className="meal-controls relative z-20 mt-3">
+                        {qty > 0 ? (
+                          <div className="meal-stepper flex w-full items-center justify-between gap-1 rounded-xl bg-white p-1">
+                            <Button size="icon" variant="ghost" disabled={!restaurant.is_open} aria-label={`Decrease ${item.name} quantity`} onClick={() => updateQuantity(item.id, qty - 1)} className="rounded-full"><Minus aria-hidden="true" /></Button>
+                            <span key={qty} className="meal-quantity min-w-4 text-center text-sm font-semibold tabular-nums">{qty}</span>
+                            <Button size="icon" disabled={!restaurant.is_open || qty >= 20} onClick={() => handleAddItem(item)} className="rounded-full" aria-label={`Add ${item.name} to cart`}><Plus aria-hidden="true" /></Button>
+                          </div>
+                        ) : (
+                          <Button variant="outline" disabled={!restaurant.is_open} onClick={() => handleAddItem(item)} className="meal-add-button w-full rounded-xl" aria-label={`Add ${item.name} to cart`}><Plus aria-hidden="true" />Add</Button>
+                        )}
+                        </div>
                       </div>
                     </article>
                   );
@@ -488,12 +507,14 @@ export function RestaurantDetail({
             </Link>
           </div>
         )}
+        </div>
+        <aside className="menu-order-panel"><OrderSummary id="menu-order-heading" destination="cart" previewItems /></aside>
       </div>
 
       {/* Floating Cart Bar */}
       {itemCount > 0 && (
         <div className="menu-cart-bar fixed left-0 right-0 z-40 px-4">
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             <Link href="/cart">
               <div className="w-full min-h-[52px] flex flex-wrap items-center justify-between gap-3 px-5 py-3 rounded-2xl bg-gray-900 text-white font-medium beautiful-md active:scale-[0.97] transition-transform cursor-pointer">
                 <div className="flex items-center gap-3">
