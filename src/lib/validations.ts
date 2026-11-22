@@ -64,7 +64,11 @@ export const createMenuItemSchema = z.object({
   sort_order: z.number().default(0),
 });
 
-export const updateMenuItemSchema = createMenuItemSchema.partial().omit({ restaurant_id: true });
+export const updateMenuItemSchema = createMenuItemSchema.omit({ restaurant_id: true }).extend({
+  is_available: createMenuItemSchema.shape.is_available.removeDefault(),
+  is_popular: createMenuItemSchema.shape.is_popular.removeDefault(),
+  sort_order: createMenuItemSchema.shape.sort_order.removeDefault(),
+}).partial();
 
 // ============================================================================
 // Order Schemas
