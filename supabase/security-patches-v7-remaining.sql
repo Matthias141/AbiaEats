@@ -118,16 +118,13 @@ RETURNS trigger
 LANGUAGE plpgsql
 AS $$
 BEGIN
-  -- Normalize profile phone
-  IF TG_TABLE_NAME = 'profiles' AND NEW.phone IS NOT NULL THEN
+  -- Only reference fields on the trigger's own table.
+  IF TG_TABLE_NAME = 'profiles' THEN
     NEW.phone := regexp_replace(NEW.phone, '^\s+|\s+$', '', 'g');
     IF NEW.phone ~ '^0[789][01][0-9]{8}$' THEN
       NEW.phone := '+234' || substring(NEW.phone from 2);
     END IF;
-  END IF;
-
-  -- Normalize order customer_phone
-  IF TG_TABLE_NAME = 'orders' AND NEW.customer_phone IS NOT NULL THEN
+  ELSIF TG_TABLE_NAME = 'orders' THEN
     NEW.customer_phone := regexp_replace(NEW.customer_phone, '^\s+|\s+$', '', 'g');
     IF NEW.customer_phone ~ '^0[789][01][0-9]{8}$' THEN
       NEW.customer_phone := '+234' || substring(NEW.customer_phone from 2);

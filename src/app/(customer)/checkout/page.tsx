@@ -32,6 +32,12 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, restaurantId, restaurantName, deliveryFee, subtotal, total, clearCart } = useCart();
   const { user, profile, isLoading: authLoading } = useAuth();
+  const opayAccountName = process.env.NEXT_PUBLIC_OPAY_ACCOUNT_NAME?.trim();
+  const opayAccountNumber = process.env.NEXT_PUBLIC_OPAY_ACCOUNT_NUMBER?.trim();
+  const opayAccount = opayAccountName && opayAccountNumber &&
+    /^\d{10}$/.test(opayAccountNumber) && opayAccountNumber !== '0000000000'
+    ? { name: opayAccountName, number: opayAccountNumber }
+    : null;
 
   // Form state
   const [deliveryAddress, setDeliveryAddress] = useState('');
@@ -119,6 +125,7 @@ export default function CheckoutPage() {
   // ============================================================================
 
   async function handlePlaceOrder() {
+    if (!opayAccount) return;
     if (!validate()) return;
     if (!restaurantId || !user) return;
     if (submittingRef.current) return;
@@ -187,17 +194,10 @@ export default function CheckoutPage() {
   }
 
   // ============================================================================
-  // OPay account details (from env vars or defaults)
-  // ============================================================================
-
-  const opayAccountName = process.env.NEXT_PUBLIC_OPAY_ACCOUNT_NAME || 'AbiaEats';
-  const opayAccountNumber = process.env.NEXT_PUBLIC_OPAY_ACCOUNT_NUMBER || 'XXXXXXXXXX';
-
-  // ============================================================================
   // Payment Instructions Sheet
   // ============================================================================
 
-  if (showPaymentSheet) {
+  if (showPaymentSheet && opayAccount) {
     return (
       <div className="min-h-screen liquid-surface overflow-x-hidden">
         <div className="max-w-lg mx-auto px-4 pb-24">
@@ -232,10 +232,10 @@ export default function CheckoutPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-500 text-xs mb-0.5">Account Name</p>
-                <p className="text-gray-900 font-medium text-sm">{opayAccountName}</p>
+                <p className="text-gray-900 font-medium text-sm">{opayAccount.name}</p>
               </div>
               <button
-                onClick={() => copyToClipboard(opayAccountName, 'name')}
+                onClick={() => copyToClipboard(opayAccount.name, 'name')}
                 className="flex items-center gap-1 text-brand-orange text-xs font-medium active:scale-95 transition-transform min-h-[44px] px-2"
                 aria-label="Copy account name"
               >
@@ -248,10 +248,10 @@ export default function CheckoutPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-500 text-xs mb-0.5">Account Number</p>
-                <p className="text-gray-900 font-mono font-bold text-base">{opayAccountNumber}</p>
+                <p className="text-gray-900 font-mono font-bold text-base">{opayAccount.number}</p>
               </div>
               <button
-                onClick={() => copyToClipboard(opayAccountNumber, 'number')}
+                onClick={() => copyToClipboard(opayAccount.number, 'number')}
                 className="flex items-center gap-1 text-brand-orange text-xs font-medium active:scale-95 transition-transform min-h-[44px] px-2"
                 aria-label="Copy account number"
               >
@@ -547,9 +547,11 @@ export default function CheckoutPage() {
         {/* ================================================================
             Submit Error
             ================================================================ */}
-        {errors.submit && (
-          <div className="bg-error/10 border border-error/20 rounded-xl p-3 mb-4">
-            <p className="text-error text-sm">{errors.submit}</p>
+        {(!opayAccount || errors.submit) && (
+          <div role="alert" className="bg-error/10 border border-error/20 rounded-xl p-3 mb-4">
+            <p className="text-error text-sm">
+              {opayAccount ? errors.submit : 'OPay payments are temporarily unavailable. Please try again later.'}
+            </p>
           </div>
         )}
 
@@ -558,7 +560,7 @@ export default function CheckoutPage() {
             ================================================================ */}
         <button
           onClick={handlePlaceOrder}
-          disabled={isSubmitting || !user}
+          disabled={isSubmitting || !user || !opayAccount}
           className="flex items-center justify-center w-full py-4 gradient-orange text-white font-semibold rounded-xl active:scale-[0.98] transition-transform text-base min-h-[44px] disabled:opacity-60 disabled:active:scale-100"
         >
           {isSubmitting ? (
