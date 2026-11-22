@@ -138,6 +138,10 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Role-based route protection
+  if (pathname === '/restaurant/apply') {
+    return supabaseResponse;
+  }
+
   if (
     pathname.startsWith('/admin') ||
     pathname.startsWith('/restaurant') ||

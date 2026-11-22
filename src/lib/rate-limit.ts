@@ -73,6 +73,37 @@ export const setPasswordRateLimit = new Ratelimit({
   prefix: 'abiaeats:set-password',
 });
 
+const memoryPolicies = new Map([
+  [loginRateLimit, { limit: 5, windowMs: 15 * 60 * 1000 }],
+  [signupRateLimit, { limit: 3, windowMs: 60 * 60 * 1000 }],
+  [setPasswordRateLimit, { limit: 5, windowMs: 60 * 60 * 1000 }],
+]);
+const memoryWindows = new Map<Ratelimit, Map<string, number[]>>();
+let warnedAboutMemory = false;
+
+function limitInMemory(limiter: Ratelimit, ip: string) {
+  const policy = memoryPolicies.get(limiter) ?? { limit: 3, windowMs: 60 * 60 * 1000 };
+  let windows = memoryWindows.get(limiter);
+  if (!windows) {
+    windows = new Map();
+    memoryWindows.set(limiter, windows);
+  }
+  const now = Date.now();
+  for (const [key, attempts] of windows) {
+    if (attempts[attempts.length - 1] <= now - policy.windowMs) windows.delete(key);
+  }
+  const attempts = (windows.get(ip) ?? []).filter(time => time > now - policy.windowMs);
+  const reset = (attempts[0] ?? now) + policy.windowMs;
+  // Fail closed for new IPs at capacity rather than evicting active limits.
+  if (!windows.has(ip) && windows.size >= 10_000) {
+    return { success: false, limit: policy.limit, remaining: 0, reset };
+  }
+  const success = attempts.length < policy.limit;
+  if (success) attempts.push(now);
+  windows.set(ip, attempts);
+  return { success, limit: policy.limit, remaining: policy.limit - attempts.length, reset };
+}
+
 /**
  * Helper: get the real client IP from a Next.js request.
  * Vercel sets x-forwarded-for. Never trust user-provided headers.
@@ -99,18 +130,22 @@ export async function applyRateLimit(
   limiter: Ratelimit,
   request: Request
 ): Promise<Response | null> {
-  // When Upstash Redis is not configured (local dev, CI without secrets),
-  // skip rate limiting entirely rather than crashing. In production both
-  // vars MUST be set — the health check in /api/health will flag this.
-  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+  const missingRedis = !process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (missingRedis) {
     if (process.env.NODE_ENV !== 'production') {
       console.warn('[rate-limit] Upstash Redis not configured — rate limiting disabled');
+      return null;
     }
-    return null; // allow the request
+    if (!warnedAboutMemory) {
+      console.error('[SECURITY] Upstash Redis not configured — using IN-MEMORY per-instance rate limiting. Limits reset on restart and are NOT shared across instances. Configure UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN.');
+      warnedAboutMemory = true;
+    }
   }
 
   const ip = getClientIp(request);
-  const { success, limit, remaining, reset } = await limiter.limit(ip);
+  const { success, limit, remaining, reset } = missingRedis
+    ? limitInMemory(limiter, ip)
+    : await limiter.limit(ip);
 
   if (!success) {
     const retryAfterSeconds = Math.ceil((reset - Date.now()) / 1000);
