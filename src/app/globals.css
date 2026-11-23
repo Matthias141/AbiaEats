@@ -2,186 +2,287 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ============================================================================
-   AbiaEats Global Styles — Light Theme
-   ============================================================================ */
-
 @layer base {
   :root {
-    --background: #FFFFFF;
-    --foreground: #1C1917;
+    --background: #f8f8f6;
+    --foreground: #1c1917;
+    --font-fallback: system-ui, sans-serif;
+    --primary: 20 89% 37%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 9% 94%;
+    --secondary-foreground: 30 5% 12%;
+    --muted: 40 9% 94%;
+    --muted-foreground: 30 4% 36%;
+    --accent: 24 100% 95%;
+    --accent-foreground: 20 89% 30%;
+    --destructive: 0 72% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 6% 84%;
+    --input: 30 4% 50%;
+    --ring: 20 89% 30%;
+    --radius: 0.875rem;
+    --ease-ui: cubic-bezier(0.23, 1, 0.32, 1);
+    --shadow-sm: 0px 2px 3px -1px rgba(0,0,0,0.1), 0px 1px 0px 0px rgba(25,28,33,0.02), 0px 0px 0px 1px rgba(25,28,33,0.08);
+    --shadow-md: 0px 0px 0px 1px rgba(0,0,0,0.06), 0px 1px 1px -0.5px rgba(0,0,0,0.06), 0px 3px 3px -1.5px rgba(0,0,0,0.06), 0px 6px 6px -3px rgba(0,0,0,0.06), 0px 12px 12px -6px rgba(0,0,0,0.06), 0px 24px 24px -12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 2.8px 2.2px rgba(0,0,0,0.034), 0 6.7px 5.3px rgba(0,0,0,0.048), 0 12.5px 10px rgba(0,0,0,0.06), 0 22.3px 17.9px rgba(0,0,0,0.072), 0 41.8px 33.4px rgba(0,0,0,0.086), 0 100px 80px rgba(0,0,0,0.12);
+    --shadow-orange: var(--shadow-sm);
   }
-
   .dark {
-    --background: #0C0A09;
-    --foreground: #FAF7F3;
+    --background: #0c0a09;
+    --foreground: #faf7f3;
+    --primary: 24 95% 72%; --primary-foreground: 24 60% 12%;
+    --secondary: 30 6% 20%; --secondary-foreground: 40 9% 96%;
+    --muted: 30 6% 20%; --muted-foreground: 40 6% 74%;
+    --accent: 24 20% 20%; --accent-foreground: 24 95% 80%;
+    --destructive: 0 72% 40%; --destructive-foreground: 0 0% 100%;
+    --border: 30 6% 30%; --input: 40 6% 60%; --ring: 24 95% 72%;
   }
-
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
+    scroll-padding-block: 6rem;
   }
-
   body {
-    font-family: var(--font-outfit), sans-serif;
-    background-color: var(--background);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--background);
     color: var(--foreground);
-    overflow-x: hidden;
+    overflow-x: clip;
   }
-
-  * {
-    max-width: 100vw;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-playfair), serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: inherit;
+    letter-spacing: -0.025em;
     font-weight: 600;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:enabled,
+  a {
+    touch-action: manipulation;
+  }
+  :focus-visible {
+    outline: 3px solid #9a390e;
+    outline-offset: 4px;
+  }
+  :focus {
+    scroll-margin-block: 6rem;
+  }
+  ::selection {
+    background: #ffe1cc;
+    color: #311b12;
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply backdrop-blur-[16px] border rounded-2xl;
-    background: rgba(255, 255, 255, 0.8);
-    border-color: rgba(0, 0, 0, 0.06);
-  }
-
   .liquid-surface {
-    background:
-      linear-gradient(135deg, rgba(242, 101, 34, 0.11) 0%, rgba(242, 101, 34, 0) 34%),
-      linear-gradient(225deg, rgba(20, 184, 166, 0.09) 0%, rgba(20, 184, 166, 0) 32%),
-      linear-gradient(180deg, #fffaf5 0%, #f8fafc 42%, #f9fafb 100%);
+    background: var(--background);
   }
-
+  .glass-card,
   .liquid-glass,
-  .liquid-glass-soft,
-  .liquid-glass-strong,
-  .liquid-glass-nav {
+  .liquid-glass-soft {
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    border-radius: 1rem;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 250, 246, 0.74));
+    box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    backdrop-filter: blur(20px) saturate(150%);
+  }
+  .liquid-glass-soft {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(248, 240, 233, 0.64));
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  }
+  .liquid-glass-strong {
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background: linear-gradient(135deg, #f26522, #b4430b);
+    box-shadow: var(--shadow-orange), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  }
+  .liquid-glass-nav,
+  .eats-topbar {
+    border: 1px solid rgba(28, 25, 23, 0.08);
+    background: rgba(255, 252, 249, 0.82);
+    box-shadow: 0 8px 30px -22px rgba(49, 27, 18, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    -webkit-backdrop-filter: blur(22px) saturate(165%);
+    backdrop-filter: blur(22px) saturate(165%);
+  }
+  .eats-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  .liquid-chip {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+  }
+  .liquid-input,
+  .eats-search {
+    border: 1px solid #d6cfc7;
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 1rem;
+    color: #1c1917;
+  }
+  .eats-search::placeholder {
+    color: #6b625b;
+  }
+  .tap-target {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gradient-orange {
+    background: hsl(var(--primary));
+  }
+  .text-gradient-orange {
+    color: #c94e10;
+  }
+  .card-shadow {
+    box-shadow: var(--shadow-sm);
+  }
+  .card-shadow-md {
+    box-shadow: var(--shadow-md);
+  }
+  .restaurant-card {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.82);
+    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    transform: translateZ(0);
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms ease-out,
+      border-color 180ms ease-out;
+  }
+  .restaurant-card-image {
+    transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .eats-filter {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border: 1px solid #ded7d0;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #534940;
+    transition:
+      transform 140ms ease-out,
+      box-shadow 180ms ease-out,
+      background-color 140ms ease-out,
+      color 140ms ease-out;
+  }
+  .eats-filter-active {
+    background: #311b12;
+    border-color: #311b12;
+    color: #fff;
+    box-shadow: var(--shadow-orange), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+  .eats-button {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.4rem;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.68);
-    -webkit-backdrop-filter: blur(24px) saturate(165%);
-    backdrop-filter: blur(24px) saturate(165%);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.72),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.24),
-      0 18px 42px rgba(28, 25, 23, 0.08);
+    background: hsl(var(--primary));
+    box-shadow: var(--shadow-orange), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition:
+      transform 120ms ease-out,
+      background-color 140ms ease-out;
   }
-
-  .liquid-glass::before,
-  .liquid-glass-soft::before,
-  .liquid-glass-strong::before,
-  .liquid-glass-nav::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0) 46%),
-      linear-gradient(315deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 36%);
+  .eats-button:active {
+    transform: translateY(1px) scale(0.97);
   }
-
-  .liquid-glass > *,
-  .liquid-glass-soft > *,
-  .liquid-glass-strong > *,
-  .liquid-glass-nav > * {
-    position: relative;
-    z-index: 1;
+  .eats-empty {
+    padding: 3rem 1.5rem;
+    border: 1px solid #e8e3dd;
+    border-radius: 1.25rem;
+    background: rgba(255, 255, 255, 0.84);
+    box-shadow: var(--shadow-md);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    backdrop-filter: blur(18px) saturate(145%);
+    text-align: center;
   }
-
-  .liquid-glass {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.62));
+  .eats-dialog {
+    width: calc(100% - 2rem);
+    max-width: 32rem;
+    max-height: 90dvh;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #e8e3dd;
+    border-radius: 1.5rem;
+    background: rgba(255, 252, 249, 0.9);
+    color: #1c1917;
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    backdrop-filter: blur(24px) saturate(150%);
+    overflow-y: auto;
   }
-
-  .liquid-glass-soft {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.46));
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.68),
-      0 10px 28px rgba(28, 25, 23, 0.06);
+  .eats-dialog::backdrop {
+    background: rgba(28, 25, 23, 0.5);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
   }
-
-  .liquid-glass-strong {
-    background:
-      linear-gradient(135deg, rgba(242, 101, 34, 0.92), rgba(255, 138, 80, 0.78)),
-      linear-gradient(315deg, rgba(20, 184, 166, 0.2), rgba(20, 184, 166, 0));
-    border-color: rgba(255, 255, 255, 0.36);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.44),
-      0 18px 42px rgba(242, 101, 34, 0.24);
+  .eats-dialog[open] {
+    animation: dialogEnter 180ms cubic-bezier(0.23, 1, 0.32, 1);
   }
-
-  .liquid-glass-nav {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.68));
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.7),
-      0 -8px 28px rgba(28, 25, 23, 0.07),
-      0 10px 32px rgba(28, 25, 23, 0.06);
-  }
-
-  .liquid-chip {
-    border: 1px solid rgba(255, 255, 255, 0.64);
-    background: rgba(255, 255, 255, 0.62);
-    -webkit-backdrop-filter: blur(18px) saturate(155%);
-    backdrop-filter: blur(18px) saturate(155%);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.68),
-      0 6px 18px rgba(28, 25, 23, 0.05);
-  }
-
-  .liquid-input {
-    border: 1px solid rgba(255, 255, 255, 0.68);
-    background: rgba(255, 255, 255, 0.66);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    backdrop-filter: blur(20px) saturate(160%);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.72),
-      0 10px 28px rgba(28, 25, 23, 0.05);
-  }
-
   .status-awaiting {
-    @apply bg-amber-500/10 text-amber-600 border-amber-500/20;
+    @apply bg-amber-500/10 text-amber-700 border-amber-500/20;
   }
   .status-confirmed {
-    @apply bg-blue-500/10 text-blue-600 border-blue-500/20;
+    @apply bg-blue-500/10 text-blue-700 border-blue-500/20;
   }
   .status-preparing {
-    @apply bg-purple-500/10 text-purple-600 border-purple-500/20;
+    @apply bg-purple-500/10 text-purple-700 border-purple-500/20;
   }
   .status-out-for-delivery {
-    @apply bg-orange-500/10 text-orange-600 border-orange-500/20;
+    @apply bg-orange-500/10 text-orange-700 border-orange-500/20;
   }
   .status-delivered {
-    @apply bg-green-500/10 text-green-600 border-green-500/20;
+    @apply bg-green-500/10 text-green-700 border-green-500/20;
   }
   .status-cancelled {
-    @apply bg-red-500/10 text-red-600 border-red-500/20;
+    @apply bg-red-500/10 text-red-700 border-red-500/20;
   }
-
-  .tap-target {
-    @apply min-h-[44px] flex items-center justify-center;
-  }
-
-  .gradient-orange {
-    background: linear-gradient(135deg, #F26522 0%, #FF8A50 100%);
-  }
-
-  .text-gradient-orange {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #F26522 0%, #FF8A50 100%);
-  }
-
   .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
   }
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(242, 101, 34, 0.3);
+    background: #c7b6a8;
     border-radius: 2px;
   }
-
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -189,98 +290,325 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-
-  /* Card with subtle shadow for light theme */
-  .card-shadow {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 1rem;
+    z-index: 200;
+    padding: 0.75rem 1rem;
+    transform: translateY(-200%);
+    background: #fff;
+    color: #311b12;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-md);
   }
-  .card-shadow-md {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  .skip-link:focus {
+    transform: none;
   }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .liquid-lift {
-      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
-    }
-
+  .premium-hero {
+    border: 1px solid rgba(255, 255, 255, 0.66);
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  }
+  .premium-image-frame {
+    box-shadow: var(--shadow-lg), inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+  }
+  .premium-float,
+  .premium-search-panel {
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(22px) saturate(155%);
+    backdrop-filter: blur(22px) saturate(155%);
+  }
+  .premium-card {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 249, 244, 0.8));
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.94);
+    transition:
+      transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 200ms ease-out,
+      border-color 180ms ease-out;
+  }
+  .premium-icon-button {
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition: transform 140ms ease-out, box-shadow 180ms ease-out;
+  }
+  .nav-item {
+    transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1), color 160ms ease-out, background-color 160ms ease-out;
+  }
+  .nav-item svg {
+    transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-item-active svg {
+    transform: translateY(-1px) scale(1.08);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .restaurant-card:hover,
     .liquid-lift:hover {
+      transform: translateY(-4px);
+      border-color: rgba(242, 101, 34, 0.2);
+      box-shadow: var(--shadow-lg);
+    }
+    .restaurant-card:hover .restaurant-card-image {
+      transform: scale(1.045);
+    }
+    .eats-button:hover {
       transform: translateY(-2px);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.74),
-        0 22px 48px rgba(28, 25, 23, 0.1);
+      box-shadow: var(--shadow-sm);
+    }
+    .eats-filter:not(.eats-filter-active):hover {
+      background: #f6eee6;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+    .premium-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(242, 101, 34, 0.22);
+      box-shadow: var(--shadow-md);
+    }
+    .premium-card:hover svg:last-child {
+      transform: translateX(3px);
+    }
+    .premium-icon-button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .nav-item:hover svg {
+      transform: translateY(-2px);
     }
   }
-
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    .liquid-glass,
-    .liquid-glass-soft,
-    .liquid-glass-nav,
-    .liquid-chip,
-    .liquid-input {
-      background: rgba(255, 255, 255, 0.96);
-    }
-
-    .liquid-glass-strong {
-      background: linear-gradient(135deg, #F26522 0%, #FF8A50 100%);
+  @media (max-width: 639px) {
+    .eats-dialog-sheet {
+      width: 100%;
+      max-width: 100%;
+      margin: auto 0 0;
+      border-radius: 1.5rem 1.5rem 0 0;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
   }
 }
-
 @layer utilities {
   .no-scroll-x {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
   .text-balance {
     text-wrap: balance;
   }
 }
-
-/* Bottom sheet slide-up animation */
+@keyframes dialogEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 @keyframes slideUpSheet {
-  0% {
+  from {
     opacity: 0;
-    transform: translateY(100%);
+    transform: translateY(12px);
   }
-  100% {
+  to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
-
 .animate-slide-up-sheet {
-  animation: slideUpSheet 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  animation: slideUpSheet 220ms cubic-bezier(0.23, 1, 0.32, 1);
 }
-
-/* Onboarding slide transitions */
 @keyframes slideInRight {
-  0% {
+  from {
     opacity: 0;
-    transform: translateX(60px);
+    transform: translateX(20px);
   }
-  100% {
+  to {
     opacity: 1;
-    transform: translateX(0);
+    transform: none;
   }
 }
-
 .animate-slide-in-right {
-  animation: slideInRight 0.4s ease-out;
+  animation: slideInRight 220ms ease-out;
+}
+/* Feedback is action-driven; repeated decorative CTA pulsing is intentionally absent. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass-card,
+  .liquid-glass,
+  .liquid-glass-soft,
+  .liquid-chip,
+  .eats-empty,
+  .eats-dialog,
+  .premium-float,
+  .premium-search-panel,
+  .liquid-glass-nav,
+  .eats-topbar {
+    background: #fff;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: #534940;
+  }
+}
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .liquid-glass-nav,
+  .eats-topbar,
+  .premium-float,
+  .premium-search-panel,
+  .liquid-glass,
+  .glass-card {
+    background: #fff;
+  }
 }
 
-/* Pulse glow animation for CTA buttons */
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(242, 101, 34, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(242, 101, 34, 0.5);
-  }
+/* Installed shadcn controls, themed for Abia Eats. */
+@layer components {
+  .beautiful-sm { @apply shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]; }
+  .beautiful-md { @apply shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_1px_-0.5px_rgba(0,0,0,0.06),0px_3px_3px_-1.5px_rgba(0,0,0,0.06),_0px_6px_6px_-3px_rgba(0,0,0,0.06),0px_12px_12px_-6px_rgba(0,0,0,0.06),0px_24px_24px_-12px_rgba(0,0,0,0.06)]; }
+  .beautiful-lg { @apply shadow-[0_2.8px_2.2px_rgba(0,_0,_0,_0.034),_0_6.7px_5.3px_rgba(0,_0,_0,_0.048),_0_12.5px_10px_rgba(0,_0,_0,_0.06),_0_22.3px_17.9px_rgba(0,_0,_0,_0.072),_0_41.8px_33.4px_rgba(0,_0,_0,_0.086),_0_100px_80px_rgba(0,_0,_0,_0.12)]; }
+  .ui-dialog { border: 1px solid transparent; background: rgba(255,255,255,.97); backdrop-filter: blur(20px); box-shadow: var(--shadow-lg); max-height: 85dvh; overflow-y: auto; overscroll-behavior: contain; }
+  .ui-dialog-sheet { inset-block-start: auto; inset-block-end: 0; transform: translate(-50%,0); border-radius: 1.5rem 1.5rem 0 0; padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
+  .ui-press { transition: background-color 150ms ease-out, opacity 150ms ease-out; }
+  .eats-button { background: hsl(var(--primary)); box-shadow: var(--shadow-sm); }
+  .premium-card { background: white; border: 1px solid transparent; box-shadow: var(--shadow-sm); }
+  .restaurant-card { background: white; border: 1px solid transparent; box-shadow: var(--shadow-md); }
+  .premium-image-frame { box-shadow: var(--shadow-lg); }
+  .restaurant-card h3 { line-height: 1.4; }
+  .restaurant-card-image, .food-photo { outline: 1px solid rgba(0,0,0,.1); outline-offset: -1px; }
+  .cuisine-tile { display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: .75rem .25rem; text-align: center; font-weight: 600; font-size: .875rem; line-height: 1.4; }
+  .cuisine-tile-icon { display: grid; place-items: center; width: 4.5rem; height: 4.5rem; border: 1px solid transparent; border-radius: 50%; background: hsl(var(--accent)); }
+  .cuisine-tile-icon svg { width: 3.5rem; height: 3.5rem; }
+  .food-category-artwork { width: 1.5rem !important; height: 1.5rem !important; }
+  .ui-dialog-close { display: flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; border-radius: 50%; background: hsl(var(--secondary)); }
+  @media (min-width: 640px) { .ui-dialog-sheet { inset-block-start: 50%; inset-block-end: auto; transform: translate(-50%,-50%); border-radius: 1.5rem; } }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ui-press { transition: transform 150ms ease-out, background-color 150ms ease-out, opacity 150ms ease-out; }
+  .ui-press:not(:disabled):active { transform: scale(.96); }
+}
+@media (hover: hover) and (pointer: fine) {
+  .ui-press:hover { filter: brightness(.96); }
+  .cuisine-tile:hover .cuisine-tile-icon { box-shadow: var(--shadow-sm); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui-press:active, .eats-button:active, .premium-card:active, .premium-icon-button:active, .restaurant-card:hover, .restaurant-card-image { transform: none !important; }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .ui-dialog { background: white; backdrop-filter: none; border-color: hsl(var(--input)); }
+}
+@media (forced-colors: active) {
+  .ui-dialog, .restaurant-card, .premium-card, .cuisine-tile-icon { border: 1px solid CanvasText; }
+  :focus-visible { outline: 2px solid Highlight; }
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 2s ease-in-out infinite;
+@layer components {
+  .ui-native-select { min-height: 3rem; width: 100%; border: 1px solid hsl(var(--input)); border-radius: .875rem; background: white; color: var(--foreground); padding: .625rem .875rem; font-size: 1rem; }
+  .nav-item-active { background: hsl(var(--accent)); box-shadow: none; }
+  .restaurant-card-image { transition: opacity 150ms ease-out; }
+  .restaurant-card { transition: opacity 150ms ease-out; }
+  .restaurant-card:hover, .restaurant-card:hover .restaurant-card-image { transform: none; }
+}
+
+@layer components { .cart-food-row { display: grid; grid-template-columns: 4rem minmax(0,1fr); gap: .875rem; padding: 1rem; border: 1px solid transparent; border-radius: 1.25rem; background: white; box-shadow: var(--shadow-sm); } }
+
+/* Customer app: photographic content, restrained chrome, floating navigation. */
+@layer components {
+  .customer-surface { font-family: var(--font-outfit), sans-serif; --primary: 0 0% 10%; --primary-foreground: 0 0% 100%; }
+  .customer-dialog { background: white; font-family: var(--font-outfit), sans-serif; --primary: 0 0% 10%; --primary-foreground: 0 0% 100%; }
+  .customer-dialog h2 { font-weight: 500; }
+  .customer-surface .font-body { font-family: inherit; }
+  .customer-surface h1, .customer-surface h2, .customer-surface h3 { font-weight: 500; }
+  .customer-surface .eats-topbar { border: 0; background: rgba(248,248,246,.9); box-shadow: none; }
+  .customer-surface .restaurant-card { background: transparent; border: 0; border-radius: 0; box-shadow: none; }
+  .customer-surface .restaurant-photo { box-shadow: var(--shadow-sm); }
+  .customer-surface .restaurant-search { background: white; border-color: #dedede; border-radius: 999px; min-height: 3.5rem; box-shadow: var(--shadow-sm); }
+  .customer-surface .restaurant-search:focus-within { border-color: #9a390e; }
+  .food-feature { position: relative; min-height: 13rem; overflow: hidden; border-radius: 1.5rem; background: #181818; box-shadow: var(--shadow-sm); }
+  .food-feature-scrim { position: absolute; inset: 0; background: linear-gradient(90deg,rgba(20,20,20,.94) 0%,rgba(20,20,20,.88) 30%,rgba(20,20,20,.7) 60%,rgba(20,20,20,.12) 85%,rgba(20,20,20,0) 100%); }
+  .food-feature-copy { position: relative; z-index: 1; width: 68%; padding: 1.5rem; }
+  .food-feature-copy h1 { color: white; }
+  .food-feature-copy p { color: #e5e5e5; }
+  .customer-dock { position: fixed; z-index: 50; bottom: max(14px,env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; padding: 6px; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; background: rgba(24,24,24,.94); backdrop-filter: blur(20px); box-shadow: var(--shadow-lg),inset 0 1px 0 rgba(255,255,255,.1); }
+  .customer-dock-inner { display: flex; align-items: stretch; justify-content: space-around; }
+  .customer-dock-item { position: relative; display: flex; flex: 1; min-width: 0; min-height: 56px; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border-radius: 30px; color: #d5d5d5; }
+  .customer-dock-item.is-active { color: white; background: rgba(255,255,255,.1); }
+  .customer-dock-item:focus-visible { outline-color: white; outline-offset: 0; }
+  .customer-dock-icon { position: relative; display: grid; place-items: center; width: 32px; height: 28px; border-radius: 999px; }
+  .customer-dock-item.is-active .customer-dock-icon { color: #ff9b69; }
+  .customer-dock-item > span { font-size: .6875rem; line-height: 1.3; font-weight: 500; }
+  .menu-cart-bar { bottom: calc(6.5rem + env(safe-area-inset-bottom)); }
+  .menu-category-bar { border-bottom: 1px solid #e5e5e5; background: rgba(248,248,246,.94); backdrop-filter: blur(16px); }
+  .menu-product { box-shadow: var(--shadow-sm); }
+  .cuisine-chip[data-state="on"] { border-color: #181818; background: #181818; color: white; }
+  .cuisine-chip:focus-visible { outline: 3px solid #9a390e; outline-offset: 3px; }
+  .cuisine-strip { scroll-padding-inline: .25rem; }
+  .restaurant-open-badge { background: rgba(255,255,255,.96); color: #181818; box-shadow: var(--shadow-sm); }
+  .home-feedback { gap: 1rem; border: 1px solid #e5e5e5; border-radius: 1.5rem; background: white; padding: 1.5rem; }
+  .customer-surface .cart-food-row { box-shadow: none; border-color: #e5e5e5; border-radius: 1.5rem; }
+  .customer-surface .restaurant-card { transition: opacity 150ms ease-out; }
+  @media (min-width: 640px) { .food-feature { min-height: 16rem; } .food-feature-copy { width: 54%; padding: 2rem; } }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .customer-dock { background: #181818; backdrop-filter: none; }
+  .customer-surface .eats-topbar { background: #f8f8f6; backdrop-filter: none; }
+  .menu-category-bar { background: #f8f8f6; backdrop-filter: none; }
+}
+@media (forced-colors: active) {
+  .customer-dock { background: Canvas; border-color: CanvasText; }
+  .customer-dock-item, .customer-dock-item.is-active { color: CanvasText; }
+  .customer-dock-item.is-active .customer-dock-icon { background: Highlight; color: HighlightText; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .customer-surface .restaurant-card:hover .restaurant-photo { box-shadow: var(--shadow-md); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .customer-surface .restaurant-photo { transition: box-shadow 180ms ease-out; }
+  .customer-surface .restaurant-card:active { transform: scale(.985); }
+}
+
+/* Motion communicates a sheet's position; content and filters never wait for an entrance. */
+@media (prefers-reduced-motion: no-preference) {
+  .customer-dock-item { transition: background-color 160ms var(--ease-ui), color 160ms var(--ease-ui), transform 140ms var(--ease-ui); }
+  .customer-surface .ui-press { transition-timing-function: var(--ease-ui); }
+  .customer-surface .ui-press:not(:disabled):active { transform: scale(.98); }
+  .customer-dialog[data-state="open"] { animation: customer-dialog-in 220ms var(--ease-ui); }
+  .customer-dialog[data-state="closed"] { animation: customer-dialog-out 140ms var(--ease-ui); pointer-events: none; }
+  body:has(.customer-dialog) .ui-dialog-overlay[data-state="open"] { animation: customer-overlay-in 180ms ease-out; }
+  body:has(.customer-dialog) .ui-dialog-overlay[data-state="closed"] { animation: customer-overlay-out 140ms ease-out; }
+  @media (max-width: 639px) {
+    .customer-dialog[data-presentation="sheet"][data-state="open"] { animation-name: customer-sheet-in; }
+    .customer-dialog[data-presentation="sheet"][data-state="closed"] { animation-name: customer-sheet-out; }
+  }
+}
+@keyframes customer-dialog-in { from { opacity: 0; scale: .98; } to { opacity: 1; scale: 1; } }
+@keyframes customer-dialog-out { from { opacity: 1; scale: 1; } to { opacity: 0; scale: .98; } }
+@keyframes customer-sheet-in { from { opacity: 0; translate: 0 48px; } to { opacity: 1; translate: 0 0; } }
+@keyframes customer-sheet-out { from { opacity: 1; translate: 0 0; } to { opacity: 0; translate: 0 32px; } }
+@keyframes customer-overlay-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes customer-overlay-out { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .customer-dialog, body:has(.customer-dialog) .ui-dialog-overlay { animation: none; }
+  .customer-surface .ui-press:not(:disabled):active { transform: none; }
+}
+@media (forced-colors: active) {
+  .cuisine-chip[data-state="on"] { background: Highlight; border-color: Highlight; color: HighlightText; }
+  .customer-dock-item.is-active { background: Highlight; color: HighlightText; }
+  .customer-dock-item.is-active .customer-dock-icon { color: HighlightText; }
 }

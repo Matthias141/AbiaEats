@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { TriangleAlert } from 'lucide-react';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { requireRole } from '@/lib/auth-guard';
@@ -75,8 +76,9 @@ export default async function OpsVendorsPage() {
 
       {(needsManualFix ?? []).length > 0 && (
         <div className="mb-6 bg-red-50 border border-red-100 rounded-2xl p-4">
-          <p className="text-sm font-medium text-red-700 mb-3">
-            ⚠️ {needsManualFix!.length} invite{needsManualFix!.length > 1 ? 's' : ''} need{needsManualFix!.length > 1 ? '' : 's'} a manual fix
+          <p className="flex items-start gap-2 text-sm font-medium text-red-700 mb-3">
+            <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            <span>{needsManualFix!.length} invite{needsManualFix!.length > 1 ? 's' : ''} need{needsManualFix!.length > 1 ? '' : 's'} a manual fix</span>
           </p>
           <div className="space-y-2">
             {needsManualFix!.map((item) => (

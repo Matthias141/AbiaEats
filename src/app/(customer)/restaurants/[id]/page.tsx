@@ -28,24 +28,29 @@ export default async function RestaurantPage({
     );
   }
 
+  let loadingFailed = false;
   // Try Supabase first
   try {
     const supabase = await createClient();
 
-    const { data: restaurant } = await supabase
+    const { data: restaurant, error: restaurantError } = await supabase
       .from('restaurants_public')
       .select('*')
       .eq('id', id)
       .eq('is_active', true)
-      .single();
+      .maybeSingle();
+
+    if (restaurantError) throw new Error("Restaurant unavailable");
 
     if (restaurant) {
-      const { data: menuItems } = await supabase
+      const { data: menuItems, error: menuError } = await supabase
         .from('menu_items')
         .select('*')
         .eq('restaurant_id', id)
         .eq('is_available', true)
         .order('sort_order', { ascending: true });
+
+      if (menuError) throw new Error("Menu unavailable");
 
       return (
         <RestaurantDetail
@@ -55,7 +60,7 @@ export default async function RestaurantPage({
       );
     }
   } catch {
-    // Supabase not configured — fall through to mock data in dev only
+    loadingFailed = true;
   }
 
   // Mock data fallback — development only to avoid masking Supabase outages
@@ -71,5 +76,6 @@ export default async function RestaurantPage({
     }
   }
 
+  if (loadingFailed) throw new Error("Restaurant or menu unavailable");
   notFound();
 }

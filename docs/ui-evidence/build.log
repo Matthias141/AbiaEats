@@ -1,0 +1,77 @@
+▲ Next.js 16.3.8 (Turbopack)
+✓ Running next.config.mjs took 15ms
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 778ms
+  Running TypeScript ...
+  Finished TypeScript in 2.5s ...
+  Collecting page data using 8 workers ...
+  Generating static pages using 8 workers (0/44) ...
+  Generating static pages using 8 workers (11/44) 
+  Generating static pages using 8 workers (22/44) 
+  Generating static pages using 8 workers (33/44) 
+✓ Generating static pages using 8 workers (44/44) in 381ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /admin
+├ ƒ /admin/applications
+├ ƒ /admin/orders
+├ ƒ /api/admin/applications
+├ ƒ /api/admin/applications/[id]
+├ ƒ /api/admin/confirm-payment
+├ ƒ /api/admin/orders
+├ ƒ /api/admin/orders/[id]
+├ ƒ /api/admin/settlements
+├ ƒ /api/admin/settlements/[id]/pay
+├ ƒ /api/auth/login
+├ ƒ /api/auth/set-password
+├ ƒ /api/auth/signout
+├ ƒ /api/auth/signup
+├ ƒ /api/cron/daily-tasks
+├ ƒ /api/cron/export-audit-log
+├ ƒ /api/cron/security-monitor
+├ ƒ /api/dsar
+├ ƒ /api/restaurant/apply
+├ ƒ /api/restaurant/info
+├ ƒ /api/restaurant/menu
+├ ƒ /api/restaurant/menu/[id]
+├ ƒ /api/restaurant/settlements
+├ ƒ /api/restaurant/upload
+├ ƒ /auth/callback
+├ ○ /auth/login
+├ ○ /auth/set-password
+├ ○ /auth/signup
+├ ○ /cart
+├ ○ /checkout
+├ ƒ /dashboard/ops
+├ ƒ /dashboard/ops/restaurants
+├ ƒ /dashboard/ops/restaurants/[id]
+├ ƒ /dashboard/ops/restaurants/new
+├ ƒ /dashboard/ops/vendors
+├ ƒ /dashboard/ops/vendors/new
+├ ○ /home
+├ ○ /onboarding
+├ ○ /privacy-policy
+├ ƒ /profile
+├ ƒ /restaurant
+├ ƒ /restaurant/apply
+├ ƒ /restaurant/menu
+├ ƒ /restaurant/orders
+├ ƒ /restaurants
+└ ƒ /restaurants/[id]
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

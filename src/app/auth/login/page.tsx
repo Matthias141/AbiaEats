@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft, UtensilsCrossed } from 'lucide-react';
 import { loginSchema } from '@/lib/validations';
+import { getCustomerLoginRedirect } from '@/lib/customer-login-redirect';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,7 +40,8 @@ export default function LoginPage() {
       return;
     }
 
-    router.push('/home');
+    const destination = new URL(window.location.href).searchParams.get('redirectTo');
+    router.push(getCustomerLoginRedirect(destination));
     router.refresh();
   };
 

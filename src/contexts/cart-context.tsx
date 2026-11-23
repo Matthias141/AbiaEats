@@ -11,6 +11,7 @@ interface CartState {
 }
 
 interface CartContextType {
+  isHydrated: boolean;
   items: CartItem[];
   restaurantId: string | null;
   restaurantName: string | null;
@@ -55,16 +56,12 @@ function saveCart(state: CartState) {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartState>(() => loadCart());
-
-  useEffect(() => {
-    saveCart(cart);
-  }, [cart]);
-
-  // Hydrate from localStorage on mount
-  useEffect(() => {
-    setCart(loadCart());
-  }, []);
+  // Server and first client render must agree. Restore storage after hydration,
+  // and never overwrite saved items with the initial empty server snapshot.
+  const [cart, setCart] = useState<CartState>({ restaurant_id: null, restaurant_name: null, delivery_fee: 0, items: [] });
+  const [isHydrated, setIsHydrated] = useState(false);
+  useEffect(() => { setCart(loadCart()); setIsHydrated(true); }, []);
+  useEffect(() => { if (isHydrated) saveCart(cart); }, [cart, isHydrated]);
 
   const addItem = useCallback((item: CartItem, restaurantName: string, deliveryFee: number) => {
     setCart((prev) => {
@@ -168,6 +165,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 
   const value: CartContextType = {
+    isHydrated,
     items: cart.items,
     restaurantId: cart.restaurant_id,
     restaurantName: cart.restaurant_name,

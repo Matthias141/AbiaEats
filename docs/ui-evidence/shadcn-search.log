@@ -1,0 +1,12 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+Found 8 items matching "dialog" in @shadcn
+Showing 1-8 of 8
+
+- @shadcn/dialog (ui)
+- @shadcn/dialog-demo (example)
+- @shadcn/alert-dialog (ui)
+- @shadcn/drawer-dialog (example)
+- @shadcn/command-dialog (example)
+- @shadcn/alert-dialog-demo (example)
+- @shadcn/dialog-close-button (example)
+- @shadcn/sidebar-13 (block) — A sidebar in a dialog.

@@ -6,9 +6,9 @@ export default function CustomerLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="customer-surface">
       {children}
       <BottomNav />
-    </>
+    </div>
   );
 }

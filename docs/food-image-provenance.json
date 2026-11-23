@@ -1,0 +1,54 @@
+{
+  "purpose": "Brand banners and cuisine inspiration. Not actual vendor or menu photography. Uploaded vendor images take priority.",
+  "existingAsset": "public/images/jollof-hero.webp — earlier generated brand image; provenance in ui-refresh.md",
+  "assets": [
+    {
+      "file": "public/images/food-banner.webp",
+      "type": "generated brand/cuisine imagery",
+      "generator": "built-in imagegen",
+      "prompt": "Use case: photorealistic-natural. Asset type: wide website food banner for Abia Eats, a food delivery marketplace in Aba and Umuahia, Nigeria. Create a high-end but believable editorial food photograph, landscape 3:2. An abundant Nigerian lunch spread on a warm ivory tabletop: an authentic bowl of deep orange jollof rice with grilled chicken and golden fried plantain, a smaller bowl of egusi soup and pounded yam, grilled suya skewers with red onion. Natural window light, realistic irregular textures, modest ceramics, no artificial shine, no CGI appearance. Food occupies the right two thirds, leave a quiet warm ivory area on the left third for dark HTML heading text. Three-quarter overhead angle, rich appetising detail, subtle shadows. No people, text, lettering, logos, watermarks, discounts, packaging brands. This is generic brand campaign imagery, not a representation of a named restaurant's actual menu."
+    },
+    {
+      "file": "public/images/cuisine-pepper-soup.webp",
+      "type": "generated brand/cuisine imagery",
+      "generator": "built-in imagegen",
+      "prompt": "Use case: photorealistic-natural. Asset type: food category photograph for Abia Eats. Subject: Authentic Nigerian goat pepper soup in a modest ceramic bowl: clear rich amber broth, irregular chunks of goat meat, scent leaves, fine chilli flecks, slight steam. Small understated plate of boiled yam alongside. Style: believable Nigerian food editorial photography, square composition, three-quarter overhead view, subject large and centered with generous crop-safe margins, warm ivory table, soft natural window light, appetising real textures and irregular food shapes. Not CGI or illustration. No text, logos, watermark, hands, discounts or named restaurant. Generic cuisine imagery, not an actual vendor menu photo."
+    },
+    {
+      "file": "public/images/cuisine-grills.webp",
+      "type": "generated brand/cuisine imagery",
+      "generator": "built-in imagegen",
+      "prompt": "Use case: photorealistic-natural. Asset type: food category photograph for Abia Eats. Subject: Freshly grilled Nigerian suya beef skewers, charred irregular edges, toasted groundnut spice, sliced red onion and tomato on a simple metal platter, an everyday restaurant portion. Style: believable Nigerian food editorial photography, square composition, three-quarter overhead view, subject large and centered with generous crop-safe margins, warm ivory table, soft natural window light, appetising real textures and irregular food shapes. Not CGI or illustration. No text, logos, watermark, hands, discounts or named restaurant. Generic cuisine imagery, not an actual vendor menu photo."
+    },
+    {
+      "file": "public/images/cuisine-shawarma.webp",
+      "type": "generated brand/cuisine imagery",
+      "generator": "built-in imagegen",
+      "prompt": "Use case: photorealistic-natural. Asset type: food category photograph for Abia Eats. Subject: Two Nigerian-style chicken shawarma wraps in lightly toasted flatbread, one cut open to reveal grilled chicken, cabbage and creamy sauce, greaseproof paper beneath, no brand packaging. Style: believable Nigerian food editorial photography, square composition, three-quarter overhead view, subject large and centered with generous crop-safe margins, warm ivory table, soft natural window light, appetising real textures and irregular food shapes. Not CGI or illustration. No text, logos, watermark, hands, discounts or named restaurant. Generic cuisine imagery, not an actual vendor menu photo."
+    },
+    {
+      "file": "public/images/cuisine-local.webp",
+      "type": "generated brand/cuisine imagery",
+      "generator": "built-in imagegen",
+      "prompt": "Use case: photorealistic-natural. Asset type: food category photograph for Abia Eats. Subject: Authentic Igbo egusi soup with leafy greens, small pieces of beef and stockfish in a shallow ceramic bowl, a rounded portion of pounded yam on a small separate plate. Style: believable Nigerian food editorial photography, square composition, three-quarter overhead view, subject large and centered with generous crop-safe margins, warm ivory table, soft natural window light, appetising real textures and irregular food shapes. Not CGI or illustration. No text, logos, watermark, hands, discounts or named restaurant. Generic cuisine imagery, not an actual vendor menu photo."
+    },
+    {
+      "file": "public/images/cuisine-drinks.webp",
+      "type": "generated brand/cuisine imagery",
+      "generator": "built-in imagegen",
+      "prompt": "Use case: photorealistic-natural. Asset type: food category photograph for Abia Eats. Subject: Refreshing Nigerian zobo hibiscus drink in a clear glass with ice, ginger and sliced pineapple nearby, small condensation droplets, rich translucent burgundy colour, no bottles or branding. Style: believable Nigerian food editorial photography, square composition, three-quarter overhead view, subject large and centered with generous crop-safe margins, warm ivory table, soft natural window light, appetising real textures and irregular food shapes. Not CGI or illustration. No text, logos, watermark, hands, discounts or named restaurant. Generic cuisine imagery, not an actual vendor menu photo."
+    },
+    {
+      "file": "public/images/cuisine-fast-food.webp",
+      "type": "generated brand/cuisine imagery",
+      "generator": "built-in imagegen",
+      "prompt": "Use case: photorealistic-natural. Asset type: Abia Eats cuisine category photograph. Subject: A believable takeaway beef burger with a lightly toasted sesame bun, uneven melted cheese, lettuce and tomato, with a small portion of hand-cut fries on greaseproof paper. Believable food editorial photography, square, three-quarter overhead, centered food with crop-safe margins, warm ivory tabletop, soft natural window light, real irregular textures. No CGI appearance, people, logos, text, watermark or brand packaging. Generic cuisine imagery, not a named restaurant's actual menu."
+    },
+    {
+      "file": "public/images/cuisine-bakery.webp",
+      "type": "generated brand/cuisine imagery",
+      "generator": "built-in imagegen",
+      "prompt": "Use case: photorealistic-natural. Asset type: Abia Eats cuisine category photograph. Subject: A fresh Nigerian meat pie cut open to show its savoury filling, a few golden puff-puff balls and a soft bread roll on a modest ceramic plate. Believable food editorial photography, square, three-quarter overhead, centered food with crop-safe margins, warm ivory tabletop, soft natural window light, real irregular textures. No CGI appearance, people, logos, text, watermark or brand packaging. Generic cuisine imagery, not a named restaurant's actual menu."
+    }
+  ]
+}
