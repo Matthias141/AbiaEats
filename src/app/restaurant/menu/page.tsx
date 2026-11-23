@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { Plus, Pencil, Trash2, ImagePlus, X, ToggleLeft, ToggleRight, Star, UtensilsCrossed } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import { MENU_IMAGE_BUCKET, validateMenuImage } from '@/lib/menu-images';
 import { formatPrice } from '@/lib/utils';
 import type { MenuItem } from '@/types/database';
 
@@ -57,7 +59,7 @@ export default function RestaurantMenuPage() {
     }).catch(() => {});
   }, [fetchMenu]);
 
-  const openAdd = () => { setEditing(null); setForm(empty(restaurantId)); setShowForm(true); };
+  const openAdd = () => { if (!restaurantId) { showToast('Restaurant is still loading. Please retry.'); return; } setEditing(null); setForm(empty(restaurantId)); setShowForm(true); };
   const openEdit = (item: MenuItem) => {
     setEditing(item);
     setForm({ name: item.name, description: item.description ?? '', price: String(item.price), category: item.category, is_available: item.is_available, is_popular: item.is_popular, image_url: item.image_url ?? '', restaurant_id: item.restaurant_id });
@@ -65,30 +67,27 @@ export default function RestaurantMenuPage() {
   };
 
   const uploadImage = async (file: File) => {
+    const validationError = validateMenuImage(file);
+    if (validationError) { showToast(validationError); return; }
     setUploading(true);
-    // Step 1: Get signed upload URL
-    const urlRes = await fetch('/api/restaurant/upload', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filename: file.name, content_type: file.type }),
-    });
-
-    if (!urlRes.ok) { showToast('Image upload failed'); setUploading(false); return; }
-    const { upload_url, public_url } = await urlRes.json();
-
-    // Step 2: PUT file directly to Supabase Storage
-    const uploadRes = await fetch(upload_url, {
-      method: 'PUT',
-      headers: { 'Content-Type': file.type },
-      body: file,
-    });
-
-    setUploading(false);
-    if (uploadRes.ok) {
-      setForm(f => ({ ...f, image_url: public_url }));
-      showToast('Image uploaded');
-    } else {
-      showToast('Upload failed');
+    try {
+      const urlRes = await fetch('/api/restaurant/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, content_type: file.type, size: file.size }),
+      });
+      const result = await urlRes.json();
+      if (!urlRes.ok) throw new Error(result.error || 'Image upload failed');
+      const { error } = await createClient().storage.from(MENU_IMAGE_BUCKET)
+        .uploadToSignedUrl(result.path, result.token, file, { contentType: file.type });
+      if (error) throw new Error('Upload failed. Check the photo format and 2MB limit, then retry.');
+      setForm(f => ({ ...f, image_url: result.public_url }));
+      showToast('Image uploaded — save the item to keep it');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Image upload failed. Please retry.');
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
     }
   };
 
@@ -224,11 +223,11 @@ export default function RestaurantMenuPage() {
       {/* Add/Edit drawer */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setShowForm(false)} />
+          <div className="absolute inset-0 bg-black/40" onClick={() => { if (!uploading) setShowForm(false); }} />
           <div className="relative bg-white rounded-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="sticky top-0 bg-white px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-gray-900">{editing ? 'Edit Item' : 'Add Menu Item'}</h3>
-              <button onClick={() => setShowForm(false)} className="p-1.5 hover:bg-gray-100 rounded-lg">
+              <button onClick={() => { if (!uploading) setShowForm(false); }} className="p-1.5 hover:bg-gray-100 rounded-lg">
                 <X className="w-4 h-4 text-gray-500" />
               </button>
             </div>
@@ -238,7 +237,6 @@ export default function RestaurantMenuPage() {
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-2">Item Photo</label>
                 <div
-                  onClick={() => fileRef.current?.click()}
                   className="w-full h-36 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-brand-orange/50 hover:bg-orange-50/30 transition-all relative overflow-hidden"
                 >
                   {form.image_url ? (
@@ -257,7 +255,7 @@ export default function RestaurantMenuPage() {
                   ) : (
                     <>
                       <ImagePlus className="w-7 h-7 text-gray-300 mb-2" />
-                      <p className="text-xs text-gray-400">{uploading ? 'Uploading...' : 'Click to upload photo'}</p>
+                      <p className="text-xs text-gray-400">{uploading ? 'Uploading...' : 'Choose a photo below'}</p>
                       <p className="text-xs text-gray-300 mt-0.5">JPG, PNG, WebP · Max 2MB</p>
                     </>
                   )}
@@ -266,11 +264,13 @@ export default function RestaurantMenuPage() {
                   ref={fileRef}
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
-                  className="hidden"
+                  aria-label="Upload item photo"
+                  disabled={uploading}
+                  className="mt-2 block w-full text-sm text-gray-600"
                   onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f); }}
                 />
                 {form.image_url && (
-                  <button onClick={() => setForm(f => ({ ...f, image_url: '' }))} className="mt-1.5 text-xs text-red-500 hover:underline">Remove photo</button>
+                  <button disabled={uploading} onClick={() => setForm(f => ({ ...f, image_url: '' }))} className="mt-1.5 text-xs text-red-500 hover:underline">Remove photo</button>
                 )}
               </div>
 
@@ -310,8 +310,8 @@ export default function RestaurantMenuPage() {
             </div>
 
             <div className="sticky bottom-0 bg-white px-6 py-4 border-t border-gray-100 flex gap-3">
-              <button onClick={() => setShowForm(false)} className="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50">Cancel</button>
-              <button onClick={save} disabled={saving || uploading} className="flex-1 py-2.5 gradient-orange text-white text-sm font-medium rounded-xl disabled:opacity-50">
+              <button onClick={() => { if (!uploading) setShowForm(false); }} className="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50">Cancel</button>
+              <button onClick={save} disabled={saving || uploading || !restaurantId} className="flex-1 py-2.5 gradient-orange text-white text-sm font-medium rounded-xl disabled:opacity-50">
                 {saving ? 'Saving...' : editing ? 'Save Changes' : 'Add Item'}
               </button>
             </div>

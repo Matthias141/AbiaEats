@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-guard';
 import { createClient } from '@/lib/supabase/server';
+import { isRestaurantImageUrl } from '@/lib/menu-images';
 import { updateMenuItemSchema } from '@/lib/validations';
 
 interface Params { params: Promise<{ id: string }> }
@@ -19,13 +20,17 @@ export async function PATCH(request: Request, { params }: Params) {
   // Ownership check via join
   const { data: item } = await supabase
     .from('menu_items')
-    .select('id, restaurants!inner(owner_id)')
+    .select('id, restaurant_id, restaurants!inner(owner_id)')
     .eq('id', id)
     .single();
 
   const owner = (item?.restaurants as unknown as { owner_id: string } | null)?.owner_id;
   if (!item || (owner !== guard.user.id && guard.role !== 'admin')) {
     return NextResponse.json({ error: 'Not found or not yours' }, { status: 403 });
+  }
+
+  if (parsed.data.image_url && !isRestaurantImageUrl(parsed.data.image_url, item.restaurant_id, process.env.NEXT_PUBLIC_SUPABASE_URL ?? '')) {
+    return NextResponse.json({ error: 'Photo must be uploaded to this restaurant' }, { status: 400 });
   }
 
   const { data, error } = await supabase
@@ -51,7 +56,7 @@ export async function DELETE(_req: Request, { params }: Params) {
 
   const { data: item } = await supabase
     .from('menu_items')
-    .select('id, restaurants!inner(owner_id)')
+    .select('id, restaurant_id, restaurants!inner(owner_id)')
     .eq('id', id)
     .single();
 

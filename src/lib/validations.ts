@@ -58,6 +58,7 @@ export const createMenuItemSchema = z.object({
   name: z.string().min(2, 'Item name is required'),
   description: z.string().optional(),
   price: z.number().min(50, 'Minimum price is ₦50'),
+  image_url: z.string().url().max(2048).nullable().optional(),
   category: z.string().min(1, 'Category is required'),
   is_available: z.boolean().default(true),
   is_popular: z.boolean().default(false),
